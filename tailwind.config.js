@@ -6,7 +6,8 @@ module.exports = {
     extend: {
       colors: {
         'spotify-dark': 'rgb(24, 24, 24)',
-        'spotify-green': 'rgb(29, 185, 84)'
+        'spotify-green': 'rgb(29, 185, 84)',
+        'custom-darkgray': '#1B1B1B'
       }
     },
   },

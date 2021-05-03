@@ -1,28 +1,21 @@
-import React from "react";
-import Link from "next/link";
-
 import { logout } from "../lib/spotifyHelper";
 
+import {AiFillCaretDown} from 'react-icons/ai'
+
 export default function MainNavigation(props) {
-  console.log(props);
 
   return (
-    <header className="flex justify-between bg-black p-6 shadow-md">
-      <h1 className="text-white">spotify</h1>
-      <div className="flex items-center">
-        <span className="inline-block mr-6 text-white">
-          {props.displayName}
-        </span>
-        <nav>
-          <ul className="list-reset flex">
-            <li>
-                <a onClick={logout} className="inline-block no-underline bg-green hover:bg-green-light text-white font-bold py-2 px-4 border-b-4 border-green-dark hover:border-green rounded uppercase">
-                  Logout
-                </a>
-            </li>
-          </ul>
-        </nav>
-      </div>
-    </header>
+    <>
+    {props.user ? <header className="sticky-nav flex justify-between p-6 ">
+    <h1 className="text-black">spotify</h1>
+    
+    <div className="rounded-full w-28 h-16 bg-custom-darkgray flex justify-between items-center">
+                <AiFillCaretDown className="h-4 w-4 ml-4 text-[#686868]" />
+              <img className="w-16 h-16 rounded-full" src={props.user.images[0].url} />
+              </div>
+  </header>
+:
+<p>Loading</p>}
+</>
   );
 }

@@ -1,12 +1,15 @@
 export default function RightSideBar(props) {
   return (
-    <div className="rounded-3xl bg-custom-darkgray pt-6 pb-4 w-80 h-full text-white">
+    <div className="h-full rounded-3xl bg-custom-darkgray pt-6 pb-4 w-80 text-white">
       <p className="text-xl mb-6 pl-8">Recently Played</p>
       <div className="pl-8 pr-1">
       {props.recentlyPlayed ? (
         <div className="flex flex-col space-y-8">
           {props.recentlyPlayed.items.map((item, index) => (
-            index < 6 && <div className="flex">
+            index < 6 && 
+            <div 
+            key={index}
+            className="flex">
             <div className="mr-4">
               <div
                 className="rounded-full bg-cover bg-center w-16 h-16"

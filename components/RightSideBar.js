@@ -32,7 +32,7 @@ export default function RightSideBar(props) {
       </div>
 
       <div className="w-full px-8 mt-6">
-          <button className="bg-[#383838] text-sm rounded-3xl px-4 py-4 w-full">View All</button>
+          <button className="bg-[#383838] text-sm rounded-3xl px-4 py-4 w-full focus:outline-none">View All</button>
       </div>
     </div>
   );

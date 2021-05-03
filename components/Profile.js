@@ -40,13 +40,13 @@ export default function Profile() {
         {topArtists && topTracksShort && topArtistsShort ? (
           <>
             <div className="flex">
-              <div className="flex flex-col flex-1 overflow-x-hidden">
-                <div className="flex flex-nowrap space-x-6 overflow-x-scroll">
+              <div className="flex flex-col flex-1 overflow-x-hidden mr-4">
+                <div className="flex flex-nowrap space-x-6 overflow-x-scroll no-scrollbar">
                   {topArtists.items.map(
                     (item, index) => index < 16 && <Card key={index} info={item} />
                   )}
                 </div>
-                <div className="mt-14 mr-10 flex flex-nowrap overflow-x-scroll space-x-8">
+                <div className="mt-14 flex flex-nowrap overflow-x-scroll no-scrollbar space-x-8">
                 <TopTracks topTracksShort={topTracksShort} />
                 <TopArtists topArtistsShort={topArtistsShort} />
                 </div>

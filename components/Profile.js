@@ -9,7 +9,6 @@ import TopArtists from "./TopArtists";
 
 import { getUserInfo } from "../lib/spotifyHelper";
 import { catchErrors } from "../utils";
-import RecentArtist from "./TopArtists";
 
 export default function Profile() {
   const [topArtists, setTopArtists] = useState(null);
@@ -31,7 +30,6 @@ export default function Profile() {
     };
 
     catchErrors(fetchData());
-    // console.log(user);
   }, []);
 
   return (
@@ -39,11 +37,11 @@ export default function Profile() {
       <Layout>
         {topArtists && topTracksShort && topArtistsShort ? (
           <>
-            <div className="flex">
-              <div className="flex flex-col flex-1 overflow-x-hidden mr-4">
+            <div className="flex bg-transparent">
+              <div className="flex flex-col overflow-x-hidden mr-4">
                 <div className="flex flex-nowrap space-x-6 overflow-x-scroll no-scrollbar">
                   {topArtists.items.map(
-                    (item, index) => index < 16 && <Card key={index} info={item} />
+                    (item, index) => index < 16 && <Card profile key={index} info={item} />
                   )}
                 </div>
                 <div className="mt-14 flex flex-nowrap overflow-x-scroll no-scrollbar space-x-8">

@@ -4,7 +4,7 @@ export default function TopArtists(props) {
   return (
     <>
       <div>
-      <Subtitle subtitle="Recent Artist" />
+      <Subtitle link="/artists" subtitle="Recent Artist" />
       <div className="space-y-3">
       <div className="flex space-x-3 items-center">
       <div style={{

@@ -1,0 +1,70 @@
+import React, { useState, useEffect } from "react";
+
+import Layout from "../components/Layout";
+import Loading from "../components/Loading";
+import Card from "../components/Card";
+
+import { getTopArtistsShort, getTopArtistsMedium, getTopArtistsLong } from "../lib/spotifyHelper";
+
+import { catchErrors } from "../utils";
+
+const classes = {
+    active: 'border-b border-white',
+    inactive: 'border-b border-transparent'
+}
+
+export default function Artists() {
+    const [topArtists, setTopArtists] = useState(null);
+    const [activeRange, setActiveRange] = useState('long');
+  
+    const apiCalls = {
+      long: getTopArtistsLong(),
+      medium: getTopArtistsMedium(),
+      short: getTopArtistsShort(),
+    };
+  
+    useEffect(() => {
+      const fetchData = async () => {
+        const { data } = await getTopArtistsLong();
+        setTopArtists(data);
+      };
+      catchErrors(fetchData());
+    }, []);
+  
+    const changeRange = async range => {
+      const { data } = await apiCalls[range];
+      setTopArtists(data);
+      setActiveRange(range);
+    };
+  
+    const setRangeData = range => catchErrors(changeRange(range));
+
+  return (
+    <>
+      <Layout>
+      <div className="max-w-6xl mx-auto no-scrollbar">
+      <div className="z-20 sticky top-0 bg-black w-full text-white pb-6 mb-4 select-none flex items-center justify-between">
+            <div>
+                <p className="text-2xl font-semibold">Top Artists</p>
+            </div>
+                <div className="flex items-center justify-center space-x-4">
+                <p onClick={() => setRangeData('long')} className={'cursor-pointer ' + (activeRange == 'long' ? classes.active : classes.inactive)}>All Time</p>
+                <p onClick={() => setRangeData('medium')} className={'cursor-pointer ' + (activeRange == 'medium' ? classes.active : classes.inactive)}>Last 6 Months</p>
+                <p onClick={() => setRangeData('short')} className={'cursor-pointer ' + (activeRange == 'short' ? classes.active : classes.inactive)}>Last 4 Weeks</p>
+                </div>
+            
+        </div>
+        {topArtists ? (
+          <div className="flex flex-wrap justify-start gap-4 no-scrollbar">              
+            {topArtists.items.map((item, index) => (
+              <Card key={index} info={item} />
+            ))}
+          </div>
+        ) : (
+          <Loading />
+        )}
+        </div>
+      </Layout>
+    </>
+  );
+}

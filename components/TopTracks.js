@@ -4,7 +4,7 @@ export default function TopTracks(props) {
   return (
       <>
       <div>
-      <Subtitle subtitle="Top Tracks of the Week" />
+      <Subtitle link="/tracks" subtitle="Top Tracks of the Week" />
     <div className="rounded-3xl p-8 text-white bg-custom-darkgray2 w-[600px]">
       <div className="space-y-10">
       {props.topTracksShort.items.map((item, index) => (

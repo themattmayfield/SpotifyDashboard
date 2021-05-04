@@ -1,5 +1,14 @@
+import Link from "next/link";
+
 export default function Subtitle(props) {
-    return (
-        <p className="mb-5 text-2xl text-white">{props.subtitle}</p>
-    )
+  return (
+    <div className="flex justify-between">
+      <p className="mb-5 text-2xl text-white">{props.subtitle}</p>
+      <Link href={props.link}>
+        <button className="focus:outline-none text-white hover:bg-[#383838] transition duration-150 ease-in-out rounded-full px-4 h-[36px] border border-[#383838]">
+          See All
+        </button>
+      </Link>
+    </div>
+  );
 }

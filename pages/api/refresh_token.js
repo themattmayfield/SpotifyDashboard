@@ -1,8 +1,6 @@
 import request from 'request'
 
-// import { CLIENT_ID, CLIENT_SECRET } from '../../lib/spotifyHelper'
-const CLIENT_ID = process.env.CLIENT_ID;
-let CLIENT_SECRET = process.env.CLIENT_SECRET
+import { CLIENT_ID, CLIENT_SECRET } from '../../lib/spotifyHelper'
 
 export default (req, res) => {
     // requesting access token from refresh token

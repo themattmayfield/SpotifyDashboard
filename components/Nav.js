@@ -20,9 +20,7 @@ export default function MainNavigation() {
 
   return (
     <>
-    <header className="sticky-nav flex justify-between p-6 ">
-    <h1 className="text-black">spotify</h1>
-    
+    <header className="flex justify-end p-6 ">    
     <div className="rounded-full w-28 h-16 bg-custom-darkgray flex justify-between items-center">
                 <AiFillCaretDown className="h-4 w-4 ml-4 text-[#686868]" />
               {user && <img onClick={logout} className="w-16 h-16 rounded-full" src={user.images[0].url} /> }

@@ -1,7 +1,12 @@
 import request from 'request'
 import querystring from 'querystring'
 
-import { CLIENT_ID, CLIENT_SECRET, REDIRECT_URI, FRONTEND_URI } from '../../lib/spotifyHelper'
+// import { CLIENT_ID, CLIENT_SECRET, REDIRECT_URI, FRONTEND_URI } from '../../lib/spotifyHelper'
+import { FRONTEND_URI } from '../../lib/spotifyHelper'
+
+const CLIENT_ID = process.env.CLIENT_ID;
+let REDIRECT_URI = process.env.REDIRECT_URI
+let CLIENT_SECRET = process.env.CLIENT_SECRET
 
 export default (req, res) => {
 

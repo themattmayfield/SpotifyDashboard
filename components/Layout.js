@@ -13,7 +13,6 @@ import { token, FRONTEND_URI } from "../lib/spotifyHelper";
 
 export default function Layout({ children }) {
   const router = useRouter();
-
   const [cookie, setCookie] = useCookies(["userImage"])
 
   useEffect(() => {

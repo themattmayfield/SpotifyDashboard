@@ -24,7 +24,7 @@ export default function MainNavigation() {
     <header className="flex justify-end p-6 ">    
     <div className="rounded-full w-28 h-16 bg-custom-darkgray flex justify-between items-center">
                 <AiFillCaretDown className="h-4 w-4 ml-4 text-[#686868]" />
-              <img onClick={logout} className="w-16 h-16 rounded-full" src={Cookies.get('userImage') || user.images[0].url} />
+              {Cookies.get('userImage') && <img onClick={logout} className="w-16 h-16 rounded-full" src={Cookies.get('userImage') || user.images[0].url} />}
               </div>
   </header>
 </>

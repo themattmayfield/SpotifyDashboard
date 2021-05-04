@@ -1,7 +1,10 @@
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
-// import { LOGIN_URI } from "../lib/spotifyHelper";
-let LOGIN_URI = process.env.NEXT_PUBLIC_LOGIN_URI
+
+const LOGIN_URI =
+  process.env.NODE_ENV !== 'production'
+    ? 'http://localhost:3000/api/login'
+    : process.env.NEXT_PUBLIC_LOGIN_URI;
 
 const Login = () => {
   return (

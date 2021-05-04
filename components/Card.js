@@ -1,11 +1,11 @@
 export default function Card(props) {
   return (
-    <div className="inline-block">
+    <div className="inline-block max-w-min mx-auto ">
       <div
         style={{
           backgroundImage: `url(${props.info.images[1].url})`,
         }}
-        className={`cursor-pointer rounded-3xl h-96 w-64 max-w-xs overflow-hidden bg-red-600 bg-cover bg-center flex items-center justify-center ${
+        className={`cursor-pointer rounded-3xl h-[60vw] w-[45vw] md:h-[40vw] md:w-[25vw] lg:h-[40vw] lg:w-[25vw] xl:h-96 xl:w-64 max-w-xs overflow-hidden bg-red-600 bg-cover bg-center flex items-center justify-center ${
           !props.profile &&
           "transition duration-300 ease-in-out transform hover:scale-105"
         }`}

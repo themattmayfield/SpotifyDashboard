@@ -42,8 +42,8 @@ export default function Artists() {
   return (
     <>
       <Layout>
-      <div className="max-w-6xl mx-auto no-scrollbar">
-      <div className="z-20 sticky top-0 bg-black w-full text-white pb-6 mb-4 select-none flex items-center justify-between">
+      <div className="max-w-5xl mx-auto px-2 md:px-4 no-scrollbar">
+      <div className="z-20 sticky top-0 bg-black w-full text-white pb-6 mb-4 select-none flex flex-col md:flex-row items-center justify-between space-y-2">
             <div>
                 <p className="text-2xl font-semibold">Top Artists</p>
             </div>
@@ -55,7 +55,7 @@ export default function Artists() {
             
         </div>
         {topArtists ? (
-          <div className="flex flex-wrap justify-start gap-4 no-scrollbar">              
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-y-2 md:gap-6 no-scrollbar">              
             {topArtists.items.map((item, index) => (
               <Card key={index} info={item} />
             ))}

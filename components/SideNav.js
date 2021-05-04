@@ -9,29 +9,33 @@ import { RiHistoryLine, RiPlayListFill } from 'react-icons/ri'
 
 const linkClasses = {
   active:
-    "cursor-pointer hover:text-[#686868] transition duration-150 ease-in-out w-6 h-6 text-white",
+    "hover:text-[#686868] transition duration-150 ease-in-out w-6 h-6 text-white",
   inactive:
-    "cursor-pointer hover:text-[#686868] transition duration-150 ease-in-out w-6 h-6 text-white",
+    "hover:text-[#686868] transition duration-150 ease-in-out w-6 h-6 text-white",
 };
 
 const linkDivClassess = {
-    active: 'w-full h-16 border-l-4 border-green-500 flex items-center justify-center',
-    inactive: 'w-full h-16 flex items-center justify-center'
+    active: 'cursor-pointer w-full h-24 border-l-4 border-green-500 flex items-center justify-center bg-custom-darkgray',
+    inactive: 'cursor-pointer w-full h-24 border-l-4 border-transparent flex items-center justify-center hover:bg-custom-darkgray'
+}
+const linkDivClassessMobile = {
+  active: 'cursor-pointer w-full border-t-4 border-green-500 flex items-center justify-center bg-custom-darkgray',
+  inactive: 'cursor-pointer w-full border-t-4 border-transparent flex items-center justify-center hover:bg-custom-darkgray'
 }
 export default function SideNav(props) {
   const router = useRouter();
   return (
-    <div className="rounded-xl py-4 w-32 h-full flex flex-col space-y-6 items-center pt-12">
-      <div className="mb-12">
-        <SiSpotify className="w-14 h-14 text-green-600" />
-      </div>
-      <div className="w-full flex flex-col space-y-8 items-center">
-        <div className={
+    <>
+
+      {/* Mobile */}
+<div className="w-full flex md:hidden bg-black text-white top-auto fixed bottom-0 right-0 h-[70px] z-50">
+
+<Link href="/"><div className={
                 router.pathname == "/"
-                  ? linkDivClassess.active
-                  : linkDivClassess.inactive
+                  ? linkDivClassessMobile.active
+                  : linkDivClassessMobile.inactive
               }>
-          <Link href="/">
+          
             <AiFillHome
               className={
                 router.pathname == "/"
@@ -39,14 +43,14 @@ export default function SideNav(props) {
                   : linkClasses.inactive
               }
             />
-          </Link>
-        </div>
-        <div className={
+          
+        </div></Link>
+        <Link href="/artists"><div className={
                 router.pathname == "/artists"
-                  ? linkDivClassess.active
-                  : linkDivClassess.inactive
+                  ? linkDivClassessMobile.active
+                  : linkDivClassessMobile.inactive
               }>
-          <Link href="/artists">
+          
             <GiMicrophone
               className={
                 router.pathname == "/artists"
@@ -54,14 +58,14 @@ export default function SideNav(props) {
                   : linkClasses.inactive
               }
             />
-          </Link>
-        </div>
-        <div className={
+          
+        </div></Link>
+        <Link href="/tracks"><div className={
                 router.pathname == "/tracks"
-                  ? linkDivClassess.active
-                  : linkDivClassess.inactive
+                  ? linkDivClassessMobile.active
+                  : linkDivClassessMobile.inactive
               }>
-          <Link href="/tracks">
+          
             <BsMusicNoteBeamed
               className={
                 router.pathname == "/tracks"
@@ -69,14 +73,14 @@ export default function SideNav(props) {
                   : linkClasses.inactive
               }
             />
-          </Link>
-        </div>
-        <div className={
+          
+        </div></Link>
+        <Link href="/recent"><div className={
                 router.pathname == "/recent"
-                  ? linkDivClassess.active
-                  : linkDivClassess.inactive
+                  ? linkDivClassessMobile.active
+                  : linkDivClassessMobile.inactive
               }>
-          <Link href="/recent">
+          
             <RiHistoryLine
               className={
                 router.pathname == "/recent"
@@ -84,14 +88,14 @@ export default function SideNav(props) {
                   : linkClasses.inactive
               }
             />
-          </Link>
-        </div>
-        <div className={
+          
+        </div></Link>
+        <Link href="/playlists"><div className={
                 router.pathname == "/playlists"
-                  ? linkDivClassess.active
-                  : linkDivClassess.inactive
+                  ? linkDivClassessMobile.active
+                  : linkDivClassessMobile.inactive
               }>
-          <Link href="/playlists">
+          
             <RiPlayListFill
               className={
                 router.pathname == "/playlists"
@@ -99,9 +103,95 @@ export default function SideNav(props) {
                   : linkClasses.inactive
               }
             />
-          </Link>
-        </div>
+          
+        </div></Link>
+      
+
+            </div>
+
+            {/* Desktop */}
+    <div className="rounded-xl py-4 w-32 h-full hidden md:flex flex-col space-y-6 items-center pt-12">
+      <div className="mb-12">
+        <SiSpotify className="w-14 h-14 text-green-600" />
+      </div>
+      <div className="w-full flex flex-col items-center">
+        <Link href="/"><div className={
+                router.pathname == "/"
+                  ? linkDivClassess.active
+                  : linkDivClassess.inactive
+              }>
+          
+            <AiFillHome
+              className={
+                router.pathname == "/"
+                  ? linkClasses.active
+                  : linkClasses.inactive
+              }
+            />
+          
+        </div></Link>
+        <Link href="/artists"><div className={
+                router.pathname == "/artists"
+                  ? linkDivClassess.active
+                  : linkDivClassess.inactive
+              }>
+          
+            <GiMicrophone
+              className={
+                router.pathname == "/artists"
+                  ? linkClasses.active
+                  : linkClasses.inactive
+              }
+            />
+          
+        </div></Link>
+        <Link href="/tracks"><div className={
+                router.pathname == "/tracks"
+                  ? linkDivClassess.active
+                  : linkDivClassess.inactive
+              }>
+          
+            <BsMusicNoteBeamed
+              className={
+                router.pathname == "/tracks"
+                  ? linkClasses.active
+                  : linkClasses.inactive
+              }
+            />
+          
+        </div></Link>
+        <Link href="/recent"><div className={
+                router.pathname == "/recent"
+                  ? linkDivClassess.active
+                  : linkDivClassess.inactive
+              }>
+          
+            <RiHistoryLine
+              className={
+                router.pathname == "/recent"
+                  ? linkClasses.active
+                  : linkClasses.inactive
+              }
+            />
+          
+        </div></Link>
+        <Link href="/playlists"><div className={
+                router.pathname == "/playlists"
+                  ? linkDivClassess.active
+                  : linkDivClassess.inactive
+              }>
+          
+            <RiPlayListFill
+              className={
+                router.pathname == "/playlists"
+                  ? linkClasses.active
+                  : linkClasses.inactive
+              }
+            />
+          
+        </div></Link>
       </div>
     </div>
+  </>
   );
 }

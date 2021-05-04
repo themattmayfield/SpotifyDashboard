@@ -23,7 +23,7 @@ export default function Recent() {
   return (
     <>
       <Layout> 
-      <div className="max-w-6xl mx-auto">
+      <div className="max-w-6xl mx-auto px-2 md:px-6">
       <div className="sticky top-0 bg-black w-full text-white pb-6 mb-4 select-none">
       <p className="text-2xl font-semibold">Recently Played Tracks</p>            
             

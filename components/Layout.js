@@ -21,7 +21,7 @@ export default function Layout({ children }) {
         <SideNav />
         <div className="flex flex-1 flex-col overflow-hidden">
           <Nav />
-          <main className="h-full pr-6 overflow-scroll">{children}</main>
+          <main className="h-full pb-[100px] md:pb-0 overflow-y-scroll">{children}</main>
         </div>
       </div>
     </>

@@ -2,7 +2,57 @@ import Link from 'next/link'
 
 export default function RightSideBar(props) {
   return (
-    <div className="h-full sticky top-0 rounded-3xl bg-custom-darkgray pt-6 pb-4 w-80 text-white">
+<>
+{/* Mobile */}
+<div className="md:hidden h-full sticky top-0 rounded-3xl bg-custom-darkgray pt-6 pb-4 w-full text-white px-4">
+      <p className="text-xl mb-6">Recently Played</p>
+      <div className="">
+        {props.recentlyPlayed ? (
+          <div className="grid grid-cols-2 gap-x-2">
+            {props.recentlyPlayed.items.map(
+              (item, index) =>
+                index < 6 && (
+                  <div key={index} className="flex">
+                    <div className="mr-4">
+                      <div
+                        className="rounded-full bg-cover bg-center w-8 h-8"
+                        style={{
+                          backgroundImage: `url(${item.track.album.images[0].url})`,
+                        }}
+                      ></div>
+                    </div>
+
+                    <div>
+                      <div className="overflow-hidden truncate w-48">
+                        {item.track.artists[0].name}
+                      </div>
+                      <p className="text-xs text-[#565656] overflow-hidden truncate w-48">
+                        {item.track.name}
+                      </p>
+                    </div>
+                  </div>
+                )
+            )}
+          </div>
+        ) : (
+          <p>Loading</p>
+        )}
+      </div>
+
+      <div className="w-full px-8 mt-6">
+        <Link href="/recent">
+        <button className="bg-[#383838] hover:bg-[#686868] transition duration-150 ease-in-out text-sm rounded-3xl px-4 py-4 w-full focus:outline-none">
+          View All
+        </button>
+        </Link>
+      </div>
+    </div>
+  
+
+
+
+    {/* Desktop */}
+    <div className="hidden md:block sticky top-0 rounded-3xl bg-custom-darkgray pt-6 pb-4 w-80 text-white">
       <p className="text-xl mb-6 pl-8">Recently Played</p>
       <div className="pl-8 pr-1">
         {props.recentlyPlayed ? (
@@ -45,5 +95,6 @@ export default function RightSideBar(props) {
         </Link>
       </div>
     </div>
+  </>
   );
 }

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 // import { LOGIN_URI } from "../lib/spotifyHelper";
-let LOGIN_URI = process.env.LOGIN_URI
+let LOGIN_URI = process.env.NEXT_LOGIN_URI
 
 const Login = () => {
   return (

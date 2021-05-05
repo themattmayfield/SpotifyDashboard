@@ -20,7 +20,7 @@ export default function Layout({ children, profile }) {
         <SideNav />
         <div className="flex flex-1 flex-col overflow-hidden">
           {/* <Nav /> */}
-          <main className={"h-full pb-[100px] no-scrollbar " + (!profile ? 'overflow-scroll pt-12 md:pt-24' : '')}>{children}</main>
+          <main className={"h-full no-scrollbar " + (!profile ? 'overflow-scroll pt-12 md:pt-24 pb-[100px]' : '')}>{children}</main>
         </div>
       </div>
     </>

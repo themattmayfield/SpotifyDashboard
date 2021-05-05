@@ -5,7 +5,9 @@ export default function RightSideBar(props) {
   return (
 <>
 {/* Mobile */}
-<div className="md:hidden h-full sticky top-0 rounded-3xl bg-custom-darkgray pt-6 pb-4 w-full text-white px-4">
+<div className="md:hidden">
+<Default />
+<div className="h-full rounded-3xl bg-custom-darkgray pt-6 pb-4 w-full text-white px-4">
       <p className="text-xl mb-6">Recently Played</p>
       <div className="">
         {props.recentlyPlayed ? (
@@ -49,6 +51,7 @@ export default function RightSideBar(props) {
       </div>
     </div>
   
+</div>
 
 
 

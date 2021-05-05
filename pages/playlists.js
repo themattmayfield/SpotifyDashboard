@@ -24,7 +24,7 @@ export default function Playlists() {
     <>
       <Layout>
       <div className="no-scrollbar overflow-x-hidden max-w-7xl mx-auto px-2 md:px-4">
-      <div className="z-20 sticky top-0 bg-black w-full text-white pb-6 mb-4 select-none flex items-center justify-between">
+      <div className="bg-black w-full text-white pb-10 select-none flex flex-col md:flex-row items-center justify-between space-y-2">
             <div>
                 <p className="text-2xl font-semibold">Your Playlists</p>
             </div>                

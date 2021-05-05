@@ -7,7 +7,7 @@
   flex-direction: column;
   height: 100vh;
 }
-
+/* 
 .sticky-nav {
   position: sticky;
   z-index: 10;
@@ -31,7 +31,7 @@ a {
 
 * {
   box-sizing: border-box;
-}
+} */
 
 .no-scrollbar::-webkit-scrollbar {
   display: none;

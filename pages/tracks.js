@@ -43,7 +43,7 @@ export default function Artists() {
     <>
       <Layout> 
       <div className="max-w-6xl mx-auto px-2 md:px-6">
-      <div className="sticky top-0 bg-black w-full text-white pb-6 mb-4 select-none flex flex-col md:flex-row items-center justify-between space-y-2">
+      <div className="bg-black w-full text-white pb-10 select-none flex flex-col md:flex-row items-center justify-between space-y-2">
             <div>
                 <p className="text-2xl font-semibold">Top Tracks</p>
             </div>

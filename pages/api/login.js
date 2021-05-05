@@ -1,9 +1,8 @@
 import Cookies from 'cookies'
 import querystring from 'querystring'
 
-// import { CLIENT_ID, REDIRECT_URI } from '../../lib/spotifyHelper'
 const CLIENT_ID = process.env.CLIENT_ID;
-let REDIRECT_URI = process.env.REDIRECT_URI
+let REDIRECT_URI = process.env.NODE_ENV !== 'production' ? 'http://localhost:3000/api/callback/' : process.env.REDIRECT_URI
 
 var keys = ['keyboard cat']
 const stateKey = 'spotify_auth_state';

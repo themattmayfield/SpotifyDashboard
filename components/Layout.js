@@ -27,11 +27,11 @@ export default function Layout({ children, profile }) {
 
   return (
     <>
-      <div className="h-full flex justify-between">
+      <div className="h-full flex">
         <SideNav />
         <div className="flex flex-1 flex-col overflow-hidden">
           {/* <Nav /> */}
-          <main className={"h-full no-scrollbar " + (!profile ? 'overflow-scroll pt-12 md:pt-24 pb-[100px]' : '')}>{children}</main>
+          <main className={"h-full no-scrollbar " + (!profile ? 'overflow-scroll ' : '')}>{children}</main>
         </div>
       </div>
     </>

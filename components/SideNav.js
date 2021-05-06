@@ -1,5 +1,8 @@
 import Link from "next/link";
 import { useRouter } from "next/router";
+import React, { useState, useEffect } from "react";
+
+import Player from "./Player";
 
 import { SiSpotify } from "react-icons/si";
 import { AiFillHome } from "react-icons/ai";
@@ -23,13 +26,18 @@ const linkDivClassessMobile = {
   inactive: 'cursor-pointer w-full border-t-4 border-transparent flex items-center justify-center hover:bg-custom-darkgray'
 }
 export default function SideNav(props) {
+
+  const [playingTrack, setPlayingTrack] = useState();
+  const [lyrics, setLyrics] = useState("");
+
   const router = useRouter();
   return (
     <>
 
       {/* Mobile */}
-<div className="w-full flex md:hidden bg-black text-white top-auto fixed bottom-0 right-0 h-[70px] z-50">
-
+<div className="w-full flex flex-col md:hidden bg-black text-white top-auto fixed bottom-0 right-0 z-50">
+<Player trackUri={playingTrack?.uri} />
+<div class="flex w-full h-[70px]">
 <Link href="/"><div className={
                 router.pathname == "/"
                   ? linkDivClassessMobile.active
@@ -106,6 +114,7 @@ export default function SideNav(props) {
           
         </div></Link>
       
+</div>
 
             </div>
 

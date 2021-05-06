@@ -21,17 +21,17 @@ export default function Default(props) {
   return (
     <>
    
-    <header className="flex justify-between p-6">
+    <header className="flex justify-between px-2 py-4 md:p-6">
       <input
       placeholder="Search..." 
       type="search"
         
         value={props.search}
         onChange={e => props.setSearch(e.target.value)}
-      className="flex-1 rounded-full focus:outline-none border border-[#383838] bg-custom-darkgray text-white px-12 py-2 text-3xl" />    
-    <div className="rounded-full w-28 h-16 bg-custom-darkgray flex justify-between items-center">
+      className="rounded-full focus:outline-none border border-[#383838] bg-custom-darkgray text-white px-4 md:px-12 py-2 text-lg md:text-3xl w-8/12 h-10 md:h-16" />    
+    <div className="rounded-full h-10 md:h-16 bg-custom-darkgray flex justify-between items-center space-x-2 md:space-x-3">
                 <AiFillCaretDown className="h-4 w-4 ml-4 text-[#686868]" />
-              {user && <img onClick={logout} className="w-16 h-16 rounded-full" src={user.images[0].url} /> }
+              {user && <img onClick={logout} className="h-10 w-10 md:h-16 md:w-16 rounded-full" src={user.images[0].url} /> }
               </div>
   </header>
 </>

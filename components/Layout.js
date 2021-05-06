@@ -77,12 +77,12 @@ export default function Layout({ children, profile }) {
 
   return (
     <>
-      <div className="h-full flex">
+      <div className="h-full flex">      
         <SideNav />
         <div className="flex flex-1 flex-col overflow-hidden">
           <Nav search={search} setSearch={setSearch} />
           {search && (
-            <div className="z-30 h-full absolute bg-black overflow-scroll w-full mt-28">
+            <div className="z-30 h-full absolute bg-black overflow-scroll w-full mt-[72px] md:mt-28">
               {searchResults.map((track) => (
                 <TrackSearchResult
                   track={track}
@@ -103,7 +103,7 @@ export default function Layout({ children, profile }) {
             }
           >
             {children}
-            <div className="top-auto fixed bottom-0 z-20 w-full">
+            <div className="hidden md:block top-auto fixed bottom-0 z-20 w-full">
             <Player trackUri={playingTrack?.uri} />
             </div>
           </main>

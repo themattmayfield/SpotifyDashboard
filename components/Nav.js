@@ -5,7 +5,7 @@ import { catchErrors } from "../utils";
 
 import {AiFillCaretDown} from 'react-icons/ai'
 
-export default function Default() {
+export default function Default(props) {
   const [user, setUser] = useState(null);
 
   useEffect(() => {
@@ -20,7 +20,15 @@ export default function Default() {
 
   return (
     <>
-    <header className="flex justify-end p-6 ">    
+   
+    <header className="flex justify-between p-6">
+      <input
+      placeholder="Search..." 
+      type="search"
+        
+        value={props.search}
+        onChange={e => props.setSearch(e.target.value)}
+      className="flex-1 rounded-full focus:outline-none border border-[#383838] bg-custom-darkgray text-white px-12 py-2 text-3xl" />    
     <div className="rounded-full w-28 h-16 bg-custom-darkgray flex justify-between items-center">
                 <AiFillCaretDown className="h-4 w-4 ml-4 text-[#686868]" />
               {user && <img onClick={logout} className="w-16 h-16 rounded-full" src={user.images[0].url} /> }

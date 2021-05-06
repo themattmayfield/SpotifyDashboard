@@ -39,7 +39,7 @@ export default function Profile() {
         {topArtists && topTracksShort && topArtistsShort ? (
           <>
             <div className="flex bg-transparent md:pr-6 md:pl-2 h-full">            
-              <div className="flex flex-col overflow-x-hidden md:mr-4 md:pt-28 overflow-y-scroll mb-[100px] no-scrollbar h-full">
+              <div className="flex flex-col overflow-x-hidden md:mr-4 overflow-y-scroll mb-[100px] no-scrollbar h-full">
               <div className="md:hidden mb-16 px-2">
             {recentlyPlayed ? (
                 <RightSideBar recentlyPlayed={recentlyPlayed} />
@@ -48,7 +48,7 @@ export default function Profile() {
               )}
             </div>  
             <div className="pl-2 pr-0 mb-16">
-            <Subtitle link="/artists" subtitle="Recent Artist" />
+            <Subtitle link="/artists" subtitle="Top Artist" />
                 <div className="flex flex-nowrap space-x-6 overflow-x-scroll no-scrollbar pl-2 md:pl-0">                  
                   {topArtists.items.map(
                     (item, index) =>

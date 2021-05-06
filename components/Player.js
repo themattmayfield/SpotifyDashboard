@@ -11,14 +11,23 @@ export default function Player({ trackUri }) {
 
   if (!token) return null
   return (
-    <SpotifyPlayer
+    <SpotifyPlayer    
       token={token}
-    //   showSaveIcon
+      persistDeviceSelection
+      initialVolume=".75"
+      magnifySliderOnHover
+      syncExternalDevice
+      showSaveIcon
       callback={state => {
         if (!state.isPlaying) setPlay(false)
       }}
       play={play}
       uris={trackUri ? [trackUri] : []}
+
+      styles={{
+        bgColor: '#000',
+        sliderColor: '#68868',
+      }}
     />
   )
 }

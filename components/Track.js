@@ -1,4 +1,8 @@
 export default function Track(props) {
+  // function handlePlay() {
+  //   props.chooseTrack(props.track)
+  // }
+
   const millisToMinutesAndSeconds = (millis) => {
     var minutes = Math.floor(millis / 60000);
     var seconds = ((millis % 60000) / 1000).toFixed(0);
@@ -6,7 +10,9 @@ export default function Track(props) {
   };
 
   return (
-    <div class="flex items-center justify-between">
+    <div 
+    // onClick={handlePlay}
+    class="flex items-center justify-between  cursor-pointer transition duration-150 ease-in-out hover:bg-custom-darkgray">
       <div class="flex space-x-6 items-center">
         <img
           className="w-20 h-20"

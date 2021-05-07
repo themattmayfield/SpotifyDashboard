@@ -19,6 +19,7 @@ export default function Layout({ children, profile }) {
   const [searchResults, setSearchResults] = useState([]);
   const [playingTrack, setPlayingTrack] = useState();
   const [lyrics, setLyrics] = useState("");
+  const [popIsOpen, setPopIsOpen] = useState(false)
 
   function chooseTrack(track) {
     setPlayingTrack(track);
@@ -77,10 +78,10 @@ export default function Layout({ children, profile }) {
 
   return (
     <>
-      <div className="h-full flex">      
+      <div className="h-full flex">
         <SideNav />
         <div className="flex flex-1 flex-col overflow-hidden">
-          <Nav search={search} setSearch={setSearch} />
+          <Nav popIsOpen={popIsOpen} setPopIsOpen={setPopIsOpen} search={search} setSearch={setSearch} />
           {search && (
             <div className="z-30 h-full absolute bg-black overflow-scroll w-full mt-[72px] md:mt-28">
               {searchResults.map((track) => (
@@ -103,7 +104,7 @@ export default function Layout({ children, profile }) {
             }
           >
             {children}
-            <div className="hidden md:block top-auto fixed bottom-0 z-20 w-full">
+            <div className="top-auto fixed bottom-0 z-20 w-full">
             <Player trackUri={playingTrack?.uri} />
             </div>
           </main>

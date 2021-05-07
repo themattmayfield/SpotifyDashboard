@@ -55,7 +55,7 @@ export default function RightSideBar(props) {
 
     {/* Desktop */}
     <div className="hidden md:block ">
-    <div className="sticky top-0 rounded-3xl bg-custom-darkgray pt-6 pb-4 w-80 text-white">
+    <div className="rounded-3xl bg-custom-darkgray pt-6 pb-4 w-80 text-white">
       
       <p className="text-xl mb-6 pl-8">Recently Played</p>
       <div className="pl-8 pr-1">

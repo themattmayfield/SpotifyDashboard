@@ -139,7 +139,7 @@ export default function SideNav(props) {
       </div>
 
       {/* Desktop */}
-      <div className="rounded-xl py-4 w-32 h-full hidden md:flex flex-col space-y-6 items-center pt-12">
+      <div className="rounded-xl py-4 w-32 h-screen sticky top-0 hidden md:flex flex-col space-y-6 items-center pt-12">
         <div className="mb-12">
           <SiSpotify className="w-14 h-14 text-green-600" />
         </div>

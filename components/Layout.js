@@ -79,7 +79,7 @@ export default function Layout({ children, profile }) {
 
   return (
     <>
-      <div className="h-full flex">        
+      <div className="flex">        
         <SideNav track={playingTrack} />
         <div className="flex flex-1 flex-col overflow-hidden">
           <Nav popIsOpen={popIsOpen} setPopIsOpen={setPopIsOpen} search={search} setSearch={setSearch} />

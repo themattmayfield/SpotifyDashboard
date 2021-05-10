@@ -25,7 +25,7 @@ export default function Artist(props) {
   return (
     <Layout>
       {artist ? (
-        <div className="flex flex-col items-center justify-center text-white h-full">
+        <div className="flex flex-col items-center text-white h-full pt-24 space-y-8">
           <div
             className="rounded-full bg-cover bg-center w-80 h-80"
             style={{
@@ -34,8 +34,16 @@ export default function Artist(props) {
           ></div>
 
           <p className="text-7xl">{artist.name}</p>
-          <p>{artist.popularity}</p>
-          <p>{artist.followers.total}</p>
+          <div className="flex space-x-12 items-center justify-center">
+            <div className="text-center">
+              <p className="text-3xl">{artist.popularity}</p>
+              <p className="text-sm">Followers</p>
+            </div>
+            <div className="text-center">
+              <p className="text-3xl">{artist.followers.total}</p>
+              <p className="text-sm">Followers</p>
+            </div>
+          </div>
         </div>
       ) : (
         <Loading />

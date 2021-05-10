@@ -1,17 +1,16 @@
-import React, { useState, useEffect } from 'react';
-import { useRouter } from 'next/router'
+import React, { useState, useEffect } from "react";
+import { useRouter } from "next/router";
 
-import Layout from '../components/Layout'
-import { getArtist } from '../lib/spotifyHelper';
-import Loading from '../components/Loading'
-import { catchErrors } from '../utils/index'
+import Layout from "../components/Layout";
+import { getArtist } from "../lib/spotifyHelper";
+import Loading from "../components/Loading";
+import { catchErrors } from "../utils/index";
 
 export default function Artist(props) {
-    const router = useRouter()
-    // console.log(router.query.id)
+  const router = useRouter();
+  // console.log(router.query.id)
 
-
-    // const artistId = router.query.id;
+  // const artistId = router.query.id;
 
   const [artist, setArtist] = useState(null);
 
@@ -23,16 +22,24 @@ export default function Artist(props) {
     catchErrors(fetchData());
   }, [router.query.id]);
 
-    return (
-        <Layout>
-            <div className="flex flex-col items-center justify-center text-white h-full">
-            {/* hello */}
-            <img className="rounded-full w-80 h-80" src={artist.images[0].url} />
-            
-            <p className="text-7xl">{artist.name}</p>
-            <p>{artist.popularity}</p>
-            <p>{artist.followers.total}</p>
+  return (
+    <Layout>
+      {artist ? (
+        <div className="flex flex-col items-center justify-center text-white h-full">
+          <div
+            className="rounded-full bg-cover bg-center w-80 h-80"
+            style={{
+              backgroundImage: `url(${artist.images[0].url})`,
+            }}
+          ></div>
+
+          <p className="text-7xl">{artist.name}</p>
+          <p>{artist.popularity}</p>
+          <p>{artist.followers.total}</p>
         </div>
-        </Layout>
-    )
+      ) : (
+        <Loading />
+      )}
+    </Layout>
+  );
 }

@@ -5,8 +5,9 @@ import SideNav from "./SideNav";
 import TrackSearchResult from "./TrackSearchResult";
 import SpotifyWebApi from "spotify-web-api-node";
 
-import { token, FRONTEND_URI, CLIENT_ID } from "../lib/spotifyHelper";
+import { token, FRONTEND_URI, CLIENT_ID, getUserInfo } from "../lib/spotifyHelper";
 import Player from "./Player";
+import { catchErrors } from "../utils";
 
 const spotifyApi = new SpotifyWebApi({
   clientId: CLIENT_ID,
@@ -20,6 +21,7 @@ export default function Layout({ children, profile }) {
   const [playingTrack, setPlayingTrack] = useState();
   const [lyrics, setLyrics] = useState("");
   const [popIsOpen, setPopIsOpen] = useState(false)
+  const [user, setUser] = useState(null);
   
 
   function chooseTrack(track) {
@@ -76,6 +78,15 @@ export default function Layout({ children, profile }) {
 
     return () => (cancel = true);
   }, [search]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const { user } = await getUserInfo();
+      setUser(user);
+      window.localStorage.setItem('spotify_user', JSON.stringify(user));
+    };
+    catchErrors(fetchData());
+  }, [user,token]);
 
   return (
     <>

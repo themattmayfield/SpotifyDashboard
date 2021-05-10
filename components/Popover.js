@@ -1,10 +1,23 @@
+import React, { useState, useEffect } from "react";
 import { Popover, Transition } from "@headlessui/react";
 import { Fragment } from "react";
 
 import {AiFillCaretDown} from 'react-icons/ai'
-import { logout } from "../lib/spotifyHelper";
 
-export default function Pop({ user }) {
+import { getUserInfo, logout } from "../lib/spotifyHelper";
+import { catchErrors } from "../utils";
+
+export default function Pop() {
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {   
+      const fetchData = async () => {
+        const { user } = await getUserInfo();
+        setUser(user);
+      };
+      catchErrors(fetchData());
+    
+  }, []);
   return (
     <Popover className="relative">
         {({ open }) => (

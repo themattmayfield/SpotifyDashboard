@@ -12,7 +12,7 @@ export default function Player({ trackUri }) {
   if (!token) return null
   return (
     <SpotifyPlayer  
-    autoPlay  
+    autoPlay={true}
       token={token}
       persistDeviceSelection
       initialVolume=".75"

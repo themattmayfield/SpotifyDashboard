@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import Player from "./Player";
 
 import { SiSpotify } from "react-icons/si";
 import { AiFillHome } from "react-icons/ai";
@@ -29,27 +28,21 @@ const linkDivClassessMobile = {
     "cursor-pointer w-full border-t-4 border-transparent flex items-center justify-center hover:bg-custom-darkgray",
 };
 export default function SideNav(props) {
-  const [activeMobile, setActiveMobile] = useState("nav");
-
-  const switchNavSong = () => {
-    activeMobile == "nav" ? setActiveMobile("player") : setActiveMobile("nav");
-  };
-
   const router = useRouter();
   return (
     <>
-      <div
+      {/* <div
         className={`top-auto fixed bottom-0 z-20 w-full  ${
-          activeMobile == "nav" && " hidden"
+          activeMobile == "nav" && " invisible"
         }`}
       >
         <Player trackUri={props.track?.trackUri} />
-      </div>
+      </div> */}
 
       {/* Mobile */}
       <div
         className={`w-full flex md:hidden bg-black text-white top-auto fixed bottom-0 right-0 h-[70px] z-50 ${
-          activeMobile == "player" && " hidden"
+          props.activeMobile == "player" && " hidden"
         }`}
       >
         <Link href="/">
@@ -139,7 +132,7 @@ export default function SideNav(props) {
         </Link>
 
         <img
-          onClick={switchNavSong}
+          onClick={() => props.switchNavSong}
           className="h-full w-auto cursor-pointer"
           src={props?.track?.albumUrl}
         />

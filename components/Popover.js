@@ -2,6 +2,7 @@ import { Popover, Transition } from "@headlessui/react";
 import { Fragment } from "react";
 
 import {AiFillCaretDown} from 'react-icons/ai'
+import { logout } from "../lib/spotifyHelper";
 
 export default function Pop({ user }) {
   return (
@@ -32,8 +33,8 @@ export default function Pop({ user }) {
                   className="absolute z-10 w-screen max-w-sm px-4 mt-3 transform translate-x-1/4 right-20 md:right-24 sm:px-0 "
                 >
                   <div className="overflow-hidden rounded-lg shadow-lg ring-1 ring-black ring-opacity-5 bg-[#686868]">
-                    <div className="relative grid gap-8 p-7">
-                    hi
+                    <div onClick={logout} className="relative grid gap-8 p-7">
+                    logout
                     </div>
                     <div className="p-4">
                     

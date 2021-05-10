@@ -33,7 +33,7 @@ export default function Pop({ user }) {
                 >
                   <div className="overflow-hidden rounded-lg shadow-lg ring-1 ring-black ring-opacity-5 bg-[#686868]">
                     <div className="relative grid gap-8 p-7">
-                      hi
+                    hi
                     </div>
                     <div className="p-4">
                     

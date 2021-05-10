@@ -23,11 +23,11 @@ export default function RightSideBar(props) {
                       ></div>
                     </div>
 
-                    <div>
-                      <div className="overflow-hidden truncate w-48">
+                    <div class="overflow-hidden">
+                      <div className="truncate">
                         {item.track.artists[0].name}
                       </div>
-                      <p className="text-xs text-[#565656] overflow-hidden truncate w-48">
+                      <p className="text-xs text-[#565656] truncate">
                         {item.track.name}
                       </p>
                     </div>

@@ -32,19 +32,23 @@ export default function Pop({ user }) {
                   static
                   className="absolute z-10 w-screen max-w-sm px-4 mt-3 transform translate-x-1/4 right-20 md:right-24 sm:px-0 "
                 >
-                  <div className="overflow-hidden rounded-lg shadow-lg ring-1 ring-black ring-opacity-5 bg-[#686868]">
-                    <div onClick={logout} className="relative grid gap-8 p-7">
-                    logout
-                    </div>
-                    <div className="p-4">
+                  <div className="overflow-hidden rounded-lg shadow-lg ring-1 ring-black ring-opacity-5 bg-custom-darkgray">
                     
-                      <a
+                    <div className="p-4">
+                    <a
                         href="https://ko-fi.com/P5P21JZUH"
                         target="_blank"
-                        className="flow-root px-2 py-2 transition duration-150 ease-in-out rounded-md hover:bg-gray-100 focus:outline-none focus-visible:ring focus-visible:ring-orange-500 focus-visible:ring-opacity-50"
+                        className="cursor-pointer flow-root px-2 text-white py-2 transition duration-150 ease-in-out rounded-md hover:bg-[rgb(24,24,24)] focus:outline-none focus-visible:ring focus-visible:ring-orange-500 focus-visible:ring-opacity-50"
                       >
-                        <span className="text-black">Enjoy the workout? </span>
-                        Buy me a ☕
+                        Enjoying Spotify Dashboard? 
+                        <span className="text-gray-400"> Buy me a ☕</span>
+                      </a>
+                      <a
+                        onClick={logout}
+                        target="_blank"
+                        className="cursor-pointer flow-root px-2 text-white py-2 transition duration-150 ease-in-out rounded-md hover:bg-[rgb(24,24,24)] focus:outline-none focus-visible:ring focus-visible:ring-orange-500 focus-visible:ring-opacity-50"
+                      >
+                        Logout
                       </a>
                     </div>
                   </div>

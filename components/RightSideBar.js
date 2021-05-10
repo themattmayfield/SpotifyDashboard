@@ -15,12 +15,14 @@ export default function RightSideBar(props) {
                 index < 6 && (
                   <div key={index} className="flex">
                     <div className="mr-4">
+                    <Link href={`/artist/?id=${item.track.artists[0].id}`}>
                       <div
                         className="rounded-full bg-cover bg-center w-8 h-8"
                         style={{
                           backgroundImage: `url(${item.track.album.images[0].url})`,
                         }}
                       ></div>
+                      </Link>
                     </div>
 
                     <div class="overflow-hidden">
@@ -66,18 +68,18 @@ export default function RightSideBar(props) {
                 index < 6 && (
                   <div key={index} className="flex">
                     <div className="mr-4">
-                      <div
-                        className="rounded-full bg-cover bg-center w-16 h-16"
+                    <Link href={`/artist/?id=${item.track.artists[0].id}`}><div
+                        className="rounded-full bg-cover bg-center w-16 h-16 cursor-pointer"
                         style={{
                           backgroundImage: `url(${item.track.album.images[0].url})`,
                         }}
-                      ></div>
+                      ></div></Link>
                     </div>
 
                     <div>
-                      <div className="overflow-hidden truncate w-48">
+                    <Link href={`/artist/?id=${item.track.artists[0].id}`}><div className="overflow-hidden truncate w-48 cursor-pointer">
                         {item.track.artists[0].name}
-                      </div>
+                      </div></Link>
                       <p className="text-xs text-[#565656] overflow-hidden truncate w-48">
                         {item.track.name}
                       </p>

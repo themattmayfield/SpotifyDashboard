@@ -36,12 +36,12 @@ export default function Artist(props) {
           <p className="text-7xl">{artist.name}</p>
           <div className="flex space-x-12 items-center justify-center">
             <div className="text-center">
-              <p className="text-3xl">{artist.popularity}</p>
-              <p className="text-sm">Followers</p>
+              <p className="text-3xl">{artist.followers.total}</p>
+              <p className="text-sm text-[#565656]">Followers</p>
             </div>
             <div className="text-center">
-              <p className="text-3xl">{artist.followers.total}</p>
-              <p className="text-sm">Followers</p>
+              <p className="text-3xl">{artist.popularity}</p>
+              <p className="text-sm text-[#565656]">Popularity</p>
             </div>
           </div>
         </div>

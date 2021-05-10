@@ -1,3 +1,5 @@
+import Link from 'next/link'
+
 export default function Track(props) {
   // function handlePlay() {
   //   props.chooseTrack(props.track)
@@ -8,7 +10,6 @@ export default function Track(props) {
     var seconds = ((millis % 60000) / 1000).toFixed(0);
     return minutes + ":" + (seconds < 10 ? "0" : "") + seconds;
   };
-
   return (
     <div 
     // onClick={handlePlay}
@@ -24,10 +25,12 @@ export default function Track(props) {
         <div className="flex flex-col">
           <p>{props.track.track?.name || props.track.name}</p>
           <div className="flex flex-col md:flex-row text-[#565656]">
+          <Link href={`/artist/?id=${props.track.track?.artists[0].id || props.track.artists[0].id}`}>
             <p>
               {props.track.track?.artists[0].name ||
                 props.track.artists[0].name}
             </p>
+            </Link>
             <span className="hidden md:block">&nbsp;&middot;&nbsp;&nbsp;</span>
             <p>{props.track.track?.album.name || props.track.album.name}</p>
           </div>

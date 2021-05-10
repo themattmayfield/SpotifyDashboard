@@ -1,6 +1,10 @@
+import Link from 'next/link'
+
 export default function Card(props) {
+  console.log(props.info)
   return (
     <div className="inline-block max-w-min mx-auto ">
+      <Link href={`/artist/?id=${props.info.id}`}>
       <div
         style={{
           backgroundImage: `url(${props.info.images[1].url})`,
@@ -18,7 +22,7 @@ export default function Card(props) {
             {props.info.name}
           </div>
         </div>
-      </div>
+      </div></Link>
     </div>
   );
 }

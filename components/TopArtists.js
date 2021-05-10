@@ -1,6 +1,7 @@
 import Subtitle from "./Subtitle";
 
 export default function TopArtists(props) {
+  
   return (
     <>
       <div className="flex flex-col max-w-min md:mx-auto">

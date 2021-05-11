@@ -1,19 +1,19 @@
 import MainNavigation from "./mainNavigation";
 import Playlists from "./Playlists";
 
-export default function Dashboard(props) {
+export default function Dashboard({ loginUrl, user, playlists, access_token}) {
   return (
     <div className="h-screen">
       <MainNavigation
-        loginUrl={props.loginUrl}
-        displayName={props.user.display_name}
+        loginUrl={loginUrl}
+        displayName={user.display_name}
       />
       <main className="flex h-full">
         <div className="bg-grey-darkest p-6 h-max">
-          {props.playlists && (
+          {playlists && (
             <Playlists
-              access_token={props.access_token}
-              playlists={props.playlists}
+              access_token={access_token}
+              playlists={playlists}
             />
           )}
         </div>

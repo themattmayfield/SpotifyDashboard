@@ -1,18 +1,18 @@
 import Link from "next/link";
 
-export default function Playlists(props) {
+export default function Playlists({ playlists, access_token}) {
     return (
       <>
         <h3 className="mb-1 text-white text-xs">PLAYLISTS</h3>
         <ul className="list-reset">
-          {props.playlists.items.map(playlist => {
+          {playlists.items.map(playlist => {
             return (
               <li className="mb-2 hover:bg-grey-darkest" key={playlist.id}>
                 <Link
                   href={{
                     pathname: "/playlist",
                     query: {
-                      access_token: props.access_token,
+                      access_token: access_token,
                       id: playlist.id,
                       playlist: playlist.name
                     }

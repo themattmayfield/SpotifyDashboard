@@ -1,4 +1,3 @@
-import React, { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 
@@ -27,7 +26,7 @@ const linkDivClassessMobile = {
   inactive:
     "cursor-pointer w-full border-t-4 border-transparent flex items-center justify-center hover:bg-custom-darkgray",
 };
-export default function SideNav(props) {
+export default function SideNav({ activeMobile, switchNavSong, track}) {
   const router = useRouter();
   return (
     <>
@@ -36,13 +35,13 @@ export default function SideNav(props) {
           activeMobile == "nav" && " invisible"
         }`}
       >
-        <Player trackUri={props.track?.trackUri} />
+        <Player trackUri={track?.trackUri} />
       </div> */}
 
       {/* Mobile */}
       <div
         className={`w-full flex md:hidden bg-black text-white top-auto fixed bottom-0 right-0 h-[70px] z-50 ${
-          props.activeMobile == "player" && " hidden"
+          activeMobile == "player" && " hidden"
         }`}
       >
         <Link href="/">
@@ -132,9 +131,9 @@ export default function SideNav(props) {
         </Link>
 
         <img
-          onClick={() => props.switchNavSong}
+          onClick={() => switchNavSong}
           className="h-full w-auto cursor-pointer"
-          src={props?.track?.albumUrl}
+          src={track?.albumUrl}
         />
       </div>
 

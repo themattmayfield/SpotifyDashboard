@@ -1,16 +1,15 @@
 import Link from 'next/link'
 
-export default function Card(props) {
-  console.log(props.info)
+export default function Card({ info, profile }) {
   return (
     <div className="inline-block max-w-min mx-auto ">
-      <Link href={`/artist/?id=${props.info.id}`}>
+      <Link href={`/artist/?id=${info.id}`}>
       <div
         style={{
-          backgroundImage: `url(${props.info.images[1].url})`,
+          backgroundImage: `url(${info.images[1].url})`,
         }}
         className={`cursor-pointer rounded-3xl h-[60vw] w-[45vw] md:h-[40vw] md:w-[25vw] lg:h-[40vw] lg:w-[25vw] xl:h-96 xl:w-64 max-w-xs overflow-hidden bg-red-600 bg-cover bg-center flex items-center justify-center ${
-          !props.profile &&
+          !profile &&
           "transition duration-300 ease-in-out transform hover:scale-105"
         }`}
       >
@@ -19,7 +18,7 @@ export default function Card(props) {
           style={{ background: "rgba(0, 0, 0, 0.45)" }}
         >
           <div className="text-center text-4xl text-white">
-            {props.info.name}
+            {info.name}
           </div>
         </div>
       </div></Link>

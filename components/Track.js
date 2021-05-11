@@ -1,8 +1,8 @@
 import Link from 'next/link'
 
-export default function Track(props) {
+export default function Track({ track }) {
   // function handlePlay() {
-  //   props.chooseTrack(props.track)
+  //   chooseTrack(track)
   // }
 
   const millisToMinutesAndSeconds = (millis) => {
@@ -18,26 +18,26 @@ export default function Track(props) {
         <img
           className="w-20 h-20"
           src={
-            props.track.track?.album.images[0].url ||
-            props.track.album?.images[0].url
+            track.track?.album.images[0].url ||
+            track.album?.images[0].url
           }
         />
         <div className="flex flex-col">
-          <p>{props.track.track?.name || props.track.name}</p>
+          <p>{track.track?.name || track.name}</p>
           <div className="flex flex-col md:flex-row text-[#565656]">
-          <Link href={`/artist/?id=${props.track.track?.artists[0].id || props.track.artists[0].id}`}>
+          <Link href={`/artist/?id=${track.track?.artists[0].id || track.artists[0].id}`}>
             <p>
-              {props.track.track?.artists[0].name ||
-                props.track.artists[0].name}
+              {track.track?.artists[0].name ||
+                track.artists[0].name}
             </p>
             </Link>
             <span className="hidden md:block">&nbsp;&middot;&nbsp;&nbsp;</span>
-            <p>{props.track.track?.album.name || props.track.album.name}</p>
+            <p>{track.track?.album.name || track.album.name}</p>
           </div>
           <p className="md:hidden text-[#565656]">
             {millisToMinutesAndSeconds(
               JSON.stringify(
-                props.track.track?.duration_ms || props.track.duration_ms
+                track.track?.duration_ms || track.duration_ms
               )
             )}
           </p>
@@ -47,7 +47,7 @@ export default function Track(props) {
       <div className="hidden md:block text-[#565656]">
         {millisToMinutesAndSeconds(
           JSON.stringify(
-            props.track.track?.duration_ms || props.track.duration_ms
+            track.track?.duration_ms || track.duration_ms
           )
         )}
       </div>

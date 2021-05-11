@@ -1,13 +1,13 @@
 import Subtitle from './Subtitle'
 
-export default function TopTracks(props) {
+export default function TopTracks({ topTracksShort }) {
   return (
       <>
       <div className="">
       <Subtitle link="/tracks" subtitle="Top Tracks of the Week" />
     <div className="rounded-3xl p-8 text-white bg-custom-darkgray2 2xl:w-[600px]">
       <div className="space-y-10">
-      {props.topTracksShort.items.map((item, index) => (
+      {topTracksShort.items.map((item, index) => (
         index < 6 && 
         <div 
         key={index}

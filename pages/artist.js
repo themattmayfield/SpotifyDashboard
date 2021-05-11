@@ -6,11 +6,8 @@ import { getArtist } from "../lib/spotifyHelper";
 import Loading from "../components/Loading";
 import { catchErrors } from "../utils/index";
 
-export default function Artist(props) {
+export default function Artist() {
   const router = useRouter();
-  // console.log(router.query.id)
-
-  // const artistId = router.query.id;
 
   const [artist, setArtist] = useState(null);
 

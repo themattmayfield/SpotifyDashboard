@@ -1,8 +1,8 @@
-export default function CheveronDown(props) {
+export default function CheveronDown({ classes }) {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      className={props.classes}
+      className={classes}
       fill="none"
       viewBox="0 0 24 24"
       stroke="currentColor"

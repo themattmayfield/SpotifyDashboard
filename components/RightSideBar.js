@@ -1,6 +1,6 @@
 import Link from 'next/link'
 
-export default function RightSideBar(props) {
+export default function RightSideBar({ recentlyPlayed }) {
   return (
 <>
 {/* Mobile */}
@@ -8,9 +8,9 @@ export default function RightSideBar(props) {
 <div className="h-full rounded-3xl bg-custom-darkgray pt-6 pb-4 w-full text-white px-4">
       <p className="text-xl mb-6">Recently Played</p>
       <div className="">
-        {props.recentlyPlayed ? (
+        {recentlyPlayed ? (
           <div className="grid grid-cols-2 gap-x-2">
-            {props.recentlyPlayed.items.map(
+            {recentlyPlayed.items.map(
               (item, index) =>
                 index < 6 && (
                   <div key={index} className="flex">
@@ -25,7 +25,7 @@ export default function RightSideBar(props) {
                       </Link>
                     </div>
 
-                    <div class="overflow-hidden">
+                    <div className="overflow-hidden">
                       <div className="truncate">
                         {item.track.artists[0].name}
                       </div>
@@ -61,9 +61,9 @@ export default function RightSideBar(props) {
       
       <p className="text-xl mb-6 pl-8">Recently Played</p>
       <div className="pl-8 pr-1">
-        {props.recentlyPlayed ? (
+        {recentlyPlayed ? (
           <div className="flex flex-col space-y-8">
-            {props.recentlyPlayed.items.map(
+            {recentlyPlayed.items.map(
               (item, index) =>
                 index < 6 && (
                   <div key={index} className="flex">

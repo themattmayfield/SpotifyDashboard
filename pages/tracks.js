@@ -17,7 +17,7 @@ const classes = {
   inactive: "border-b border-transparent",
 };
 
-export default function Artists() {
+export default function Tracks() {
   const [topTracks, setTopTracks] = useState(null);
   const [activeRange, setActiveRange] = useState("long");
 

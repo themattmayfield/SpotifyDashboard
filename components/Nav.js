@@ -34,7 +34,7 @@ export default function Default({ search, setSearch }) {
           <>
             <Popover.Button className="rounded-full h-10 md:h-16 bg-custom-darkgray flex justify-between items-center space-x-2 md:space-x-3 focus:outline-none">
               <AiFillCaretDown className="h-4 w-4 ml-4 text-[#686868]" />
-              {user ? (
+              {user.images.length ? (
                 <img
                   className="h-10 w-10 md:h-16 md:w-16 rounded-full"
                   src={user.images[0].url}

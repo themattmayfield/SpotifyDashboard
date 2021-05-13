@@ -16,7 +16,7 @@ export default function RightSideBar({ recentlyPlayed }) {
                       <div className="mr-4">
                         <Link href={`/artist/?id=${item.track.artists[0].id}`}>
                           <div
-                            className="rounded-full bg-cover bg-center w-8 h-8"
+                            className="rounded-full bg-cover bg-custom-darkgray bg-center w-8 h-8"
                             style={{
                               backgroundImage: `url(${item.track.album.images[0].url})`,
                             }}

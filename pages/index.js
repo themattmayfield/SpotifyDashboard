@@ -5,7 +5,7 @@ import Profile from "../components/Profile";
 import { token } from "../lib/spotifyHelper";
 
 export default function Page() {
-  const [access_token, setAccessToken] = useState(false);
+  const [access_token, setAccessToken] = useState("");
 
   useEffect(() => {
     setAccessToken(token);

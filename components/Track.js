@@ -21,7 +21,9 @@ export default function Track({ track }) {
           src={track.track?.album.images[0].url || track.album?.images[0].url}
         />
         <div className="flex flex-col">
-          <p>{track.track?.name || track.name}</p>
+          <Link href={`/track/?id=${track.track?.id || track.id}`}>
+            <p className="hover:underline">{track.track?.name || track.name}</p>
+          </Link>
           <div className="flex flex-col md:flex-row text-[#565656]">
             <Link
               href={`/artist/?id=${

@@ -84,7 +84,7 @@ export default function Tracks() {
           {topTracks ? (
             <div className="flex flex-col gap-4 no-scrollbar text-white mb-[100px]">
               {topTracks.items.map((track, index) => (
-                <Track track={track} />
+                <Track key={index} track={track} />
               ))}
             </div>
           ) : (

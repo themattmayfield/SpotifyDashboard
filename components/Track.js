@@ -15,7 +15,7 @@ export default function Track({ track }) {
       // onClick={handlePlay}
       className="flex items-center justify-between  cursor-pointer transition duration-150 ease-in-out hover:bg-custom-darkgray"
     >
-      <div class="flex space-x-6 items-center">
+      <div className="flex space-x-6 items-center">
         <img
           className="w-20 h-20"
           src={track.track?.album.images[0].url || track.album?.images[0].url}

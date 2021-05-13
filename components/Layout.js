@@ -5,7 +5,12 @@ import SideNav from "./SideNav";
 import TrackSearchResult from "./TrackSearchResult";
 import SpotifyWebApi from "spotify-web-api-node";
 
-import { token, FRONTEND_URI, CLIENT_ID, getUserInfo } from "../lib/spotifyHelper";
+import {
+  token,
+  FRONTEND_URI,
+  CLIENT_ID,
+  getUserInfo,
+} from "../lib/spotifyHelper";
 import Player from "./Player";
 import { catchErrors } from "../utils";
 
@@ -20,9 +25,8 @@ export default function Layout({ children, profile }) {
   const [searchResults, setSearchResults] = useState([]);
   const [playingTrack, setPlayingTrack] = useState();
   const [lyrics, setLyrics] = useState("");
-  const [popIsOpen, setPopIsOpen] = useState(false)
+  const [popIsOpen, setPopIsOpen] = useState(false);
   const [user, setUser] = useState(null);
-  
 
   function chooseTrack(track) {
     setPlayingTrack(track);
@@ -83,17 +87,24 @@ export default function Layout({ children, profile }) {
     const fetchData = async () => {
       const { user } = await getUserInfo();
       setUser(user);
-      window.localStorage.setItem('spotify_user', JSON.stringify(user));
+      window.localStorage.setItem("spotify_user", JSON.stringify(user));
     };
     catchErrors(fetchData());
-  }, [user,token]);
+  }, [user, token]);
 
   return (
     <>
-      <div className="flex">        
+      <div className="flex">
         <SideNav track={playingTrack} />
         <div className="flex flex-1 flex-col overflow-hidden">
-          <Nav popIsOpen={popIsOpen} setPopIsOpen={setPopIsOpen} search={search} setSearch={setSearch} />
+          {profile && (
+            <Nav
+              popIsOpen={popIsOpen}
+              setPopIsOpen={setPopIsOpen}
+              search={search}
+              setSearch={setSearch}
+            />
+          )}
           {search && (
             <div className="z-30 h-full absolute bg-black overflow-scroll w-full mt-[72px] md:mt-28">
               {searchResults.map((track) => (
@@ -117,11 +128,9 @@ export default function Layout({ children, profile }) {
           >
             {children}
             <div className="hidden md:block top-auto fixed bottom-0 z-20 w-full">
-            <Player trackUri={playingTrack?.uri} />
+              <Player trackUri={playingTrack?.uri} />
             </div>
           </main>
-
-          
         </div>
       </div>
     </>

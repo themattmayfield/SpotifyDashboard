@@ -22,7 +22,7 @@ export default function Artist() {
   return (
     <Layout>
       {artist ? (
-        <div className="flex flex-col items-center text-center text-white pt-4 md:pt-24 space-y-4 md:space-y-8">
+        <div className="flex flex-col items-center text-center text-white pt-10 md:pt-24 space-y-4 md:space-y-8">
           <div
             className="rounded-full bg-cover bg-center w-40 h-40 md:w-80 md:h-80"
             style={{

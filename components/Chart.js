@@ -117,7 +117,7 @@ const MyChart = ({ features, type }) => {
     parseData();
   }, [features]);
 
-  return <canvas id="chart" width="400" height="400" />;
+  return <canvas className="p-6 w-full h-full" id="chart" />;
 };
 
 export default MyChart;

@@ -24,7 +24,7 @@ const TopArtists = ({ topArtistsShort }) => {
                     (index == 1 && "tr") ||
                     (index == 2 && "bl") ||
                     (index == 3 && "br")
-                  }-3xl rounded-lg h-[45vw] w-[45vw] md:h-[16vw] md:w-[16vw] xl:h-48 xl:w-48 bg-cover bg-center ${
+                  }-3xl rounded-lg h-[45vw] w-[45vw] md:h-[16vw] md:w-[16vw] xl:h-48 xl:w-48 bg-cover bg-center cursor-pointer ${
                     !card.images.length && "p-12"
                   }`}
                 >

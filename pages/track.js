@@ -42,7 +42,7 @@ const Track = () => {
               alt="Album Artwork"
             />
             <div className="flex flex-col space-y-1 md:space-y-3 text-center md:text-left">
-              <p className="text-white text-3xl md:text-6xl mt-3 md:mt-0">
+              <p className="text-white text-3xl md:text-5xl mt-3 md:mt-0">
                 {track.name}
               </p>
               <div className="md:text-2xl">

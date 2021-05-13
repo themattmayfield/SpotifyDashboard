@@ -16,17 +16,17 @@ const linkClasses = {
 
 const linkDivClassess = {
   active:
-    "cursor-pointer w-full h-24 border-l-4 border-green-500 flex items-center justify-center bg-custom-darkgray",
+    "cursor-pointer w-full h-24 border-l-4 border-[#1DB954] flex items-center justify-center bg-custom-darkgray",
   inactive:
     "cursor-pointer w-full h-24 border-l-4 border-transparent flex items-center justify-center hover:bg-custom-darkgray",
 };
 const linkDivClassessMobile = {
   active:
-    "cursor-pointer w-full border-t-4 border-green-500 flex items-center justify-center bg-custom-darkgray",
+    "cursor-pointer w-full border-t-4 border-[#1DB954] flex items-center justify-center bg-custom-darkgray",
   inactive:
     "cursor-pointer w-full border-t-4 border-transparent flex items-center justify-center hover:bg-custom-darkgray",
 };
-export default function SideNav({ activeMobile, switchNavSong, track}) {
+export default function SideNav({ activeMobile, switchNavSong, track }) {
   const router = useRouter();
   return (
     <>
@@ -140,7 +140,7 @@ export default function SideNav({ activeMobile, switchNavSong, track}) {
       {/* Desktop */}
       <div className="rounded-xl py-4 w-32 h-screen sticky top-0 hidden md:flex flex-col space-y-6 items-center pt-12">
         <div className="mb-12">
-          <SiSpotify className="w-14 h-14 text-green-600" />
+          <SiSpotify className="w-14 h-14 text-[#1DB954]" />
         </div>
         <div className="w-full flex flex-col items-center">
           <Link href="/">

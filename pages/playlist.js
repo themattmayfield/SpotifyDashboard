@@ -3,7 +3,7 @@ import { useRouter } from "next/router";
 import Chart from "../components/Chart";
 
 import Track from "../components/Track";
-import Playlistt from "../components/Playlist";
+import PlaylistComponent from "../components/Playlist";
 import Layout from "../components/Layout";
 import Loading from "../components/Loading";
 
@@ -41,7 +41,7 @@ const Playlist = () => {
         {playlist ? (
           <div className="flex flex-col md:flex-row md:justify-center items-center md:items-start space-y-8 md:space-y-0 mb-[100px] md:space-x-16">
             <div className="flex flex-col items-center">
-              <Playlistt analytic playlist={playlist} />
+              <PlaylistComponent analytic playlist={playlist} />
               {audioFeatures && (
                 <Chart
                   features={audioFeatures.audio_features}

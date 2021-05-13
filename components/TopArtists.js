@@ -4,43 +4,37 @@ import { RiUserVoiceLine } from "react-icons/ri";
 
 const n = 2;
 
-export default function TopArtists({ topArtistsShort }) {
+const TopArtists = ({ topArtistsShort }) => {
   const Card = () =>
     [...Array(n)].map((e, wrapperIndex) => (
       <div key={wrapperIndex} className="flex space-x-3 items-center">
-        {topArtistsShort.items.map((card, index) => {
-          return (
+        {topArtistsShort.items.map(
+          (card, index) =>
             (((index == 2 || index == 3) && wrapperIndex === 1) ||
               ((index == 0 || index == 1) && wrapperIndex === 0)) && (
               <Link key={index} href={`/artist/?id=${card.id}`}>
-                {card.images.length ? (
-                  <div
-                    style={{
-                      backgroundImage: `url(${card.images[0].url})`,
-                    }}
-                    className={`rounded-${
-                      (index == 0 && "tl") ||
-                      (index == 1 && "tr") ||
-                      (index == 2 && "bl") ||
-                      (index == 3 && "br")
-                    }-3xl rounded-lg h-[45vw] w-[45vw] md:h-[16vw] md:w-[16vw] xl:h-48 xl:w-48 bg-cover bg-center`}
-                  ></div>
-                ) : (
-                  <div
-                    className={`rounded-${
-                      (index == 0 && "tl") ||
-                      (index == 1 && "tr") ||
-                      (index == 2 && "bl") ||
-                      (index == 3 && "br")
-                    }-3xl rounded-lg h-[45vw] w-[45vw] md:h-[16vw] md:w-[16vw] xl:h-48 xl:w-48 bg-cover bg-center p-12`}
-                  >
+                <div
+                  style={{
+                    backgroundImage: card.images.length
+                      ? `url(${card.images[0].url})`
+                      : "none",
+                  }}
+                  className={`rounded-${
+                    (index == 0 && "tl") ||
+                    (index == 1 && "tr") ||
+                    (index == 2 && "bl") ||
+                    (index == 3 && "br")
+                  }-3xl rounded-lg h-[45vw] w-[45vw] md:h-[16vw] md:w-[16vw] xl:h-48 xl:w-48 bg-cover bg-center ${
+                    !card.images.length && "p-12"
+                  }`}
+                >
+                  {!card.images.length && (
                     <RiUserVoiceLine className="text-[#686868] h-full w-full" />
-                  </div>
-                )}
+                  )}
+                </div>
               </Link>
             )
-          );
-        })}
+        )}
       </div>
     ));
 
@@ -54,4 +48,6 @@ export default function TopArtists({ topArtistsShort }) {
       </div>
     </>
   );
-}
+};
+
+export default TopArtists;

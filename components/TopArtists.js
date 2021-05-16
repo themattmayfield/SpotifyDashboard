@@ -24,13 +24,18 @@ const TopArtists = ({ topArtistsShort }) => {
                     (index == 1 && "tr") ||
                     (index == 2 && "bl") ||
                     (index == 3 && "br")
-                  }-3xl rounded-lg h-[45vw] w-[45vw] md:h-[16vw] md:w-[16vw] xl:h-48 xl:w-48 bg-cover bg-center cursor-pointer ${
+                  }-3xl rounded-lg h-[45vw] w-[45vw] md:h-[16vw] md:w-[16vw] xl:h-48 xl:w-48 bg-custom-darkgray bg-cover bg-center cursor-pointer ${
                     !card.images.length && "p-12"
                   }`}
                 >
-                  {!card.images.length && (
-                    <RiUserVoiceLine className="text-[#686868] h-full w-full" />
-                  )}
+                  <div
+                    className="opacity-0 hover:opacity-100 rounded-xl w-full h-full flex flex-col items-center justify-center transition duration-300 ease-in-out pl-2 pb-2 md:pl-6 md:pb-3"
+                    style={{ background: "rgba(0, 0, 0, 0.45)" }}
+                  >
+                    <div className="text-center text-2xl md:text-4xl text-white">
+                      {card.name}
+                    </div>
+                  </div>
                 </div>
               </Link>
             )

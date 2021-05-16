@@ -16,10 +16,12 @@ export default function Track({ track }) {
       className="flex items-center justify-between  cursor-pointer transition duration-150 ease-in-out hover:bg-custom-darkgray"
     >
       <div className="flex space-x-6 items-center">
-        <img
-          className="w-20 h-20"
-          src={track.track?.album.images[0].url || track.album?.images[0].url}
-        />
+        <Link href={`/track/?id=${track.track?.id || track.id}`}>
+          <img
+            className="w-20 h-20"
+            src={track.track?.album.images[0].url || track.album?.images[0].url}
+          />
+        </Link>
         <div className="flex flex-col">
           <Link href={`/track/?id=${track.track?.id || track.id}`}>
             <p className="hover:underline">{track.track?.name || track.name}</p>
@@ -30,7 +32,9 @@ export default function Track({ track }) {
                 track.track?.artists[0].id || track.artists[0].id
               }`}
             >
-              <p>{track.track?.artists[0].name || track.artists[0].name}</p>
+              <p className="hover:underline">
+                {track.track?.artists[0].name || track.artists[0].name}
+              </p>
             </Link>
             <span className="hidden md:block">&nbsp;&middot;&nbsp;&nbsp;</span>
             <p>{track.track?.album.name || track.album.name}</p>

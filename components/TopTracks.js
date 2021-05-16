@@ -13,10 +13,12 @@ export default function TopTracks({ topTracksShort }) {
                 index < 6 && (
                   <div key={index} className="flex justify-between">
                     <div className="flex items-center space-x-4">
-                      <img
-                        className="w-20 h-20 "
-                        src={item.album.images[0].url}
-                      ></img>
+                      <Link href={`/track/?id=${item.id}`}>
+                        <img
+                          className="w-20 h-20 cursor-pointer"
+                          src={item.album.images[0].url}
+                        ></img>
+                      </Link>
                       <div className="flex flex-col">
                         <Link href={`/track/?id=${item.id}`}>
                           <p className="text-xl cursor-pointer hover:underline">
@@ -32,7 +34,7 @@ export default function TopTracks({ topTracksShort }) {
                       </div>
                     </div>
 
-                    <div className="hidden lg:block">somethings</div>
+                    {/* <div className="hidden lg:block">somethings</div> */}
                   </div>
                 )
             )}

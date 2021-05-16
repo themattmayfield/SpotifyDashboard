@@ -46,7 +46,7 @@ export default function Artists() {
   return (
     <>
       <Layout>
-        <div className="max-w-5xl mx-auto px-2 md:px-4 no-scrollbar pt-4 md:pt-24">
+        <div className="max-w-5xl mx-auto px-2 md:px-4 no-scrollbar pt-10 md:pt-24">
           <div className="bg-black w-full text-white pb-10 select-none flex flex-col md:flex-row items-center justify-between space-y-2">
             <div>
               <p className="text-2xl font-semibold">Top Artists</p>

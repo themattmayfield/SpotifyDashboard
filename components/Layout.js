@@ -6,7 +6,7 @@ import TrackSearchResult from "./TrackSearchResult";
 import SpotifyWebApi from "spotify-web-api-node";
 
 import { token, FRONTEND_URI, CLIENT_ID } from "../lib/spotifyHelper";
-import Player from "./Player";
+// import Player from "./Player";
 
 const spotifyApi = new SpotifyWebApi({
   clientId: CLIENT_ID,
@@ -46,34 +46,34 @@ export default function Layout({ children, profile }) {
     spotifyApi.setAccessToken(token);
   }, [token]);
 
-  useEffect(() => {
-    if (!search) return setSearchResults([]);
+  // useEffect(() => {
+  //   if (!search) return setSearchResults([]);
 
-    let cancel = false;
-    spotifyApi.searchTracks(search).then((res) => {
-      if (cancel) return;
-      setSearchResults(
-        res.body.tracks.items.map((track) => {
-          const smallestAlbumImage = track.album.images.reduce(
-            (smallest, image) => {
-              if (image.height < smallest.height) return image;
-              return smallest;
-            },
-            track.album.images[0]
-          );
+  //   let cancel = false;
+  //   spotifyApi.searchTracks(search).then((res) => {
+  //     if (cancel) return;
+  //     setSearchResults(
+  //       res.body.tracks.items.map((track) => {
+  //         const smallestAlbumImage = track.album.images.reduce(
+  //           (smallest, image) => {
+  //             if (image.height < smallest.height) return image;
+  //             return smallest;
+  //           },
+  //           track.album.images[0]
+  //         );
 
-          return {
-            artist: track.artists[0].name,
-            title: track.name,
-            uri: track.uri,
-            albumUrl: smallestAlbumImage.url,
-          };
-        })
-      );
-    });
+  //         return {
+  //           artist: track.artists[0].name,
+  //           title: track.name,
+  //           uri: track.uri,
+  //           albumUrl: smallestAlbumImage.url,
+  //         };
+  //       })
+  //     );
+  //   });
 
-    return () => (cancel = true);
-  }, [search]);
+  //   return () => (cancel = true);
+  // }, [search]);
 
   return (
     <>
@@ -103,9 +103,9 @@ export default function Layout({ children, profile }) {
             }
           >
             {children}
-            <div className="hidden md:block top-auto fixed bottom-0 z-20 w-full">
-              <Player trackUri={playingTrack?.uri} />
-            </div>
+            {/* <div className="hidden md:block top-auto fixed bottom-0 z-20 w-full">
+              <Player token={token} trackUri={playingTrack?.uri} />
+            </div> */}
           </main>
         </div>
       </div>

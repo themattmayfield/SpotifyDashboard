@@ -2,7 +2,11 @@ import React, { useState, useEffect } from "react";
 import { useRouter } from "next/router";
 
 import Layout from "../components/Layout";
-import { getArtist } from "../lib/spotifyHelper";
+import {
+  getArtist,
+  doesUserFollowArtist,
+  followArtist,
+} from "../lib/spotifyHelper";
 import Loading from "../components/Loading";
 import { catchErrors } from "../utils/index";
 
@@ -10,6 +14,7 @@ export default function Artist() {
   const router = useRouter();
 
   const [artist, setArtist] = useState(null);
+  const [followingArtist, setFollowingArtist] = useState(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -19,6 +24,18 @@ export default function Artist() {
     catchErrors(fetchData());
   }, [router.query.id]);
 
+  useEffect(() => {
+    const fetchData = async () => {
+      const { data } = await doesUserFollowArtist(router.query.id);
+      setFollowingArtist(data[0]);
+    };
+    catchErrors(fetchData());
+  }, [followingArtist]);
+
+  const followHandler = () => {
+    followArtist(router.query.id, followingArtist ? "delete" : "put");
+    setFollowingArtist(!followingArtist);
+  };
   return (
     <Layout>
       {artist ? (
@@ -31,6 +48,14 @@ export default function Artist() {
           ></div>
 
           <p className="text-4xl md:text-7xl">{artist.name}</p>
+          <button
+            onClick={() => followHandler()}
+            className={`bg-transparent border text-white rounded px-4 py-1 cursor-pointer focus:outline-none hover:bg-custom-darkgray transition duration-300 ease-in-out ${
+              followingArtist ? "border-white" : "border-gray-900"
+            }`}
+          >
+            {followingArtist ? "Following" : `Follow`}
+          </button>
           <div className="flex space-x-12 items-center justify-center">
             <div>
               <p className="text-xl md:text-3xl">{artist.followers.total}</p>

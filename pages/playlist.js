@@ -29,7 +29,6 @@ const Playlist = () => {
       if (playlist) {
         const { data } = await getAudioFeaturesForTracks(playlist.tracks.items);
         setAudioFeatures(data);
-        console.log(audioFeatures);
       }
     };
     catchErrors(fetchData());
@@ -51,7 +50,7 @@ const Playlist = () => {
             </div>
             <div className="flex flex-col gap-4 no-scrollbar text-white w-full">
               {playlist.tracks.items.map((track, index) => (
-                <Track analytic track={track} />
+                <Track analytic key={index} track={track} />
               ))}
             </div>
           </div>

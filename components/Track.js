@@ -1,18 +1,30 @@
 import Link from "next/link";
+import { useRecoilState } from "recoil";
+import { currentTrackIdState, isPlayingState } from "atoms/songAtom";
+import useSpotify from "lib/useSpotify";
+import { millisToMinutesAndSeconds } from "lib/time";
 
 export default function Track({ track }) {
-  // function handlePlay() {
-  //   chooseTrack(track)
-  // }
+  const spotifyApi = useSpotify();
+  const [currentTrackId, setCurrentTrackId] =
+    useRecoilState(currentTrackIdState);
+  const [isPlaying, setIsPlaying] = useRecoilState(isPlayingState);
+  useRecoilState(currentTrackIdState);
 
-  const millisToMinutesAndSeconds = (millis) => {
-    var minutes = Math.floor(millis / 60000);
-    var seconds = ((millis % 60000) / 1000).toFixed(0);
-    return minutes + ":" + (seconds < 10 ? "0" : "") + seconds;
+  const playSong = (track) => {
+    const id = track.track?.id || track.id;
+    const uri = track.track?.uri || track.uri;
+
+    setCurrentTrackId(id);
+    setIsPlaying(true);
+    spotifyApi.play({
+      uris: [uri],
+    });
   };
+
   return (
     <div
-      // onClick={handlePlay}
+      onClick={() => playSong(track)}
       className="flex items-center justify-between  cursor-pointer transition duration-150 ease-in-out hover:bg-custom-darkgray"
     >
       <div className="flex space-x-6 items-center">

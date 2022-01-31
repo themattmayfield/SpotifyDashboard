@@ -1,16 +1,12 @@
 import React, { useState, useEffect } from "react";
-
+import useSpotify from "lib/useSpotify";
+import { useSession } from "next-auth/react";
 import Layout from "../components/Layout";
-import Loading from "../components/Loading";
 import Track from "../components/Track";
-
-import {
-  getTopTracksShort,
-  getTopTracksMedium,
-  getTopTracksLong,
-} from "../lib/spotifyHelper";
-
 import { catchErrors } from "../utils";
+import dynamic from "next/dynamic";
+
+const Loading = dynamic(() => import("components/Loading"), { ssr: false });
 
 const classes = {
   active: "border-b border-white",
@@ -18,30 +14,57 @@ const classes = {
 };
 
 export default function Tracks() {
+  const spotifyApi = useSpotify();
+  const { data: session, status } = useSession();
   const [topTracks, setTopTracks] = useState(null);
   const [activeRange, setActiveRange] = useState("long");
 
+  useEffect(() => {
+    if (spotifyApi.getAccessToken()) {
+      (async () => {
+        const { body } = await spotifyApi.getMyTopTracks({
+          limit: 50,
+          time_range: "long_term",
+        });
+
+        setTopTracks(body.items);
+      })();
+    }
+  }, [session, spotifyApi]);
+
   const apiCalls = {
-    long: getTopTracksLong(),
-    medium: getTopTracksMedium(),
-    short: getTopTracksShort(),
+    long: () =>
+      spotifyApi.getMyTopTracks({
+        limit: 50,
+        time_range: "long_term",
+      }),
+    medium: () =>
+      spotifyApi.getMyTopTracks({
+        limit: 50,
+        time_range: "medium_term",
+      }),
+    short: () =>
+      spotifyApi.getMyTopTracks({
+        limit: 50,
+        time_range: "short_term",
+      }),
   };
 
-  useEffect(() => {
-    const fetchData = async () => {
-      const { data } = await getTopTracksLong();
-      setTopTracks(data);
-    };
-    catchErrors(fetchData());
-  }, []);
-
   const changeRange = async (range) => {
-    const { data } = await apiCalls[range];
-    setTopTracks(data);
+    const { body } = await apiCalls[range]();
+    setTopTracks(body.items);
     setActiveRange(range);
   };
 
   const setRangeData = (range) => catchErrors(changeRange(range));
+
+  if (!topTracks) {
+    return (
+      <Layout>
+        <Loading />
+      </Layout>
+    );
+  }
 
   return (
     <>
@@ -81,15 +104,11 @@ export default function Tracks() {
               </p>
             </div>
           </div>
-          {topTracks ? (
-            <div className="flex flex-col gap-4 no-scrollbar text-white mb-[100px]">
-              {topTracks.items.map((track, index) => (
-                <Track key={index} track={track} />
-              ))}
-            </div>
-          ) : (
-            <Loading />
-          )}
+          <div className="flex flex-col gap-4 no-scrollbar text-white mb-[100px]">
+            {topTracks.map((track, index) => (
+              <Track key={index} track={track} />
+            ))}
+          </div>
         </div>
       </Layout>
     </>

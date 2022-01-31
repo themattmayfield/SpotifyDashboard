@@ -1,23 +1,36 @@
 import React, { useState, useEffect } from "react";
+import Layout from "components/Layout";
+import Track from "components/Track";
+import { catchErrors } from "utils";
+import useSpotify from "lib/useSpotify";
+import { useSession } from "next-auth/react";
+import dynamic from "next/dynamic";
 
-import Layout from "../components/Layout";
-import Loading from "../components/Loading";
-import Track from "../components/Track";
-
-import { getRecentlyPlayed } from "../lib/spotifyHelper";
-
-import { catchErrors } from "../utils";
+const Loading = dynamic(() => import("components/Loading"), { ssr: false });
 
 export default function Recent() {
+  const spotifyApi = useSpotify();
+  const { data: session, status } = useSession();
+
   const [recentlyPlayed, setRecentlyPlayed] = useState(null);
 
   useEffect(() => {
-    const fetchData = async () => {
-      const { data } = await getRecentlyPlayed();
-      setRecentlyPlayed(data);
-    };
-    catchErrors(fetchData());
-  }, []);
+    if (spotifyApi.getAccessToken()) {
+      (async () => {
+        const { body } = await spotifyApi.getMyRecentlyPlayedTracks();
+
+        setRecentlyPlayed(body.items);
+      })();
+    }
+  }, [session, spotifyApi]);
+
+  if (!recentlyPlayed) {
+    return (
+      <Layout>
+        <Loading />
+      </Layout>
+    );
+  }
 
   return (
     <>
@@ -26,15 +39,12 @@ export default function Recent() {
           <div className="bg-black w-full text-white pb-10 select-none flex flex-col md:flex-row items-center justify-between space-y-2">
             <p className="text-2xl font-semibold">Recently Played Tracks</p>
           </div>
-          {recentlyPlayed ? (
-            <div className="flex flex-col gap-4 no-scrollbar text-white mb-[100px]">
-              {recentlyPlayed.items.map((track, index) => (
-                <Track key={index} track={track} />
-              ))}
-            </div>
-          ) : (
-            <Loading />
-          )}
+
+          <div className="flex flex-col gap-4 no-scrollbar text-white mb-[100px]">
+            {recentlyPlayed.map((track, index) => (
+              <Track key={index} track={track} />
+            ))}
+          </div>
         </div>
       </Layout>
     </>

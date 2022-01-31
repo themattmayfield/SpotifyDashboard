@@ -2,15 +2,9 @@ import React, { useState, useEffect } from "react";
 import { useRouter } from "next/router";
 import Nav from "./Nav";
 import SideNav from "./SideNav";
-import TrackSearchResult from "./TrackSearchResult";
-import SpotifyWebApi from "spotify-web-api-node";
-
-import { token, FRONTEND_URI, CLIENT_ID } from "../lib/spotifyHelper";
+import Head from "next/head";
+// import TrackSearchResult from "./TrackSearchResult";
 // import Player from "./Player";
-
-const spotifyApi = new SpotifyWebApi({
-  clientId: CLIENT_ID,
-});
 
 export default function Layout({ children, profile }) {
   const router = useRouter();
@@ -36,15 +30,8 @@ export default function Layout({ children, profile }) {
   };
 
   useEffect(() => {
-    if (!token) {
-      !token && router.push(FRONTEND_URI);
-    }
     changeVhVariable();
   }, []);
-
-  useEffect(() => {
-    spotifyApi.setAccessToken(token);
-  }, [token]);
 
   // useEffect(() => {
   //   if (!search) return setSearchResults([]);
@@ -77,11 +64,16 @@ export default function Layout({ children, profile }) {
 
   return (
     <>
+      <Head>
+        <title>Spotify | Wrapper</title>
+        <meta name="description" content="Spotify Wrapper" />
+        <link rel="icon" href="/spotify.ico" />
+      </Head>
       <div className="flex">
         <SideNav track={playingTrack} />
         <div className="flex flex-1 flex-col overflow-hidden">
           {profile && <Nav search={search} setSearch={setSearch} />}
-          {search && (
+          {/* {search && (
             <div className="z-30 h-full absolute bg-black overflow-scroll w-full mt-[72px] md:mt-28">
               {searchResults.map((track) => (
                 <TrackSearchResult
@@ -90,13 +82,13 @@ export default function Layout({ children, profile }) {
                   chooseTrack={chooseTrack}
                 />
               ))}
-              {/* {searchResults.length === 0 && (
+              {searchResults.length === 0 && (
           <div className="text-center" style={{ whiteSpace: "pre" }}>
             {lyrics}
           </div>
-        )} */}
+        )}
             </div>
-          )}
+          )} */}
           <main
             className={
               "h-full no-scrollbar " + (!profile ? "overflow-scroll " : "")
@@ -104,7 +96,7 @@ export default function Layout({ children, profile }) {
           >
             {children}
             {/* <div className="hidden md:block top-auto fixed bottom-0 z-20 w-full">
-              <Player token={token} trackUri={playingTrack?.uri} />
+              <Player />
             </div> */}
           </main>
         </div>

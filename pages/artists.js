@@ -1,16 +1,12 @@
 import React, { useState, useEffect } from "react";
+import useSpotify from "lib/useSpotify";
+import { useSession } from "next-auth/react";
+import Layout from "components/Layout";
+import Card from "components/Card";
+import { catchErrors } from "utils";
+import dynamic from "next/dynamic";
 
-import Layout from "../components/Layout";
-import Loading from "../components/Loading";
-import Card from "../components/Card";
-
-import {
-  getTopArtistsShort,
-  getTopArtistsMedium,
-  getTopArtistsLong,
-} from "../lib/spotifyHelper";
-
-import { catchErrors } from "../utils";
+const Loading = dynamic(() => import("components/Loading"), { ssr: false });
 
 const classes = {
   active: "border-b border-white",
@@ -18,30 +14,57 @@ const classes = {
 };
 
 export default function Artists() {
+  const spotifyApi = useSpotify();
+  const { data: session, status } = useSession();
   const [topArtists, setTopArtists] = useState(null);
   const [activeRange, setActiveRange] = useState("long");
 
+  useEffect(() => {
+    if (spotifyApi.getAccessToken()) {
+      (async () => {
+        const { body } = await spotifyApi.getMyTopArtists({
+          limit: 50,
+          time_range: "long_term",
+        });
+
+        setTopArtists(body.items);
+      })();
+    }
+  }, [session, spotifyApi]);
+
   const apiCalls = {
-    long: getTopArtistsLong(),
-    medium: getTopArtistsMedium(),
-    short: getTopArtistsShort(),
+    long: () =>
+      spotifyApi.getMyTopArtists({
+        limit: 50,
+        time_range: "long_term",
+      }),
+    medium: () =>
+      spotifyApi.getMyTopArtists({
+        limit: 50,
+        time_range: "medium_term",
+      }),
+    short: () =>
+      spotifyApi.getMyTopArtists({
+        limit: 50,
+        time_range: "short_term",
+      }),
   };
 
-  useEffect(() => {
-    const fetchData = async () => {
-      const { data } = await getTopArtistsLong();
-      setTopArtists(data);
-    };
-    catchErrors(fetchData());
-  }, []);
-
   const changeRange = async (range) => {
-    const { data } = await apiCalls[range];
-    setTopArtists(data);
+    const { body } = await apiCalls[range]();
+    setTopArtists(body.items);
     setActiveRange(range);
   };
 
   const setRangeData = (range) => catchErrors(changeRange(range));
+
+  if (!topArtists) {
+    return (
+      <Layout>
+        <Loading />
+      </Layout>
+    );
+  }
 
   return (
     <>
@@ -81,15 +104,12 @@ export default function Artists() {
               </p>
             </div>
           </div>
-          {topArtists ? (
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-y-2 md:gap-6 no-scrollbar mb-[100px]">
-              {topArtists.items.map((item, index) => (
-                <Card key={index} info={item} />
-              ))}
-            </div>
-          ) : (
-            <Loading />
-          )}
+
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-y-2 md:gap-6 no-scrollbar mb-[100px]">
+            {topArtists.map((item, index) => (
+              <Card key={index} info={item} />
+            ))}
+          </div>
         </div>
       </Layout>
     </>

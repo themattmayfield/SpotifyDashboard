@@ -1,4 +1,3 @@
-import React, { useState, useEffect } from "react";
 import { getProviders, signIn } from "next-auth/react";
 
 const Login = ({ providers }) => {

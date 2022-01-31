@@ -33,7 +33,7 @@ const Playlist = () => {
     }
   }, [session, spotifyApi, query]);
 
-  if (!playlists || !audioFeatures) {
+  if (!playlist || !audioFeatures) {
     return (
       <Layout>
         <Loading />

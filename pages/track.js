@@ -1,16 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/router";
 import Chart from "components/Chart";
-import PlaylistComponent from "components/Playlist";
 import Layout from "components/Layout";
 import useSpotify from "lib/useSpotify";
 import { useSession } from "next-auth/react";
-import {
-  formatDuration,
-  getYear,
-  parsePitchClass,
-  catchErrors,
-} from "utils/index";
+import { getYear } from "lib/formatters";
 import dynamic from "next/dynamic";
 
 const Loading = dynamic(() => import("components/Loading"), { ssr: false });

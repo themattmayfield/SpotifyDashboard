@@ -5,8 +5,16 @@ import { catchErrors } from "utils";
 import useSpotify from "lib/useSpotify";
 import { useSession } from "next-auth/react";
 import dynamic from "next/dynamic";
-
+import { motion } from "framer-motion";
 const Loading = dynamic(() => import("components/Loading"), { ssr: false });
+
+let parent = {
+  show: {
+    transition: {
+      staggerChildren: 0.1,
+    },
+  },
+};
 
 export default function Recent() {
   const spotifyApi = useSpotify();
@@ -40,11 +48,16 @@ export default function Recent() {
             <p className="text-2xl font-semibold">Recently Played Tracks</p>
           </div>
 
-          <div className="flex flex-col gap-4 no-scrollbar text-white mb-[100px]">
+          <motion.div
+            variants={parent}
+            initial="hidden"
+            animate="show"
+            className="flex flex-col gap-4 no-scrollbar text-white mb-[100px]"
+          >
             {recentlyPlayed.map((track, index) => (
               <Track key={index} track={track} />
             ))}
-          </div>
+          </motion.div>
         </div>
       </Layout>
     </>

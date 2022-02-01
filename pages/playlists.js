@@ -5,8 +5,16 @@ import { catchErrors } from "utils";
 import useSpotify from "lib/useSpotify";
 import { useSession } from "next-auth/react";
 import dynamic from "next/dynamic";
-
+import { motion } from "framer-motion";
 const Loading = dynamic(() => import("components/Loading"), { ssr: false });
+
+let parent = {
+  show: {
+    transition: {
+      staggerChildren: 0.1,
+    },
+  },
+};
 
 export default function Playlists() {
   const spotifyApi = useSpotify();
@@ -42,11 +50,16 @@ export default function Playlists() {
             </div>
           </div>
 
-          <div className="grid grid-cols-2 lg:grid-cols-3 gap-2 md:gap-6 no-scrollbar mb-[100px]">
+          <motion.div
+            variants={parent}
+            initial="hidden"
+            animate="show"
+            className="grid grid-cols-2 lg:grid-cols-3 gap-2 md:gap-6 no-scrollbar mb-[100px]"
+          >
             {playlists.map((playlist, index) => (
               <Playlist key={index} playlist={playlist} />
             ))}
-          </div>
+          </motion.div>
         </div>
       </Layout>
     </>

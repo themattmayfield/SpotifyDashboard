@@ -5,8 +5,16 @@ import Layout from "../components/Layout";
 import Track from "../components/Track";
 import { catchErrors } from "../utils";
 import dynamic from "next/dynamic";
-
+import { motion } from "framer-motion";
 const Loading = dynamic(() => import("components/Loading"), { ssr: false });
+
+let parent = {
+  show: {
+    transition: {
+      staggerChildren: 0.1,
+    },
+  },
+};
 
 const classes = {
   active: "border-b border-white",
@@ -104,11 +112,16 @@ export default function Tracks() {
               </p>
             </div>
           </div>
-          <div className="flex flex-col gap-4 no-scrollbar text-white mb-[100px]">
+          <motion.div
+            variants={parent}
+            initial="hidden"
+            animate="show"
+            className="flex flex-col gap-4 no-scrollbar text-white mb-[100px]"
+          >
             {topTracks.map((track, index) => (
               <Track key={index} track={track} />
             ))}
-          </div>
+          </motion.div>
         </div>
       </Layout>
     </>

@@ -5,6 +5,15 @@ import Layout from "components/Layout";
 import Card from "components/Card";
 import { catchErrors } from "utils";
 import dynamic from "next/dynamic";
+import { motion } from "framer-motion";
+
+let parent = {
+  show: {
+    transition: {
+      staggerChildren: 0.1,
+    },
+  },
+};
 
 const Loading = dynamic(() => import("components/Loading"), { ssr: false });
 
@@ -105,11 +114,16 @@ export default function Artists() {
             </div>
           </div>
 
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-y-2 md:gap-6 no-scrollbar mb-[100px]">
+          <motion.div
+            variants={parent}
+            initial="hidden"
+            animate="show"
+            className="grid grid-cols-2 md:grid-cols-3 gap-y-2 md:gap-6 no-scrollbar mb-[100px]"
+          >
             {topArtists.map((item, index) => (
               <Card key={index} info={item} />
             ))}
-          </div>
+          </motion.div>
         </div>
       </Layout>
     </>

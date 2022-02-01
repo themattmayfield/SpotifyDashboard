@@ -1,8 +1,14 @@
 import Link from "next/link";
+import { motion } from "framer-motion";
+
+let card = {
+  hidden: { opacity: 0 },
+  show: { opacity: 1 },
+};
 
 export default function Card({ info, profile }) {
   return (
-    <div className="inline-block max-w-min mx-auto ">
+    <motion.div variants={card} className="inline-block max-w-min mx-auto ">
       <Link href={`/artist/?id=${info.id}`}>
         <div
           style={{
@@ -23,6 +29,6 @@ export default function Card({ info, profile }) {
           </div>
         </div>
       </Link>
-    </div>
+    </motion.div>
   );
 }

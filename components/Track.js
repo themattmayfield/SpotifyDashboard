@@ -3,6 +3,12 @@ import { useRecoilState } from "recoil";
 import { currentTrackIdState, isPlayingState } from "atoms/songAtom";
 import useSpotify from "lib/useSpotify";
 import { millisToMinutesAndSeconds } from "lib/time";
+import { motion } from "framer-motion";
+
+let motionTrack = {
+  hidden: { opacity: 0 },
+  show: { opacity: 1 },
+};
 
 export default function Track({ track }) {
   const spotifyApi = useSpotify();
@@ -23,7 +29,8 @@ export default function Track({ track }) {
   };
 
   return (
-    <div
+    <motion.div
+      variants={motionTrack}
       onClick={() => playSong(track)}
       className="flex items-center justify-between  cursor-pointer transition duration-150 ease-in-out hover:bg-custom-darkgray"
     >
@@ -64,6 +71,6 @@ export default function Track({ track }) {
           JSON.stringify(track.track?.duration_ms || track.duration_ms)
         )}
       </div>
-    </div>
+    </motion.div>
   );
 }

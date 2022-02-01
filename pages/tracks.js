@@ -6,6 +6,8 @@ import Track from "../components/Track";
 import { catchErrors } from "../utils";
 import dynamic from "next/dynamic";
 import { motion } from "framer-motion";
+import { tracksState } from "atoms/tracksAtom";
+import { useRecoilState } from "recoil";
 const Loading = dynamic(() => import("components/Loading"), { ssr: false });
 
 let parent = {
@@ -24,7 +26,8 @@ const classes = {
 export default function Tracks() {
   const spotifyApi = useSpotify();
   const { data: session, status } = useSession();
-  const [topTracks, setTopTracks] = useState(null);
+  const [topTracks, setTopTracks] = useRecoilState(tracksState);
+
   const [activeRange, setActiveRange] = useState("long");
 
   useEffect(() => {
@@ -35,7 +38,7 @@ export default function Tracks() {
           time_range: "long_term",
         });
 
-        setTopTracks(body.items);
+        setTopTracks((prevState) => ({ ...prevState, long: body.items }));
       })();
     }
   }, [session, spotifyApi]);
@@ -59,14 +62,17 @@ export default function Tracks() {
   };
 
   const changeRange = async (range) => {
-    const { body } = await apiCalls[range]();
-    setTopTracks(body.items);
     setActiveRange(range);
+    if (topTracks[range] !== null) {
+      return;
+    }
+    const { body } = await apiCalls[range]();
+    setTopTracks((prevState) => ({ ...prevState, [range]: body.items }));
   };
 
   const setRangeData = (range) => catchErrors(changeRange(range));
 
-  if (!topTracks) {
+  if (!topTracks[activeRange]) {
     return (
       <Layout>
         <Loading />
@@ -118,7 +124,7 @@ export default function Tracks() {
             animate="show"
             className="flex flex-col gap-4 no-scrollbar text-white mb-[100px]"
           >
-            {topTracks.map((track, index) => (
+            {topTracks[activeRange].map((track, index) => (
               <Track key={index} track={track} />
             ))}
           </motion.div>

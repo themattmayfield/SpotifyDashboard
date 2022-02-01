@@ -6,6 +6,8 @@ import Card from "components/Card";
 import { catchErrors } from "utils";
 import dynamic from "next/dynamic";
 import { motion } from "framer-motion";
+import { artistsState } from "atoms/artistsAtom";
+import { useRecoilState } from "recoil";
 
 let parent = {
   show: {
@@ -25,7 +27,7 @@ const classes = {
 export default function Artists() {
   const spotifyApi = useSpotify();
   const { data: session, status } = useSession();
-  const [topArtists, setTopArtists] = useState(null);
+  const [topArtists, setTopArtists] = useRecoilState(artistsState);
   const [activeRange, setActiveRange] = useState("long");
 
   useEffect(() => {
@@ -36,7 +38,7 @@ export default function Artists() {
           time_range: "long_term",
         });
 
-        setTopArtists(body.items);
+        setTopArtists((prevState) => ({ ...prevState, long: body.items }));
       })();
     }
   }, [session, spotifyApi]);
@@ -60,14 +62,17 @@ export default function Artists() {
   };
 
   const changeRange = async (range) => {
-    const { body } = await apiCalls[range]();
-    setTopArtists(body.items);
     setActiveRange(range);
+    if (topArtists[range] !== null) {
+      return;
+    }
+    const { body } = await apiCalls[range]();
+    setTopArtists((prevState) => ({ ...prevState, [range]: body.items }));
   };
 
   const setRangeData = (range) => catchErrors(changeRange(range));
 
-  if (!topArtists) {
+  if (!topArtists[activeRange]) {
     return (
       <Layout>
         <Loading />
@@ -120,7 +125,7 @@ export default function Artists() {
             animate="show"
             className="grid grid-cols-2 md:grid-cols-3 gap-y-2 md:gap-6 no-scrollbar mb-[100px]"
           >
-            {topArtists.map((item, index) => (
+            {topArtists[activeRange].map((item, index) => (
               <Card key={index} info={item} />
             ))}
           </motion.div>

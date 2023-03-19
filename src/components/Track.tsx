@@ -3,7 +3,6 @@ import Link from 'next/link';
 import useSpotify from '@/lib/useSpotify';
 import { millisToMinutesAndSeconds } from '@/lib/time';
 import { motion } from 'framer-motion';
-import { useState } from 'react';
 
 let motionTrack = {
   hidden: { opacity: 0 },
@@ -12,25 +11,22 @@ let motionTrack = {
 
 export default function Track({ track }) {
   const spotifyApi = useSpotify();
-  const [currentTrackId, setCurrentTrackId] = useState();
-  const [isPlaying, setIsPlaying] = useState();
-  useState(currentTrackIdState);
-  // console.log(track);
-  const playSong = (track) => {
-    const id = track.track?.id || track.id;
-    const uri = track.track?.uri || track.uri;
 
-    setCurrentTrackId(id);
-    setIsPlaying(true);
-    spotifyApi.play({
-      uris: [uri],
-    });
-  };
+  // const playSong = (track) => {
+  //   const id = track.track?.id || track.id;
+  //   const uri = track.track?.uri || track.uri;
+
+  //   setCurrentTrackId(id);
+  //   setIsPlaying(true);
+  //   spotifyApi.play({
+  //     uris: [uri],
+  //   });
+  // };
 
   return (
     <motion.div
       variants={motionTrack}
-      onClick={() => playSong(track)}
+      // onClick={() => playSong(track)}
       className="flex items-center justify-between  cursor-pointer transition duration-150 ease-in-out hover:bg-custom-darkgray"
     >
       <div className="flex space-x-6 items-center">

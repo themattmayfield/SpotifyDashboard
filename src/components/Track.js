@@ -1,7 +1,5 @@
 'use client';
 import Link from 'next/link';
-// import { useRecoilState } from 'recoil';
-import { currentTrackIdState, isPlayingState } from '@/atoms/songAtom';
 import useSpotify from '@/lib/useSpotify';
 import { millisToMinutesAndSeconds } from '@/lib/time';
 import { motion } from 'framer-motion';
@@ -14,8 +12,8 @@ let motionTrack = {
 
 export default function Track({ track }) {
   const spotifyApi = useSpotify();
-  const [currentTrackId, setCurrentTrackId] = useState(currentTrackIdState);
-  const [isPlaying, setIsPlaying] = useState(isPlayingState);
+  const [currentTrackId, setCurrentTrackId] = useState();
+  const [isPlaying, setIsPlaying] = useState();
   useState(currentTrackIdState);
   // console.log(track);
   const playSong = (track) => {

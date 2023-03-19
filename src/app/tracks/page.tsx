@@ -7,10 +7,8 @@ import Track from '../../components/Track';
 import { catchErrors } from '../../utils';
 import dynamic from 'next/dynamic';
 import { motion } from 'framer-motion';
-import { tracksState } from '@/atoms/tracksAtom';
 import useTracksQuery from '@/hooks/useTracksQuery';
 import { TTimeRange } from '@/types';
-// import { useRecoilState } from 'recoil';
 const Loading = dynamic(() => import('@/components/Loading'), { ssr: false });
 
 let parent = {

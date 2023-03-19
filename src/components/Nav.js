@@ -5,15 +5,13 @@ import useSpotify from '@/lib/useSpotify';
 import { AiFillCaretDown } from 'react-icons/ai';
 import { RiUser6Fill } from 'react-icons/ri';
 import { signOut, useSession } from 'next-auth/react';
-import { currentUserState } from '@/atoms/userAtom';
-// import { useRecoilState } from 'recoil';
 
 export default function Default({ search, setSearch }) {
   const spotifyApi = useSpotify();
   const { data: session, status } = useSession();
 
   // const [user, setUser] = useState(null);
-  const [user, setUser] = useState(currentUserState);
+  const [user, setUser] = useState();
   useEffect(() => {
     if (spotifyApi.getAccessToken()) {
       (async () => {

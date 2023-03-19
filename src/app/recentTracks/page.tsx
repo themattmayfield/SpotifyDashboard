@@ -1,11 +1,11 @@
+'use client';
 import React, { useState, useEffect } from 'react';
 import Layout from '@/components/Layout';
 import Track from '@/components/Track';
-import { catchErrors } from '@/utils';
-import useSpotify from 'lib/useSpotify';
 import { useSession } from 'next-auth/react';
 import dynamic from 'next/dynamic';
 import { motion } from 'framer-motion';
+import useRecentlyPlayedQuery from '@/hooks/useRecentlyPlayedQuery';
 const Loading = dynamic(() => import('@/components/Loading'), { ssr: false });
 
 let parent = {
@@ -17,20 +17,7 @@ let parent = {
 };
 
 export default function Recent() {
-  const spotifyApi = useSpotify();
-  const { data: session, status } = useSession();
-
-  const [recentlyPlayed, setRecentlyPlayed] = useState(null);
-
-  useEffect(() => {
-    if (spotifyApi.getAccessToken()) {
-      (async () => {
-        const { body } = await spotifyApi.getMyRecentlyPlayedTracks();
-
-        setRecentlyPlayed(body.items);
-      })();
-    }
-  }, [session, spotifyApi]);
+  const { data: recentlyPlayed } = useRecentlyPlayedQuery({});
 
   if (!recentlyPlayed) {
     return (

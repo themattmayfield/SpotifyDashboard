@@ -4,4 +4,5 @@ module.exports = {
   experimental: {
     appDir: true,
   },
+  skipMiddlewareUrlNormalize: false,
 };

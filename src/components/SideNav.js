@@ -23,7 +23,7 @@ const navItems = [
   },
   {
     id: 3,
-    path: '/recent',
+    path: '/recentTracks',
     Icon: RiHistoryLine,
   },
   {

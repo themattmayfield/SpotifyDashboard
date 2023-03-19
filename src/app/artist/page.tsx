@@ -1,42 +1,35 @@
-import React, { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+'use client';
+import { useSearchParams } from 'next/navigation';
 import Layout from '@/components/Layout';
-import { catchErrors } from '@/utils/index';
-import useSpotify from 'lib/useSpotify';
-import { useSession } from 'next-auth/react';
 import dynamic from 'next/dynamic';
-
+import useArtistQuery from '@/hooks/useArtistQuery';
+import useIsFollowingArtist from '@/hooks/useIsFollowingArtistQuery';
+import useIsFollowingMutation from '@/hooks/useIsFollowingMutation';
 const Loading = dynamic(() => import('@/components/Loading'), { ssr: false });
 
 export default function Artist() {
-  const { query } = useRouter();
-  const spotifyApi = useSpotify();
-  const { data: session, status } = useSession();
-  const [artist, setArtist] = useState(null);
-  const [followingArtist, setFollowingArtist] = useState(null);
+  const searchParams = useSearchParams();
+  const id = searchParams?.get('id') as string;
 
-  useEffect(() => {
-    if (query && spotifyApi.getAccessToken()) {
-      (async () => {
-        const { body: artist } = await spotifyApi.getArtist(query.id);
-        const { body: isFollowing } = await spotifyApi.isFollowingArtists([
-          query.id,
-        ]);
+  const { data: artist } = useArtistQuery({
+    id,
+  });
+  const { data: followingArtist } = useIsFollowingArtist({
+    id,
+  });
 
-        setArtist(artist);
-        setFollowingArtist(isFollowing[0]);
-      })();
-    }
-  }, [session, spotifyApi, query]);
+  const isFollowingArtist = followingArtist && followingArtist[0];
 
-  const followHandler = () => {
-    followingArtist
-      ? spotifyApi.unfollowArtists([query.id])
-      : spotifyApi.followArtists([query.id]);
-    setFollowingArtist((prevState) => !prevState);
+  const { mutateAsync: handleFollow } = useIsFollowingMutation({
+    id,
+    isFollowingArtist,
+  });
+
+  const followHandler = async () => {
+    await handleFollow();
   };
 
-  if (!artist) {
+  if (!artist || !followingArtist) {
     return (
       <Layout>
         <Loading />
@@ -56,12 +49,12 @@ export default function Artist() {
 
         <p className="text-4xl md:text-7xl">{artist.name}</p>
         <button
-          onClick={() => catchErrors(followHandler())}
+          onClick={() => followHandler()}
           className={`bg-transparent border text-white rounded px-4 py-1 cursor-pointer focus:outline-none hover:bg-custom-darkgray transition duration-300 ease-in-out ${
-            followingArtist ? 'border-white' : 'border-gray-900'
+            isFollowingArtist ? 'border-white' : 'border-gray-900'
           }`}
         >
-          {followingArtist ? 'Following' : `Follow`}
+          {isFollowingArtist ? 'Following' : `Follow`}
         </button>
         <div className="flex space-x-12 items-center justify-center">
           <div>

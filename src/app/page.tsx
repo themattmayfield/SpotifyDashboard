@@ -10,6 +10,9 @@ import useSpotify from '@/lib/useSpotify';
 import { useSession } from 'next-auth/react';
 import dynamic from 'next/dynamic';
 import { motion } from 'framer-motion';
+import useRecentlyPlayedQuery from '@/hooks/useRecentlyPlayedQuery';
+import useArtistsQuery from '@/hooks/useArtistsQuery';
+import useTracksQuery from '@/hooks/useTracksQuery';
 
 let parent = {
   hidden: { opacity: 0 },
@@ -22,46 +25,29 @@ export default function Profile() {
   const spotifyApi = useSpotify();
   const { data: session, status } = useSession();
 
-  const [recentlyPlayed, setRecentlyPlayed] = useState([]);
-  const [topTracksShort, setTopTracksShort] = useState([]);
-  const [topArtists, setTopArtists] = useState([]);
-  const [topArtistsShort, setTopArtistsShort] = useState(null);
+  const { data: recentData } = useRecentlyPlayedQuery({});
 
-  useEffect(() => {
-    if (spotifyApi.getAccessToken()) {
-      (async () => {
-        const { body: recentlyPlayed } =
-          await spotifyApi.getMyRecentlyPlayedTracks({
-            limit: 6,
-          });
+  const { data: tracksData } = useTracksQuery({
+    time_range: 'long_term',
+  });
+  const { data: topArtists_LONG_Data } = useArtistsQuery({
+    time_range: 'long_term',
+  });
+  const { data: topArtists_SHORT_data } = useArtistsQuery({
+    time_range: 'short_term',
+  });
 
-        const { body: topTracksShort } = await spotifyApi.getMyTopTracks({
-          limit: 6,
-          time_range: 'short_term',
-        });
-
-        const { body: topArtists } = await spotifyApi.getMyTopArtists({
-          limit: 16,
-          time_range: 'long_term',
-        });
-
-        const { body: topArtistsShort } = await spotifyApi.getMyTopArtists({
-          limit: 4,
-          time_range: 'short_term',
-        });
-
-        setRecentlyPlayed(recentlyPlayed.items);
-        setTopTracksShort(topTracksShort.items);
-        setTopArtists(topArtists.items);
-        setTopArtistsShort(topArtistsShort.items);
-      })();
-    }
-  }, [session, spotifyApi]);
+  const recentlyPlayed = recentData?.slice(0, 6);
+  const topTracks = tracksData?.slice(0, 6);
+  const topArtists_LONG = topArtists_LONG_Data?.slice(0, 16);
+  const topArtists_SHORT = topArtists_SHORT_data?.slice(0, 4);
 
   return (
     <Layout profile>
-      {/* {true ? ( */}
-      {!recentlyPlayed || !topTracksShort || !topArtistsShort || !topArtists ? (
+      {!recentlyPlayed ||
+      !topTracks ||
+      !topArtists_LONG ||
+      !topArtists_SHORT ? (
         <Loading />
       ) : (
         <motion.div
@@ -77,14 +63,14 @@ export default function Profile() {
             <div className="pl-2 pr-0 mb-16">
               <Subtitle link="/artists" subtitle="Top Artist" />
               <div className="flex flex-nowrap space-x-6 overflow-x-scroll no-scrollbar pl-2 lg:pl-0">
-                {topArtists.map((item, index) => (
+                {topArtists_LONG.map((item, index) => (
                   <Card profile key={index} info={item} />
                 ))}
               </div>
             </div>
             <div className="px-2 lg:pl-2 flex flex-col xl:flex-row 2xl:flex-nowrap no-scrollbar gap-y-16 gap-x-8">
-              <TopTracks topTracksShort={topTracksShort} />
-              <TopArtists topArtistsShort={topArtistsShort} />
+              <TopTracks topTracksShort={topTracks} />
+              <TopArtists topArtistsShort={topArtists_SHORT} />
             </div>
           </div>
           <div className="hidden lg:block">

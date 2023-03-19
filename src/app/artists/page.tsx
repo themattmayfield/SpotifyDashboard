@@ -9,6 +9,8 @@ import dynamic from 'next/dynamic';
 import { motion } from 'framer-motion';
 
 import { useQuery } from '@tanstack/react-query';
+import useArtistsQuery from '@/hooks/useArtistsQuery';
+import { TTimeRange } from '@/types';
 
 let parent = {
   show: {
@@ -28,57 +30,33 @@ const classes = {
 export default function Artists() {
   const spotifyApi = useSpotify();
   const { data: session, status } = useSession();
-  // const [topArtists, setTopArtists] = useState(artistsState);
-  const [activeRange, setActiveRange] = useState('long');
 
-  const getData = async (range) => {
-    const { body } = await spotifyApi
-      .getMyTopArtists({
-        limit: 50,
-        time_range: range,
-      })
-      .then((data) => data);
+  const [activeRange, setActiveRange] = useState<TTimeRange>('long_term');
 
-    return body;
-  };
-  const { data: topArtists_LONG } = useQuery({
-    queryKey: ['topArtists_LONG'],
-    queryFn: () => getData('long_term'),
+  const { data: topArtists_LONG } = useArtistsQuery({
+    time_range: 'long_term',
   });
-  const { data: topArtists_MEDIUM } = useQuery({
-    queryKey: ['topArtists_MEDIUM'],
-    queryFn: () => getData('medium_term'),
+  const { data: topArtists_MEDIUM } = useArtistsQuery({
+    time_range: 'medium_term',
   });
-  const { data: topArtists_SHORT } = useQuery({
-    queryKey: ['topArtists_SHORT'],
-    queryFn: () => getData('short_term'),
+  const { data: topArtists_SHORT } = useArtistsQuery({
+    time_range: 'short_term',
   });
-  console.log(topArtists_LONG);
 
-  // useEffect(() => {
-  //   if (spotifyApi.getAccessToken()) {
-  //     (async () => {
-  //       const { body } = await getData();
-
-  //       setTopArtists((prevState) => ({ ...prevState, long: body.items }));
-  //     })();
-  //   }
-  // }, [session, spotifyApi]);
-
-  const getRangeData = (range) => {
+  const getRangeData = (range: TTimeRange) => {
     switch (range) {
-      case 'long':
+      case 'long_term':
         return topArtists_LONG;
-      case 'medium':
+      case 'medium_term':
         return topArtists_MEDIUM;
-      case 'short':
+      case 'short_term':
         return topArtists_SHORT;
       default:
         return topArtists_LONG;
     }
   };
 
-  const setRangeData = (range) => setActiveRange(range);
+  const setRangeData = (range: TTimeRange) => setActiveRange(range);
 
   if (!getRangeData(activeRange)) {
     return (
@@ -98,28 +76,34 @@ export default function Artists() {
             </div>
             <div className="flex items-center justify-center space-x-4">
               <p
-                onClick={() => setRangeData('long')}
+                onClick={() => setRangeData('long_term')}
                 className={
                   'cursor-pointer ' +
-                  (activeRange == 'long' ? classes.active : classes.inactive)
+                  (activeRange == 'long_term'
+                    ? classes.active
+                    : classes.inactive)
                 }
               >
                 All Time
               </p>
               <p
-                onClick={() => setRangeData('medium')}
+                onClick={() => setRangeData('medium_term')}
                 className={
                   'cursor-pointer ' +
-                  (activeRange == 'medium' ? classes.active : classes.inactive)
+                  (activeRange == 'medium_term'
+                    ? classes.active
+                    : classes.inactive)
                 }
               >
                 Last 6 Months
               </p>
               <p
-                onClick={() => setRangeData('short')}
+                onClick={() => setRangeData('short_term')}
                 className={
                   'cursor-pointer ' +
-                  (activeRange == 'short' ? classes.active : classes.inactive)
+                  (activeRange == 'short_term'
+                    ? classes.active
+                    : classes.inactive)
                 }
               >
                 Last 4 Weeks
@@ -133,7 +117,7 @@ export default function Artists() {
             animate="show"
             className="grid grid-cols-2 md:grid-cols-3 gap-y-2 md:gap-6 no-scrollbar mb-[100px]"
           >
-            {getRangeData(activeRange).items.map((item, index) => (
+            {getRangeData(activeRange).map((item, index) => (
               <Card key={index} info={item} />
             ))}
           </motion.div>

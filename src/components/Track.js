@@ -1,9 +1,11 @@
+'use client';
 import Link from 'next/link';
 // import { useRecoilState } from 'recoil';
 import { currentTrackIdState, isPlayingState } from '@/atoms/songAtom';
 import useSpotify from '@/lib/useSpotify';
-import { millisToMinutesAndSeconds } from 'lib/time';
+import { millisToMinutesAndSeconds } from '@/lib/time';
 import { motion } from 'framer-motion';
+import { useState } from 'react';
 
 let motionTrack = {
   hidden: { opacity: 0 },
@@ -15,7 +17,7 @@ export default function Track({ track }) {
   const [currentTrackId, setCurrentTrackId] = useState(currentTrackIdState);
   const [isPlaying, setIsPlaying] = useState(isPlayingState);
   useState(currentTrackIdState);
-
+  // console.log(track);
   const playSong = (track) => {
     const id = track.track?.id || track.id;
     const uri = track.track?.uri || track.uri;

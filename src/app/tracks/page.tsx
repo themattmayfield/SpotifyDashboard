@@ -1,5 +1,6 @@
+'use client';
 import React, { useState, useEffect } from 'react';
-import useSpotify from 'lib/useSpotify';
+import useSpotify from '@/lib/useSpotify';
 import { useSession } from 'next-auth/react';
 import Layout from '../../components/Layout';
 import Track from '../../components/Track';
@@ -7,6 +8,8 @@ import { catchErrors } from '../../utils';
 import dynamic from 'next/dynamic';
 import { motion } from 'framer-motion';
 import { tracksState } from '@/atoms/tracksAtom';
+import useTracksQuery from '@/hooks/useTracksQuery';
+import { TTimeRange } from '@/types';
 // import { useRecoilState } from 'recoil';
 const Loading = dynamic(() => import('@/components/Loading'), { ssr: false });
 
@@ -24,55 +27,34 @@ const classes = {
 };
 
 export default function Tracks() {
-  const spotifyApi = useSpotify();
-  const { data: session, status } = useSession();
-  const [topTracks, setTopTracks] = useState(tracksState);
+  const [activeRange, setActiveRange] = useState<TTimeRange>('long_term');
 
-  const [activeRange, setActiveRange] = useState('long');
+  const { data: topTracks_LONG } = useTracksQuery({
+    time_range: 'long_term',
+  });
+  const { data: topTracks_MEDIUM } = useTracksQuery({
+    time_range: 'medium_term',
+  });
+  const { data: topTracks_SHORT } = useTracksQuery({
+    time_range: 'short_term',
+  });
 
-  useEffect(() => {
-    if (spotifyApi.getAccessToken()) {
-      (async () => {
-        const { body } = await spotifyApi.getMyTopTracks({
-          limit: 50,
-          time_range: 'long_term',
-        });
-
-        setTopTracks((prevState) => ({ ...prevState, long: body.items }));
-      })();
+  const getRangeData = (range: TTimeRange) => {
+    switch (range) {
+      case 'long_term':
+        return topTracks_LONG;
+      case 'medium_term':
+        return topTracks_MEDIUM;
+      case 'short_term':
+        return topTracks_SHORT;
+      default:
+        return topTracks_LONG;
     }
-  }, [session, spotifyApi]);
-
-  const apiCalls = {
-    long: () =>
-      spotifyApi.getMyTopTracks({
-        limit: 50,
-        time_range: 'long_term',
-      }),
-    medium: () =>
-      spotifyApi.getMyTopTracks({
-        limit: 50,
-        time_range: 'medium_term',
-      }),
-    short: () =>
-      spotifyApi.getMyTopTracks({
-        limit: 50,
-        time_range: 'short_term',
-      }),
   };
 
-  const changeRange = async (range) => {
-    setActiveRange(range);
-    if (topTracks[range] !== null) {
-      return;
-    }
-    const { body } = await apiCalls[range]();
-    setTopTracks((prevState) => ({ ...prevState, [range]: body.items }));
-  };
+  const setRangeData = (range: TTimeRange) => setActiveRange(range);
 
-  const setRangeData = (range) => catchErrors(changeRange(range));
-
-  if (!topTracks[activeRange]) {
+  if (!getRangeData(activeRange)) {
     return (
       <Layout>
         <Loading />
@@ -90,28 +72,34 @@ export default function Tracks() {
             </div>
             <div className="flex items-center justify-center space-x-4">
               <p
-                onClick={() => setRangeData('long')}
+                onClick={() => setRangeData('long_term')}
                 className={
                   'cursor-pointer ' +
-                  (activeRange == 'long' ? classes.active : classes.inactive)
+                  (activeRange == 'long_term'
+                    ? classes.active
+                    : classes.inactive)
                 }
               >
                 All Time
               </p>
               <p
-                onClick={() => setRangeData('medium')}
+                onClick={() => setRangeData('medium_term')}
                 className={
                   'cursor-pointer ' +
-                  (activeRange == 'medium' ? classes.active : classes.inactive)
+                  (activeRange == 'medium_term'
+                    ? classes.active
+                    : classes.inactive)
                 }
               >
                 Last 6 Months
               </p>
               <p
-                onClick={() => setRangeData('short')}
+                onClick={() => setRangeData('short_term')}
                 className={
                   'cursor-pointer ' +
-                  (activeRange == 'short' ? classes.active : classes.inactive)
+                  (activeRange == 'short_term'
+                    ? classes.active
+                    : classes.inactive)
                 }
               >
                 Last 4 Weeks
@@ -124,7 +112,7 @@ export default function Tracks() {
             animate="show"
             className="flex flex-col gap-4 no-scrollbar text-white mb-[100px]"
           >
-            {topTracks[activeRange].map((track, index) => (
+            {getRangeData(activeRange).map((track, index) => (
               <Track key={index} track={track} />
             ))}
           </motion.div>

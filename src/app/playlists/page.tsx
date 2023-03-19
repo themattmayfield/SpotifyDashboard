@@ -1,11 +1,13 @@
+'use client';
 import React, { useState, useEffect } from 'react';
 import Layout from '@/components/Layout';
 import Playlist from '@/components/Playlist';
 import { catchErrors } from '@/utils';
-import useSpotify from 'lib/useSpotify';
+import useSpotify from '@/lib/useSpotify';
 import { useSession } from 'next-auth/react';
 import dynamic from 'next/dynamic';
 import { motion } from 'framer-motion';
+import usePlaylistsQuery from '@/hooks/usePlaylistsQuery';
 const Loading = dynamic(() => import('@/components/Loading'), { ssr: false });
 
 let parent = {
@@ -20,17 +22,7 @@ export default function Playlists() {
   const spotifyApi = useSpotify();
   const { data: session, status } = useSession();
 
-  const [playlists, setPlaylists] = useState(null);
-
-  useEffect(() => {
-    if (spotifyApi.getAccessToken()) {
-      (async () => {
-        const { body } = await spotifyApi.getUserPlaylists();
-
-        setPlaylists(body.items);
-      })();
-    }
-  }, [session, spotifyApi]);
+  const { data: playlists } = usePlaylistsQuery({});
 
   if (!playlists) {
     return (

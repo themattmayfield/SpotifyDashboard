@@ -1,4 +1,4 @@
-import Link from "next/link";
+import Link from 'next/link';
 
 export default function RightSideBar({ recentlyPlayed }) {
   return (
@@ -38,7 +38,7 @@ export default function RightSideBar({ recentlyPlayed }) {
         </div>
 
         <div className="w-full mt-4">
-          <Link href="/recent">
+          <Link href="/recentTracks">
             <button className="bg-[#383838] hover:bg-[#686868] transition duration-150 ease-in-out text-sm rounded-3xl px-4 py-3 sm:py-4 w-full focus:outline-none">
               View All
             </button>

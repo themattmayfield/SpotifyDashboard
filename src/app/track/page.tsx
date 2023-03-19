@@ -1,36 +1,23 @@
+'use client';
 import React, { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import Chart from '@/components/Chart';
 import Layout from '@/components/Layout';
-import useSpotify from 'lib/useSpotify';
+import useSpotify from '@/lib/useSpotify';
 import { useSession } from 'next-auth/react';
-import { getYear } from 'lib/formatters';
+import { getYear } from '@/lib/formatters';
 import dynamic from 'next/dynamic';
+import useTrackQuery from '@/hooks/useTrackQuery';
+import useTrackFeaturesQuery from '@/hooks/useTrackFeaturesQuery';
 
 const Loading = dynamic(() => import('@/components/Loading'), { ssr: false });
 
 const Track = () => {
-  const router = useRouter();
-  const { query } = router;
-  const spotifyApi = useSpotify();
-  const { data: session, status } = useSession();
-  const [track, setTrack] = useState(null);
+  const searchParams = useSearchParams();
+  const id = searchParams?.get('id') as string;
 
-  const [audioFeatures, setAudioFeatures] = useState(null);
-
-  useEffect(() => {
-    if (query.id && spotifyApi.getAccessToken()) {
-      (async () => {
-        const { body: track } = await spotifyApi.getTrack(query.id);
-        const { body: features } = await spotifyApi.getAudioFeaturesForTrack(
-          query.id
-        );
-
-        setTrack(track);
-        setAudioFeatures(features);
-      })();
-    }
-  }, [session, spotifyApi, query]);
+  const { data: track } = useTrackQuery({ id });
+  const { data: audioFeatures } = useTrackFeaturesQuery({ id });
 
   if (!track || !audioFeatures) {
     return (

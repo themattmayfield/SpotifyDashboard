@@ -58,7 +58,7 @@ export const authOptions: NextAuthOptions = {
         return token;
       }
 
-      // Access yoken has expired, so we need to refresh it...
+      // Access token has expired, so we need to refresh it...
       console.log('ACCESS TOKEN HAS EXPIRES, REFRESHING...');
       return await refreshAccessToken(token);
     },

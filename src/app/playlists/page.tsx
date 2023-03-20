@@ -19,10 +19,7 @@ let parent = {
 };
 
 export default function Playlists() {
-  const spotifyApi = useSpotify();
-  const { data: session, status } = useSession();
-
-  const { data: playlists } = usePlaylistsQuery({});
+  const { data: playlists } = usePlaylistsQuery();
 
   if (!playlists) {
     return (

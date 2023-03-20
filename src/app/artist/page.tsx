@@ -18,7 +18,7 @@ export default function Artist() {
     id,
   });
 
-  const isFollowingArtist = followingArtist && followingArtist[0];
+  const isFollowingArtist = followingArtist?.[0];
 
   const { mutateAsync: handleFollow } = useIsFollowingMutation({
     id,

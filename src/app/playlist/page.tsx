@@ -1,13 +1,11 @@
 'use client';
 import React, { useState, useEffect } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
 import Chart from '@/components/Chart';
 import Track from '@/components/Track';
 import PlaylistComponent from '@/components/Playlist';
 import Layout from '../../components/Layout';
-import { catchErrors } from '@/utils/index';
-import useSpotify from '@/lib/useSpotify';
-import { useSession } from 'next-auth/react';
+
 import dynamic from 'next/dynamic';
 import usePlaylistQuery from '@/hooks/usePlaylistQuery';
 import usePlaylistFeaturesQuery from '@/hooks/usePlaylistFeaturesQuery';
@@ -18,10 +16,7 @@ const Playlist = () => {
   const searchParams = useSearchParams();
   const id = searchParams?.get('id') as string;
 
-  const { data: playlist } = usePlaylistQuery(id, {
-    enabled: !!id,
-  });
-  console.log('playlist', playlist);
+  const { data: playlist } = usePlaylistQuery(id);
 
   const { data: audioFeatures } = usePlaylistFeaturesQuery(
     id,
@@ -30,19 +25,6 @@ const Playlist = () => {
       enabled: !!playlist,
     }
   );
-
-  // useEffect(() => {
-  //   if (query.id && spotifyApi.getAccessToken()) {
-  //     (async () => {
-  //       const { body: playlist } = await spotifyApi.getPlaylist(query.id);
-  //       const { body: audioFeatures } =
-  //         await spotifyApi.getAudioFeaturesForTracks(playlist.tracks.items);
-  //       console.log(playlist);
-  //       setPlaylist(playlist);
-  //       setAudioFeatures(audioFeatures);
-  //     })();
-  //   }
-  // }, [session, spotifyApi, query]);
 
   if (!playlist || !audioFeatures) {
     return (

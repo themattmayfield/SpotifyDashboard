@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import useSongInfo from 'lib/useSongInfo';
-import useSpotify from 'lib/useSpotify';
+import useSpotify from '@/lib/useSpotify';
 import { useSession } from 'next-auth/react';
 import { debounce } from 'lodash';
 import { catchErrors } from '@/utils';

@@ -1,19 +1,17 @@
-import spotifyApi from '@/lib/spotify';
+import useSpotify from '@/lib/useSpotify';
 import { useQuery } from '@tanstack/react-query';
 
-const getData = async () => {
-  const { body } = await spotifyApi
-    .getUserPlaylists()
-    .then((data: any) => data);
-
-  return body;
-};
-
 const usePlaylistsQuery = () => {
-  return useQuery(['playlists'], () => getData().then((data) => data.items), {
+  const spotifyApi = useSpotify();
+  return useQuery({
+    queryKey: ['playlists'],
+    queryFn: () => {
+      return spotifyApi.getUserPlaylists().then(({ body }: any) => body.items);
+    },
     onError: (error) => {
       console.log('error: ', error);
     },
+    enabled: !!spotifyApi.getAccessToken(),
   });
 };
 

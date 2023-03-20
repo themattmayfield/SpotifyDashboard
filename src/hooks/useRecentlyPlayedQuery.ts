@@ -1,26 +1,19 @@
-import spotifyApi from '@/lib/spotify';
+import useSpotify from '@/lib/useSpotify';
 import { useQuery } from '@tanstack/react-query';
 
-const getData = async () => {
-  const { body } = await spotifyApi
-    .getMyRecentlyPlayedTracks({
-      limit: 50,
-    })
-    .then((data: any) => data);
-
-  return body;
-};
-
 const useRecentlyPlayedQuery = () => {
-  return useQuery(
-    ['recentlyPlayed'],
-    () => getData().then((data) => data.items),
-    {
-      onError: (error) => {
-        console.log('error: ', error);
-      },
-    }
-  );
+  const spotifyApi = useSpotify();
+  return useQuery({
+    queryKey: ['recentlyPlayed'],
+    queryFn: () =>
+      spotifyApi
+        .getMyRecentlyPlayedTracks({ limit: 50 })
+        .then(({ body }: any) => body.items),
+    onError: (error) => {
+      console.log('error: ', error);
+    },
+    enabled: !!spotifyApi.getAccessToken(),
+  });
 };
 
 export default useRecentlyPlayedQuery;

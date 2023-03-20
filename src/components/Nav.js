@@ -1,27 +1,14 @@
-import React, { useState, useEffect } from 'react';
+'use client';
+
 import { Popover, Transition } from '@headlessui/react';
 import { Fragment } from 'react';
-import useSpotify from '@/lib/useSpotify';
 import { AiFillCaretDown } from 'react-icons/ai';
 import { RiUser6Fill } from 'react-icons/ri';
 import { signOut, useSession } from 'next-auth/react';
+import useMeQuery from '@/hooks/useMeQuery';
 
 export default function Default({ search, setSearch }) {
-  const spotifyApi = useSpotify();
-  const { data: session, status } = useSession();
-
-  // const [user, setUser] = useState(null);
-  const [user, setUser] = useState();
-  useEffect(() => {
-    if (spotifyApi.getAccessToken()) {
-      (async () => {
-        const { body } = await spotifyApi.getMe();
-        console.log(body);
-
-        setUser(body);
-      })();
-    }
-  }, [session, spotifyApi]);
+  const { data: user } = useMeQuery();
 
   return (
     <header className="flex justify-end px-2 py-4 lg:p-6">

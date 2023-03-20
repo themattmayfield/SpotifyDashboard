@@ -1,19 +1,19 @@
-import spotifyApi from '@/lib/spotify';
+import useSpotify from '@/lib/useSpotify';
 import { useQuery } from '@tanstack/react-query';
 
-const getData = async (id: string) => {
-  const { body } = await spotifyApi
-    .getAudioFeaturesForTrack(id)
-    .then((data: any) => data);
-
-  return body;
-};
-
 const useTrackFeaturesQuery = ({ id }: { id: string }) => {
-  return useQuery(['features', id], () => getData(id).then((data) => data), {
+  const spotifyApi = useSpotify();
+  return useQuery({
+    queryKey: ['trackFeatures', id],
+    queryFn: () => {
+      return spotifyApi
+        .getAudioFeaturesForTrack(id)
+        .then(({ body }: any) => body);
+    },
     onError: (error) => {
       console.log('error: ', error);
     },
+    enabled: !!spotifyApi.getAccessToken(),
   });
 };
 

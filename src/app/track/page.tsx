@@ -1,10 +1,8 @@
 'use client';
-import React, { useState, useEffect } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
+
+import { useSearchParams } from 'next/navigation';
 import Chart from '@/components/Chart';
 import Layout from '@/components/Layout';
-import useSpotify from '@/lib/useSpotify';
-import { useSession } from 'next-auth/react';
 import { getYear } from '@/lib/formatters';
 import dynamic from 'next/dynamic';
 import useTrackQuery from '@/hooks/useTrackQuery';
@@ -16,7 +14,9 @@ const Track = () => {
   const searchParams = useSearchParams();
   const id = searchParams?.get('id') as string;
 
-  const { data: track } = useTrackQuery({ id });
+  const { data: track } = useTrackQuery(id);
+  console.log(track);
+
   const { data: audioFeatures } = useTrackFeaturesQuery({ id });
 
   if (!track || !audioFeatures) {

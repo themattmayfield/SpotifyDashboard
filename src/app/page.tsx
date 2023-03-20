@@ -22,14 +22,12 @@ let parent = {
 const Loading = dynamic(() => import('@/components/Loading'), { ssr: false });
 
 export default function Profile() {
-  const spotifyApi = useSpotify();
-  const { data: session, status } = useSession();
-
-  const { data: recentData } = useRecentlyPlayedQuery({});
+  const { data: recentData } = useRecentlyPlayedQuery();
 
   const { data: tracksData } = useTracksQuery({
     time_range: 'long_term',
   });
+
   const { data: topArtists_LONG_Data } = useArtistsQuery({
     time_range: 'long_term',
   });

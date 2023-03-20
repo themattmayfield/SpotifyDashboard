@@ -1,14 +1,10 @@
 'use client';
 
 import React, { useState } from 'react';
-import useSpotify from '@/lib/useSpotify';
-import { useSession } from 'next-auth/react';
 import Layout from '@/components/Layout';
 import Card from '@/components/Card';
 import dynamic from 'next/dynamic';
 import { motion } from 'framer-motion';
-
-import { useQuery } from '@tanstack/react-query';
 import useArtistsQuery from '@/hooks/useArtistsQuery';
 import { TTimeRange } from '@/types';
 
@@ -28,9 +24,6 @@ const classes = {
 };
 
 export default function Artists() {
-  const spotifyApi = useSpotify();
-  const { data: session, status } = useSession();
-
   const [activeRange, setActiveRange] = useState<TTimeRange>('long_term');
 
   const { data: topArtists_LONG } = useArtistsQuery({

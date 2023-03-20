@@ -1,4 +1,4 @@
-import spotifyApi from '@/lib/spotify';
+import useSpotify from '@/lib/useSpotify';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 const useIsFollowingMutation = ({
@@ -9,18 +9,12 @@ const useIsFollowingMutation = ({
   id: string;
 }) => {
   const queryClient = useQueryClient();
-  console.log('here', id);
-
+  const spotifyApi = useSpotify();
   return useMutation({
     mutationFn: async () => {
       if (isFollowingArtist) {
-        console.log('isFollowingArtist: ', isFollowingArtist);
-
-        console.log('following');
         return await spotifyApi.unfollowArtists([id]);
       } else {
-        console.log('not following');
-
         return await spotifyApi.followArtists([id]);
       }
     },

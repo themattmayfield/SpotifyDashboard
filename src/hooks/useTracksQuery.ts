@@ -1,32 +1,24 @@
-import spotifyApi from '@/lib/spotify';
+import useSpotify from '@/lib/useSpotify';
 import { TTimeRange } from '@/types';
 import { useQuery } from '@tanstack/react-query';
-
-const getData = async (time_range: string) => {
-  const { body } = await spotifyApi
-    .getMyTopTracks({
-      limit: 50,
-      time_range,
-    })
-    .then((data: any) => data);
-
-  return body;
-};
 
 type UseTracksQueryProps = {
   time_range: TTimeRange;
 };
 
 const useTracksQuery = ({ time_range }: UseTracksQueryProps) => {
-  return useQuery(
-    ['tracks', time_range],
-    () => getData(time_range).then((data) => data.items),
-    {
-      onError: (error) => {
-        console.log('error: ', error);
-      },
-    }
-  );
+  const spotifyApi = useSpotify();
+  return useQuery({
+    queryKey: ['tracks', time_range],
+    queryFn: () =>
+      spotifyApi
+        .getMyTopTracks({ limit: 50, time_range })
+        .then(({ body }: any) => body.items),
+    onError: (error) => {
+      console.log('error: ', error);
+    },
+    enabled: !!spotifyApi.getAccessToken(),
+  });
 };
 
 export default useTracksQuery;

@@ -1,12 +1,11 @@
 import useSpotify from '@/lib/useSpotify';
 import { useQuery } from '@tanstack/react-query';
 
-const useIsFollowingArtist = ({ id }: { id: string }) => {
+const useTracksQuery = () => {
   const spotifyApi = useSpotify();
   return useQuery({
-    queryKey: ['isFollowingArtist', id],
-    queryFn: () =>
-      spotifyApi.isFollowingArtists([id]).then(({ body }: any) => body),
+    queryKey: ['me'],
+    queryFn: () => spotifyApi.getMe().then(({ body }: any) => body),
     onError: (error) => {
       console.log('error: ', error);
     },
@@ -14,4 +13,4 @@ const useIsFollowingArtist = ({ id }: { id: string }) => {
   });
 };
 
-export default useIsFollowingArtist;
+export default useTracksQuery;

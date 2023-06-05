@@ -2,7 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
-body, #__next {
+body {
   display: flex;
   flex-direction: column;
   height: 100vh;
@@ -10,7 +10,7 @@ body, #__next {
 body {
   background-color: black;
 }
-/* 
+
 .sticky-nav {
   position: sticky;
   z-index: 10;
@@ -34,7 +34,7 @@ a {
 
 * {
   box-sizing: border-box;
-} */
+}
 
 .no-scrollbar::-webkit-scrollbar {
   display: none;

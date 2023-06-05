@@ -8,6 +8,7 @@ import spotifyApi from '@/lib/spotify';
 import { getServerSession } from 'next-auth';
 import { authOptions } from './auth/[...nextauth]/route';
 import handleServerSession from '@/lib/handleServerSession';
+import Nav from '@/components/Nav';
 
 const Loading = dynamic(() => import('@/components/Loading'), { ssr: false });
 
@@ -38,26 +39,30 @@ export default async function Profile() {
   const topArtists_SHORT = topArtists_SHORT_data.items?.slice(0, 4);
 
   return (
-    <div className="flex">
-      <div className="flex flex-col overflow-x-hidden lg:mr-4 overflow-y-scroll mb-[100px] no-scrollbar h-full">
-        <div className="lg:hidden mb-16 px-2">
-          <RightSideBar recentlyPlayed={recentlyPlayed} />
-        </div>
-        <div className="pl-2 pr-0 mb-16">
-          <Subtitle link="/artists" subtitle="Top Artist" />
-          <div className="flex flex-nowrap space-x-6 overflow-x-scroll no-scrollbar pl-2 lg:pl-0">
-            {topArtists_LONG.map((item, index) => (
-              <Card profile key={index} info={item} />
-            ))}
+    <div className="h-full overflow-hidden">
+      {/* @ts-expect-error Server Component */}
+      <Nav />
+      <div className="flex h-full">
+        <div className="flex flex-col overflow-x-hidden lg:mr-4 overflow-y-scroll mb-[100px] no-scrollbar h-full">
+          <div className="lg:hidden mb-16 px-2">
+            <RightSideBar recentlyPlayed={recentlyPlayed} />
+          </div>
+          <div className="pl-2 pr-0 mb-16">
+            <Subtitle link="/artists" subtitle="Top Artist" />
+            <div className="flex flex-nowrap space-x-6 overflow-x-scroll no-scrollbar pl-2 lg:pl-0">
+              {topArtists_LONG.map((item, index) => (
+                <Card profile key={index} info={item} />
+              ))}
+            </div>
+          </div>
+          <div className="px-2 lg:pl-2 flex flex-col xl:flex-row 2xl:flex-nowrap no-scrollbar gap-y-16 gap-x-8">
+            <TopTracks topTracksShort={topTracks} />
+            <TopArtists topArtistsShort={topArtists_SHORT} />
           </div>
         </div>
-        <div className="px-2 lg:pl-2 flex flex-col xl:flex-row 2xl:flex-nowrap no-scrollbar gap-y-16 gap-x-8">
-          <TopTracks topTracksShort={topTracks} />
-          <TopArtists topArtistsShort={topArtists_SHORT} />
+        <div className="hidden lg:block">
+          <RightSideBar recentlyPlayed={recentlyPlayed} />
         </div>
-      </div>
-      <div className="hidden lg:block">
-        <RightSideBar recentlyPlayed={recentlyPlayed} />
       </div>
     </div>
   );

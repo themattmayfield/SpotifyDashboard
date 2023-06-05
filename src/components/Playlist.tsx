@@ -25,7 +25,7 @@ export default function Playlist({
       variants={motionPlaylist}
       className="inline-block max-w-min mx-auto "
     >
-      <Link href={`/playlist/?id=${playlist.id}`}>
+      <Link href={`/playlists/${playlist.id}`}>
         {playlist.images.length ? (
           <div
             style={{

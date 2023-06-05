@@ -1,9 +1,8 @@
-import Nav from './Nav';
 import SideNav from './SideNav';
-import Head from 'next/head';
+
 import PageTransition from './PageTransition';
 
-export default function Layout({ children, profile }) {
+export default function Layout({ children }: { children: React.ReactNode }) {
   return (
     <>
       {/* <Head>
@@ -14,12 +13,8 @@ export default function Layout({ children, profile }) {
       <PageTransition>
         <SideNav />
         <div className="flex flex-1 flex-col overflow-hidden">
-          {profile && <Nav />}
-          <main
-            className={
-              'h-full no-scrollbar ' + (!profile ? 'overflow-scroll ' : '')
-            }
-          >
+          {/* {true && <Nav />} */}
+          <main className="h-full no-scrollbar overflow-scroll">
             {children}
           </main>
         </div>

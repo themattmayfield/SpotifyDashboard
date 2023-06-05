@@ -9,13 +9,9 @@ import handleServerSession from '@/lib/handleServerSession';
 
 const Loading = dynamic(() => import('@/components/Loading'), { ssr: false });
 
-const Playlist = async ({
-  searchParams,
-}: {
-  searchParams: { [key: string]: string | string[] | undefined };
-}) => {
+const Playlist = async ({ params }: { params: { id: string } }) => {
   await handleServerSession();
-  const { id } = searchParams;
+  const { id } = params;
 
   const { body: playlist } = await spotifyApi.getPlaylist(id);
 

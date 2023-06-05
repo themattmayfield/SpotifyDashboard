@@ -1,24 +1,8 @@
 import spotifyApi from '@/lib/spotify';
 import NavClient from './NavClient';
-import { getServerSession } from 'next-auth';
-import { authOptions } from '@/app/auth/[...nextauth]/route';
-
-export default async function Default() {
-  const session = await getServerSession(authOptions);
-  if (
-    session.error === 'RefreshAccessTokenError' ||
-    !session.user.accessToken
-  ) {
-    console.log('going to signin');
-
-    // signIn();
-  }
-
-  if (session?.user.accessToken) {
-    await spotifyApi.setAccessToken(session.user.accessToken);
-  }
-
-  console.log('session', session);
+import handleServerSession from '@/lib/handleServerSession';
+const Nav = async () => {
+  await handleServerSession();
   const { body: user } = await spotifyApi.getMe();
 
   return (
@@ -26,4 +10,5 @@ export default async function Default() {
       <NavClient user={user} />
     </header>
   );
-}
+};
+export default Nav;

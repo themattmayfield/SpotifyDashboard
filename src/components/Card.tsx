@@ -16,7 +16,7 @@ export default function Card({
 }) {
   return (
     <motion.div variants={card} className="inline-block max-w-min mx-auto ">
-      <Link href={`/artist/?id=${info.id}`}>
+      <Link href={`/artists/${info.id}`}>
         <div
           style={{
             backgroundImage: `url(${info.images[1].url})`,

@@ -10,7 +10,7 @@ export default function RightSideBar({ recentlyPlayed }) {
             {recentlyPlayed?.map((item, index) => (
               <div key={index} className="flex">
                 <div className="mr-4">
-                  <Link href={`/artist/?id=${item.track.artists[0].id}`}>
+                  <Link href={`/artists/${item.track.artists[0].id}`}>
                     <div
                       className="rounded-full bg-cover bg-custom-darkgray bg-center w-8 h-8 sm:w-12 sm:h-12 lg:w-16 lg:h-16 cursor-pointer"
                       style={{
@@ -21,12 +21,12 @@ export default function RightSideBar({ recentlyPlayed }) {
                 </div>
 
                 <div className="overflow-hidden">
-                  <Link href={`/artist/?id=${item.track.artists[0].id}`}>
+                  <Link href={`/artists/${item.track.artists[0].id}`}>
                     <div className="overflow-hidden truncate lg:w-48 cursor-pointer hover:underline">
                       {item.track.artists[0].name}
                     </div>
                   </Link>
-                  <Link href={`/track/?id=${item.track.id}`}>
+                  <Link href={`/tracks/${item.track.id}`}>
                     <p className="text-xs text-[#565656] overflow-hidden truncate lg:w-48 hover:underline cursor-pointer">
                       {item.track.name}
                     </p>

@@ -2,17 +2,13 @@ import { useSearchParams } from 'next/navigation';
 import dynamic from 'next/dynamic';
 import spotifyApi from '@/lib/spotify';
 import { getServerSession } from 'next-auth';
-import { authOptions } from '../auth/[...nextauth]/route';
+import { authOptions } from '../../auth/[...nextauth]/route';
 import handleServerSession from '@/lib/handleServerSession';
 import FollowButton from '@/components/Artist/FollowButton';
 const Loading = dynamic(() => import('@/components/Loading'), { ssr: false });
 
-export default async function Artist({
-  searchParams,
-}: {
-  searchParams: { [key: string]: string | string[] | undefined };
-}) {
-  const { id } = searchParams;
+export default async function Artist({ params }: { params: { id: string } }) {
+  const { id } = params;
 
   await handleServerSession();
 

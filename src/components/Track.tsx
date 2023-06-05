@@ -19,19 +19,19 @@ export default function Track({
       className="flex items-center justify-between  cursor-pointer transition duration-150 ease-in-out hover:bg-custom-darkgray"
     >
       <div className="flex space-x-6 items-center">
-        <Link href={`/track/?id=${track.track?.id || track.id}`}>
+        <Link href={`/tracks/${track.track?.id || track.id}`}>
           <img
             className="w-20 h-20"
             src={track.track?.album.images[0].url || track.album?.images[0].url}
           />
         </Link>
         <div className="flex flex-col">
-          <Link href={`/track/?id=${track.track?.id || track.id}`}>
+          <Link href={`/tracks/${track.track?.id || track.id}`}>
             <p className="hover:underline">{track.track?.name || track.name}</p>
           </Link>
           <div className="flex flex-col md:flex-row text-[#565656]">
             <Link
-              href={`/artist/?id=${
+              href={`/artists/${
                 track.track?.artists[0].id || track.artists[0].id
               }`}
             >

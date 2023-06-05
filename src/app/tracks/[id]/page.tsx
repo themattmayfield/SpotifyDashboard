@@ -2,13 +2,9 @@ import { getYear } from '@/lib/formatters';
 import spotifyApi from '@/lib/spotify';
 import handleServerSession from '@/lib/handleServerSession';
 
-const Track = async ({
-  searchParams,
-}: {
-  searchParams: { [key: string]: string | string[] | undefined };
-}) => {
+const Track = async ({ params }: { params: { id: string } }) => {
   await handleServerSession();
-  const { id } = searchParams;
+  const { id } = params;
   const { body: track } = await spotifyApi.getTrack(id);
 
   const { body: audioFeatures } = await spotifyApi.getAudioFeaturesForTrack(id);

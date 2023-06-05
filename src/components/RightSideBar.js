@@ -7,7 +7,7 @@ export default function RightSideBar({ recentlyPlayed }) {
         <p className="text-xl mb-6 ">Recently Played</p>
         <div className="">
           <div className="grid grid-cols-2 lg:flex flex-col gap-x-2 lg:gap-x-0 gap-y-2 lg:space-y-6">
-            {recentlyPlayed.map((item, index) => (
+            {recentlyPlayed?.map((item, index) => (
               <div key={index} className="flex">
                 <div className="mr-4">
                   <Link href={`/artist/?id=${item.track.artists[0].id}`}>

@@ -2,7 +2,7 @@
 
 import { useSearchParams } from 'next/navigation';
 import Chart from '@/components/Chart';
-import Layout from '@/components/Layout';
+
 import { getYear } from '@/lib/formatters';
 import dynamic from 'next/dynamic';
 import useTrackQuery from '@/hooks/useTrackQuery';
@@ -20,15 +20,11 @@ const Track = () => {
   const { data: audioFeatures } = useTrackFeaturesQuery({ id });
 
   if (!track || !audioFeatures) {
-    return (
-      <Layout>
-        <Loading />
-      </Layout>
-    );
+    return <Loading />;
   }
 
   return (
-    <Layout>
+    <>
       <div className="no-scrollbar overflow-x-hidden max-w-7xl mx-auto px-2 md:px-4 pt-10 md:pt-12 pb-24 flex flex-col items-center">
         <div className="flex flex-col items-center md:flex-row text-[#565656] md:space-x-8">
           <img
@@ -68,7 +64,7 @@ const Track = () => {
           {audioFeatures && <Chart features={audioFeatures} type="" />}
         </div>
       </div>
-    </Layout>
+    </>
   );
 };
 

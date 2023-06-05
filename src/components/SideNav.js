@@ -36,6 +36,7 @@ const navItems = [
 
 export default function SideNav({ activeMobile, switchNavSong, track }) {
   const router = useRouter();
+
   return (
     <>
       {/* Mobile */}

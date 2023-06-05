@@ -9,8 +9,6 @@
   },
   "dependencies": {
     "@headlessui/react": "1.7.14",
-    "@tanstack/react-query": "^4.26.1",
-    "@tanstack/react-query-devtools": "4.29.12",
     "@types/spotify-web-api-node": "^5.0.7",
     "chart.js": "4.3.0",
     "clsx": "1.2.1",
@@ -22,11 +20,11 @@
     "react-dom": "18.2.0",
     "react-icons": "4.9.0",
     "spotify-web-api-node": "5.0.2",
+    "tailwind-merge": "^1.13.0",
     "tailwindcss": "3.3.2",
     "typescript": "5.0.4"
   },
   "devDependencies": {
-    "@tanstack/eslint-plugin-query": "4.29.9",
     "@types/node": "20.2.5",
     "@types/react": "18.2.7",
     "autoprefixer": "10.4.14",

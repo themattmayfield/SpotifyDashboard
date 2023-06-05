@@ -1,27 +1,17 @@
-'use client';
-
-import { useSearchParams } from 'next/navigation';
-import Chart from '@/components/Chart';
-
 import { getYear } from '@/lib/formatters';
-import dynamic from 'next/dynamic';
-import useTrackQuery from '@/hooks/useTrackQuery';
-import useTrackFeaturesQuery from '@/hooks/useTrackFeaturesQuery';
+import spotifyApi from '@/lib/spotify';
+import handleServerSession from '@/lib/handleServerSession';
 
-const Loading = dynamic(() => import('@/components/Loading'), { ssr: false });
+const Track = async ({
+  searchParams,
+}: {
+  searchParams: { [key: string]: string | string[] | undefined };
+}) => {
+  await handleServerSession();
+  const { id } = searchParams;
+  const { body: track } = await spotifyApi.getTrack(id);
 
-const Track = () => {
-  const searchParams = useSearchParams();
-  const id = searchParams?.get('id') as string;
-
-  const { data: track } = useTrackQuery(id);
-  console.log(track);
-
-  const { data: audioFeatures } = useTrackFeaturesQuery({ id });
-
-  if (!track || !audioFeatures) {
-    return <Loading />;
-  }
+  const { body: audioFeatures } = await spotifyApi.getAudioFeaturesForTrack(id);
 
   return (
     <>
@@ -60,9 +50,9 @@ const Track = () => {
             </div>
           </div>
         </div>
-        <div className="w-full md:max-w-xl">
+        {/* <div className="w-full md:max-w-xl">
           {audioFeatures && <Chart features={audioFeatures} type="" />}
-        </div>
+        </div> */}
       </div>
     </>
   );

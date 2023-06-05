@@ -7,25 +7,12 @@ import dynamic from 'next/dynamic';
 import spotifyApi from '@/lib/spotify';
 import { getServerSession } from 'next-auth';
 import { authOptions } from './auth/[...nextauth]/route';
+import handleServerSession from '@/lib/handleServerSession';
 
 const Loading = dynamic(() => import('@/components/Loading'), { ssr: false });
 
 export default async function Profile() {
-  const session = await getServerSession(authOptions);
-  if (
-    session.error === 'RefreshAccessTokenError' ||
-    !session.user.accessToken
-  ) {
-    console.log('going to signin');
-
-    // signIn();
-  }
-
-  if (session?.user.accessToken) {
-    await spotifyApi.setAccessToken(session.user.accessToken);
-  }
-
-  console.log('session', session);
+  await handleServerSession();
 
   const { body: recentData } = await spotifyApi.getMyRecentlyPlayedTracks({
     limit: 50,

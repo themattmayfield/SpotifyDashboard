@@ -1,7 +1,7 @@
 module.exports = {
   root: true,
   parser: '@typescript-eslint/parser',
-  plugins: ['@typescript-eslint', '@tanstack/query'],
+  plugins: ['@typescript-eslint'],
   extends: ['plugin:@next/next/recommended'],
   parserOptions: {
     tsconfigRootDir: __dirname,
@@ -15,8 +15,6 @@ module.exports = {
     node: true,
   },
   rules: {
-    '@tanstack/query/exhaustive-deps': 'warn',
-    '@tanstack/query/prefer-query-object-syntax': 'error',
     'no-restricted-exports': [
       'off',
       {

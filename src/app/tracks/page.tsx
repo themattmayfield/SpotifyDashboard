@@ -3,7 +3,7 @@ import spotifyApi from '@/lib/spotify';
 import TermSelect from '@/components/Tracks/TermSelect';
 
 export default async function Tracks() {
-  handleServerSession();
+  await handleServerSession();
 
   const { body: topTracks_LONG } = await spotifyApi.getMyTopTracks({
     limit: 50,

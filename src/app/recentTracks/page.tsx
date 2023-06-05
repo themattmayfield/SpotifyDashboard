@@ -1,27 +1,17 @@
-'use client';
-import React, { useState, useEffect } from 'react';
-import Layout from '@/components/Layout';
+import React from 'react';
 import Track from '@/components/Track';
-import { useSession } from 'next-auth/react';
 import dynamic from 'next/dynamic';
-import { motion } from 'framer-motion';
-import useRecentlyPlayedQuery from '@/hooks/useRecentlyPlayedQuery';
+import StaggerChildren from '../playlists/StaggerChildren';
+import spotifyApi from '@/lib/spotify';
+import handleServerSession from '@/lib/handleServerSession';
 const Loading = dynamic(() => import('@/components/Loading'), { ssr: false });
 
-let parent = {
-  show: {
-    transition: {
-      staggerChildren: 0.1,
-    },
-  },
-};
-
-export default function Recent() {
-  const { data: recentlyPlayed } = useRecentlyPlayedQuery({});
-
-  if (!recentlyPlayed) {
-    return <Loading />;
-  }
+export default async function Recent() {
+  await handleServerSession();
+  const { body } = await spotifyApi.getMyRecentlyPlayedTracks({
+    limit: 50,
+  });
+  const recentlyPlayed = body.items;
 
   return (
     <>
@@ -30,16 +20,11 @@ export default function Recent() {
           <p className="text-2xl font-semibold">Recently Played Tracks</p>
         </div>
 
-        <motion.div
-          variants={parent}
-          initial="hidden"
-          animate="show"
-          className="flex flex-col gap-4 no-scrollbar text-white mb-[100px]"
-        >
+        <StaggerChildren className="flex flex-col gap-4 no-scrollbar text-white mb-[100px]">
           {recentlyPlayed.map((track, index) => (
             <Track key={index} track={track} />
           ))}
-        </motion.div>
+        </StaggerChildren>
       </div>
     </>
   );

@@ -1,29 +1,13 @@
-'use client';
-import React, { useState, useEffect } from 'react';
-import Layout from '@/components/Layout';
+import spotifyApi from '@/lib/spotify';
+import handleServerSession from '@/lib/handleServerSession';
+import StaggerChildren from './StaggerChildren';
 import Playlist from '@/components/Playlist';
-import { catchErrors } from '@/utils';
-import useSpotify from '@/lib/useSpotify';
-import { useSession } from 'next-auth/react';
-import dynamic from 'next/dynamic';
-import { motion } from 'framer-motion';
-import usePlaylistsQuery from '@/hooks/usePlaylistsQuery';
-const Loading = dynamic(() => import('@/components/Loading'), { ssr: false });
 
-let parent = {
-  show: {
-    transition: {
-      staggerChildren: 0.1,
-    },
-  },
-};
+export default async function Playlists() {
+  await handleServerSession();
 
-export default function Playlists() {
-  const { data: playlists } = usePlaylistsQuery();
-
-  if (!playlists) {
-    return <Loading />;
-  }
+  const { body } = await spotifyApi.getUserPlaylists();
+  const playlists = body.items;
 
   return (
     <div className="no-scrollbar overflow-x-hidden max-w-7xl mx-auto px-2 md:px-4 pt-10 md:pt-24">
@@ -33,16 +17,11 @@ export default function Playlists() {
         </div>
       </div>
 
-      <motion.div
-        variants={parent}
-        initial="hidden"
-        animate="show"
-        className="grid grid-cols-2 lg:grid-cols-3 gap-2 md:gap-6 no-scrollbar mb-[100px]"
-      >
+      <StaggerChildren className="grid grid-cols-2 lg:grid-cols-3 gap-2 md:gap-6 no-scrollbar mb-[100px]">
         {playlists.map((playlist, index) => (
           <Playlist key={index} playlist={playlist} />
         ))}
-      </motion.div>
+      </StaggerChildren>
     </div>
   );
 }

@@ -3,7 +3,7 @@ import spotifyApi from '@/lib/spotify';
 import TermSelect from '@/components/Artists/termSelect';
 
 export default async function Artists() {
-  handleServerSession();
+  await handleServerSession();
 
   const { body: topArtists_LONG } = await spotifyApi.getMyTopArtists({
     limit: 50,

@@ -1,14 +1,15 @@
-import React, { useEffect } from "react";
-import Chart from "chart.js";
+'use client';
+import React, { useEffect } from 'react';
+import Chart from 'chart.js';
 
 const properties = [
-  "acousticness",
-  "danceability",
-  "energy",
-  "instrumentalness",
-  "liveness",
-  "speechiness",
-  "valence",
+  'acousticness',
+  'danceability',
+  'energy',
+  'instrumentalness',
+  'liveness',
+  'speechiness',
+  'valence',
 ];
 
 const MyChart = ({ features, type }) => {
@@ -26,35 +27,35 @@ const MyChart = ({ features, type }) => {
     };
 
     const createChart = (dataset) => {
-      const ctx = document.getElementById("chart");
+      const ctx = document.getElementById('chart');
       const labels = Object.keys(dataset);
       const data = Object.values(dataset);
 
       new Chart(ctx, {
-        type: type || "bar",
+        type: type || 'bar',
         data: {
           labels,
           datasets: [
             {
-              label: "",
+              label: '',
               data,
               backgroundColor: [
-                "rgba(255, 99, 132, 0.3)",
-                "rgba(255, 159, 64, 0.3)",
-                "rgba(255, 206, 86, 0.3)",
-                "rgba(75, 192, 192, 0.3)",
-                "rgba(54, 162, 235, 0.3)",
-                "rgba(104, 132, 245, 0.3)",
-                "rgba(153, 102, 255, 0.3)",
+                'rgba(255, 99, 132, 0.3)',
+                'rgba(255, 159, 64, 0.3)',
+                'rgba(255, 206, 86, 0.3)',
+                'rgba(75, 192, 192, 0.3)',
+                'rgba(54, 162, 235, 0.3)',
+                'rgba(104, 132, 245, 0.3)',
+                'rgba(153, 102, 255, 0.3)',
               ],
               borderColor: [
-                "rgba(255,99,132,1)",
-                "rgba(255, 159, 64, 1)",
-                "rgba(255, 206, 86, 1)",
-                "rgba(75, 192, 192, 1)",
-                "rgba(54, 162, 235, 1)",
-                "rgba(104, 132, 245, 1)",
-                "rgba(153, 102, 255, 1)",
+                'rgba(255,99,132,1)',
+                'rgba(255, 159, 64, 1)',
+                'rgba(255, 206, 86, 1)',
+                'rgba(75, 192, 192, 1)',
+                'rgba(54, 162, 235, 1)',
+                'rgba(104, 132, 245, 1)',
+                'rgba(153, 102, 255, 1)',
               ],
               borderWidth: 1,
             },
@@ -74,7 +75,7 @@ const MyChart = ({ features, type }) => {
             text: `Audio Features`,
             fontSize: 18,
             // fontFamily: `${fonts.primary}`,
-            fontColor: "#ffffff",
+            fontColor: '#ffffff',
             padding: 30,
           },
           legend: {
@@ -84,7 +85,7 @@ const MyChart = ({ features, type }) => {
             xAxes: [
               {
                 gridLines: {
-                  color: "rgba(255, 255, 255, 0.3)",
+                  color: 'rgba(255, 255, 255, 0.3)',
                 },
                 ticks: {
                   // fontFamily: `${fonts.primary}`,
@@ -95,7 +96,7 @@ const MyChart = ({ features, type }) => {
             yAxes: [
               {
                 gridLines: {
-                  color: "rgba(255, 255, 255, 0.3)",
+                  color: 'rgba(255, 255, 255, 0.3)',
                 },
                 ticks: {
                   beginAtZero: true,

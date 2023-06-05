@@ -1,9 +1,4 @@
-'use client';
-import dynamic from 'next/dynamic';
-
-const LoadingComponent = dynamic(() => import('@/components/Loading'), {
-  ssr: false,
-});
+import LoadingComponent from '@/components/Loading';
 
 export default function Loading() {
   return <LoadingComponent />;

@@ -1,6 +1,12 @@
-import Link from "next/link";
+import Link from 'next/link';
 
-export default function Subtitle({ subtitle, link }) {
+export default function Subtitle({
+  subtitle,
+  link,
+}: {
+  subtitle: string;
+  link: string;
+}) {
   return (
     <div className="flex justify-between w-full px-2">
       <p className="mb-5  lg:text-2xl text-white">{subtitle}</p>

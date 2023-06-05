@@ -1,36 +1,37 @@
-import { motion } from "framer-motion";
+'use client';
+import { motion } from 'framer-motion';
 
 function AnimatedBars() {
   const motions = [
     {
       animate: {
         transform: [
-          "scaleY(1.0) translateY(0rem)",
-          "scaleY(1.5) translateY(-0.082rem)",
-          "scaleY(1.0) translateY(0rem)",
+          'scaleY(1.0) translateY(0rem)',
+          'scaleY(1.5) translateY(-0.082rem)',
+          'scaleY(1.0) translateY(0rem)',
         ],
       },
-      transition: { duration: 1, repeat: "Infinity" },
+      transition: { duration: 1, repeat: 'Infinity' },
     },
     {
       animate: {
         transform: [
-          "scaleY(1.0) translateY(0rem)",
-          "scaleY(3) translateY(-0.083rem)",
-          "scaleY(1.0) translateY(0rem)",
+          'scaleY(1.0) translateY(0rem)',
+          'scaleY(3) translateY(-0.083rem)',
+          'scaleY(1.0) translateY(0rem)',
         ],
       },
-      transition: { delay: 0.2, duration: 1.5, repeat: "Infinity" },
+      transition: { delay: 0.2, duration: 1.5, repeat: 'Infinity' },
     },
     {
       animate: {
         transform: [
-          "scaleY(1.0)  translateY(0rem)",
-          "scaleY(0.5) translateY(0.37rem)",
-          "scaleY(1.0)  translateY(0rem)",
+          'scaleY(1.0)  translateY(0rem)',
+          'scaleY(0.5) translateY(0.37rem)',
+          'scaleY(1.0)  translateY(0rem)',
         ],
       },
-      transition: { delay: 0.3, duration: 1.5, repeat: "Infinity" },
+      transition: { delay: 0.3, duration: 1.5, repeat: 'Infinity' },
     },
   ];
   return (
@@ -40,7 +41,7 @@ function AnimatedBars() {
           <motion.span
             key={index}
             {...bar}
-            style={{ backgroundColor: "rgba(27, 27, 27" }}
+            style={{ backgroundColor: 'rgba(27, 27, 27' }}
             className="w-2.5 h-5 ease-in-out"
           />
         ))}

@@ -87,9 +87,16 @@ const TermSelect = ({ long_term, short_term, medium_term }: any) => {
           animate="show"
           className="flex flex-col gap-4 no-scrollbar text-white mb-[100px]"
         >
-          {activeRange.data.map((track, index) => (
-            <Track key={index} track={track} />
-          ))}
+          {activeRange.data.map(
+            (
+              track:
+                | SpotifyApi.PlayHistoryObject
+                | SpotifyApi.PlaylistTrackObject,
+              index: React.Key | null | undefined
+            ) => (
+              <Track key={index} track={track} />
+            )
+          )}
         </motion.div>
       </div>
     </>

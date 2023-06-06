@@ -1,4 +1,4 @@
-export default function CheveronDown({ classes }) {
+export default function CheveronDown({ classes }: { classes: string }) {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"

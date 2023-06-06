@@ -11,7 +11,7 @@ let motionTrack = {
 export default function Track({
   track,
 }: {
-  track: SpotifyApi.PlaylistTrackObject;
+  track: SpotifyApi.PlaylistTrackObject | SpotifyApi.PlayHistoryObject;
 }) {
   return (
     <motion.div

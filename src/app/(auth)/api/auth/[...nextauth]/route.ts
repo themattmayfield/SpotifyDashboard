@@ -1,21 +1,22 @@
-import NextAuth from 'next-auth';
-import SpotifyProvider from 'next-auth/providers/spotify';
 import spotifyApi, { LOGIN_URL } from '@/lib/spotify';
-import type { NextAuthOptions } from 'next-auth';
-console.log(LOGIN_URL);
-const refreshAccessToken = async (token) => {
+import { AuthOptions } from 'next-auth';
+import { JWT } from 'next-auth/jwt';
+import NextAuth from 'next-auth/next';
+import SpotifyProvider from 'next-auth/providers/spotify';
+
+const refreshAccessToken = async (token: JWT) => {
   try {
-    spotifyApi.setAccessToken(token.accessToken);
-    spotifyApi.setRefreshToken(token.refreshToken);
+    spotifyApi.setAccessToken(token.access_token);
+    spotifyApi.setRefreshToken(token.refresh_token);
 
     const { body: refreshedToken } = await spotifyApi.refreshAccessToken();
     console.log('REFRESHED TOKEN IS', refreshedToken);
 
     return {
       ...token,
-      accessToken: refreshedToken.access_token,
+      access_token: refreshedToken.access_token,
       accessTokenExpires: Date.now() + refreshedToken.expires_in * 1000,
-      refreshToken: refreshedToken.refresh_token ?? token.refreshToken,
+      refresh_token: refreshedToken.refresh_token ?? token.refresh_token,
     };
   } catch (error) {
     console.log(error);
@@ -27,7 +28,7 @@ const refreshAccessToken = async (token) => {
   }
 };
 
-export const authOptions: NextAuthOptions = {
+export const authOptions: AuthOptions = {
   providers: [
     SpotifyProvider({
       clientId: '2f2f9d028ef14b98a6dfb63b8ef9ffb6', //process.env.NEXT_PUBLIC_CLIENT_ID,
@@ -45,8 +46,8 @@ export const authOptions: NextAuthOptions = {
       if (account && user) {
         return {
           ...token,
-          accessToken: account.access_token,
-          refreshToken: account.refresh_token,
+          access_token: account.access_token,
+          refresh_token: account.refresh_token,
           username: account.providerAccountId,
           accountTokenExpires: account.expires_at * 1000,
         };
@@ -64,16 +65,14 @@ export const authOptions: NextAuthOptions = {
     },
 
     async session({ session, token }) {
-      session.user.accessToken = token.accessToken;
-      session.user.refreshToken = token.refreshToken;
+      session.user.access_token = token.access_token;
+      session.user.refresh_token = token.refresh_token;
       session.user.username = token.username;
 
       return session;
     },
   },
 };
-
-// export default NextAuth(authOptions);
 
 const handler = NextAuth(authOptions);
 

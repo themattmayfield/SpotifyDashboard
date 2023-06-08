@@ -5,15 +5,16 @@ import { redirect } from 'next/navigation';
 
 const handleServerSession = async () => {
   const session = await getServerSession(authOptions);
+  console.log(session);
   if (
     session?.error === 'RefreshAccessTokenError' ||
-    !session?.user?.accessToken
+    !session?.user?.access_token
   ) {
     redirect('/login');
   }
 
-  if (session?.user?.accessToken) {
-    await spotifyApi.setAccessToken(session.user.accessToken);
+  if (session?.user?.access_token) {
+    spotifyApi.setAccessToken(session.user.access_token);
   }
 };
 export default handleServerSession;

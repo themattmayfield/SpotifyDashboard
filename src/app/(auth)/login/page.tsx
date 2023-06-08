@@ -6,8 +6,9 @@ import { redirect } from 'next/navigation';
 
 const Login = async () => {
   const session = await getServerSession(authOptions);
-  if (session?.user?.accessToken) {
-    await spotifyApi.setAccessToken(session.user.accessToken);
+  console.log(session);
+  if (session?.user?.access_token) {
+    spotifyApi.setAccessToken(session.user.access_token);
     redirect('/login');
   }
   return (

@@ -1,21 +1,18 @@
 import { ReactNode } from 'react';
 
 import '@/styles/globals.css';
-import PageTransition from '@/components/PageTransition';
-import SideNav from '@/components/SideNav';
+
 import Providers from '@/containers/Providers';
 
 type TRootLayoutProps = {
   children: ReactNode;
 };
 
-{
-  /* <Head>
+/* <Head>
         <title>Spotify | Wrapper</title>
         <meta name="description" content="Spotify Wrapper" />
         <link rel="icon" href="/spotify.ico" />
       </Head> */
-}
 
 export default function RootLayout({ children }: TRootLayoutProps) {
   return (

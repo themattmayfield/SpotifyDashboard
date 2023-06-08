@@ -5,6 +5,8 @@ import { getServerSession } from 'next-auth';
 import { authOptions } from '../../../(auth)/api/auth/[...nextauth]/route';
 import handleServerSession from '@/lib/handleServerSession';
 import FollowButton from '@/components/Artist/FollowButton';
+import numeral from 'numeral';
+
 const Loading = dynamic(() => import('@/components/Loading'), { ssr: false });
 
 export default async function Artist({ params }: { params: { id: string } }) {
@@ -31,11 +33,13 @@ export default async function Artist({ params }: { params: { id: string } }) {
       <FollowButton isFollowingArtist={isFollowingArtist} id={id} />
       <div className="flex space-x-12 items-center justify-center">
         <div>
-          <p className="text-xl md:text-3xl">{artist.followers.total}</p>
+          <p className="text-xl md:text-3xl">
+            {numeral(artist.followers.total).format('0,0')}
+          </p>
           <p className="text-sm text-[#565656]">Followers</p>
         </div>
         <div>
-          <p className="text-xl md:text-3xl">{artist.popularity}</p>
+          <p className="text-xl md:text-3xl">{artist.popularity}%</p>
           <p className="text-sm text-[#565656]">Popularity</p>
         </div>
       </div>

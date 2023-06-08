@@ -1,8 +1,10 @@
-import handleServerSession from '@/lib/handleServerSession';
 import spotifyApi from '@/lib/spotify';
 import StaggerChildren from '@/containers/StaggerChildren';
 import Link from 'next/link';
 import Track from '@/components/Track';
+import { Suspense } from 'react';
+import LoadingComponent from '@/components/Loading';
+import handleServerSession from '@/lib/handleServerSession';
 
 const classes = {
   active: 'border-b border-white',
@@ -14,38 +16,42 @@ export default async function Tracks({
 }: {
   searchParams: { [key: string]: string | string[] | undefined };
 }) {
+  await handleServerSession();
   const { range } = searchParams;
   const activeRange = range || 'long_term';
-  await handleServerSession();
 
-  const { body: topTracks_LONG } = await spotifyApi.getMyTopTracks({
-    limit: 50,
-    time_range: 'long_term',
-  });
-  const { body: topTracks_MEDIUM } = await spotifyApi.getMyTopTracks({
-    limit: 50,
-    time_range: 'medium_term',
-  });
-  const { body: topTracks_SHORT } = await spotifyApi.getMyTopTracks({
-    limit: 50,
-    time_range: 'short_term',
-  });
+  const [{ body: long }, { body: medium }, { body: short }] = await Promise.all(
+    [
+      spotifyApi.getMyTopTracks({
+        limit: 50,
+        time_range: 'long_term',
+      }),
+      spotifyApi.getMyTopTracks({
+        limit: 50,
+        time_range: 'medium_term',
+      }),
+      spotifyApi.getMyTopTracks({
+        limit: 50,
+        time_range: 'short_term',
+      }),
+    ]
+  );
 
   const terms = [
     {
       range: 'long_term',
       text: 'All Time',
-      data: topTracks_LONG,
+      data: long,
     },
     {
       range: 'medium_term',
       text: 'Last 6 Months',
-      data: topTracks_MEDIUM,
+      data: medium,
     },
     {
       range: 'short_term',
       text: 'Last 4 Weeks',
-      data: topTracks_SHORT,
+      data: short,
     },
   ];
 
@@ -57,7 +63,7 @@ export default async function Tracks({
         </div>
         <div className="flex items-center justify-center space-x-4">
           {terms.map(({ text, range }) => (
-            <Link href={`/tracks/?range=${range}`}>
+            <Link prefetch href={`/tracks?range=${range}`}>
               <p
                 className={
                   'cursor-pointer ' +
@@ -70,13 +76,15 @@ export default async function Tracks({
           ))}
         </div>
       </div>
-      <StaggerChildren className="flex flex-col gap-4 no-scrollbar text-white mb-[100px]">
-        {terms
-          .find(({ range }) => range === activeRange)
-          ?.data.items.map((track, index) => (
-            <Track key={index} track={track} />
-          ))}
-      </StaggerChildren>
+      <Suspense fallback={<LoadingComponent />}>
+        <StaggerChildren className="flex flex-col gap-4 no-scrollbar text-white mb-[100px]">
+          {terms
+            .find(({ range }) => range === activeRange)
+            ?.data.items.map((track, index) => (
+              <Track key={index} track={track} />
+            ))}
+        </StaggerChildren>
+      </Suspense>
     </div>
   );
 }

@@ -11,7 +11,6 @@ const SideNavLink = ({
   children: React.ReactNode;
 }) => {
   const pathname = usePathname();
-  console.log(pathname);
   return (
     <Link
       className={`${

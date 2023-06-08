@@ -4,17 +4,16 @@ import spotifyApi from '@/lib/spotify';
 import { redirect } from 'next/navigation';
 
 const handleServerSession = async () => {
+  console.log('I RAN');
+
   const session = await getServerSession(authOptions);
-  console.log(session);
-  if (
-    session?.error === 'RefreshAccessTokenError' ||
-    !session?.user?.access_token
-  ) {
+  // console.log(session);
+  if (session?.error === 'RefreshAccessTokenError' || !session?.accessToken) {
     redirect('/login');
   }
 
-  if (session?.user?.access_token) {
-    spotifyApi.setAccessToken(session.user.access_token);
+  if (session?.accessToken) {
+    spotifyApi.setAccessToken(session.accessToken);
   }
 };
 export default handleServerSession;

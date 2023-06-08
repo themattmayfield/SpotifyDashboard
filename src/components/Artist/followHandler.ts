@@ -11,7 +11,7 @@ const followHandler = async ({
   id: string;
 }) => {
   await handleServerSession();
-  console.log('I ran');
+  // console.log('I ran');
 
   isFollowingArtist
     ? await spotifyApi.unfollowArtists([id])

@@ -11,7 +11,7 @@ function AnimatedBars() {
           'scaleY(1.0) translateY(0rem)',
         ],
       },
-      transition: { duration: 1, repeat: 'Infinity' },
+      transition: { duration: 1, repeat: Infinity },
     },
     {
       animate: {
@@ -21,7 +21,7 @@ function AnimatedBars() {
           'scaleY(1.0) translateY(0rem)',
         ],
       },
-      transition: { delay: 0.2, duration: 1.5, repeat: 'Infinity' },
+      transition: { delay: 0.2, duration: 1.5, repeat: Infinity },
     },
     {
       animate: {
@@ -31,7 +31,7 @@ function AnimatedBars() {
           'scaleY(1.0)  translateY(0rem)',
         ],
       },
-      transition: { delay: 0.3, duration: 1.5, repeat: 'Infinity' },
+      transition: { delay: 0.3, duration: 1.5, repeat: Infinity },
     },
   ];
   return (

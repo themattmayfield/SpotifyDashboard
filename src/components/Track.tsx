@@ -13,7 +13,6 @@ export default function Track({
 }: {
   track: SpotifyApi.TrackObjectFull | null;
 }) {
-  console.log(track);
   return (
     <motion.div
       variants={motionTrack}

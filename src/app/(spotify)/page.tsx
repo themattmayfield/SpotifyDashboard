@@ -3,13 +3,9 @@ import RightSideBar from '@/components/RightSideBar';
 import Subtitle from '@/components/Subtitle';
 import TopTracks from '@/components/TopTracks';
 import TopArtists from '@/components/TopArtists';
-import dynamic from 'next/dynamic';
 import spotifyApi from '@/lib/spotify';
 import handleServerSession from '@/lib/handleServerSession';
 import Nav from '@/components/Nav';
-
-import { AiFillCaretDown } from 'react-icons/ai';
-const Loading = dynamic(() => import('@/components/Loading'), { ssr: false });
 
 export default async function Profile() {
   await handleServerSession();

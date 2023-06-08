@@ -6,10 +6,9 @@ import { redirect } from 'next/navigation';
 
 const Login = async () => {
   const session = await getServerSession(authOptions);
-  console.log(session);
-  if (session?.user?.access_token) {
-    spotifyApi.setAccessToken(session.user.access_token);
-    redirect('/login');
+  if (session?.accessToken && session?.error !== 'RefreshAccessTokenError') {
+    spotifyApi.setAccessToken(session.accessToken);
+    redirect('/');
   }
   return (
     <div className="flex flex-col justify-center items-center h-screen bg-spotify-dark">

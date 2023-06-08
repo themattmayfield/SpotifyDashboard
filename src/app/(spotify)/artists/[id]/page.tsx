@@ -18,7 +18,7 @@ export default async function Artist({ params }: { params: { id: string } }) {
   const { body: followingArtist } = await spotifyApi.isFollowingArtists([id]);
 
   const isFollowingArtist = followingArtist?.[0];
-  console.log('isFollowingArtist', isFollowingArtist);
+  // console.log('isFollowingArtist', isFollowingArtist);
 
   return (
     <div className="flex flex-col items-center text-center text-white pt-10 md:pt-24 space-y-4 md:space-y-8">

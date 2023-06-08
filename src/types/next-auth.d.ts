@@ -11,21 +11,22 @@ declare module 'next-auth' {
       /** The user's postal address. */
       access_token: string;
       refresh_token: string;
-      username: string;
     } & DefaultSession['user'];
   }
 
   interface Account {
+    access_token: string;
+    refresh_token: string;
     expires_at: number;
   }
 }
 
 // nextauth.d.ts
 declare module 'next-auth/jwt' {
-  interface JWT {
+  interface JWT extends DefaultJWT {
     access_token: string;
     refresh_token: string;
-    username: string;
-    accountTokenExpires: number;
+    expires_at: number;
+    error?: 'RefreshAccessTokenError';
   }
 }

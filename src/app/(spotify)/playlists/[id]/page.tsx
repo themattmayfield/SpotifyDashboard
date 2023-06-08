@@ -1,13 +1,11 @@
 import React from 'react';
-import Chart from '@/components/Chart';
+// import Chart from '@/components/Chart';
 import Track from '@/components/Track';
 import PlaylistComponent from '@/components/Playlist';
 
 import dynamic from 'next/dynamic';
 import spotifyApi from '@/lib/spotify';
 import handleServerSession from '@/lib/handleServerSession';
-
-const Loading = dynamic(() => import('@/components/Loading'), { ssr: false });
 
 const Playlist = async ({ params }: { params: { id: string } }) => {
   await handleServerSession();
@@ -16,9 +14,9 @@ const Playlist = async ({ params }: { params: { id: string } }) => {
   const { body: playlist } = await spotifyApi.getPlaylist(id);
 
   // might need to check if playlists exists??
-  const { body: audioFeatures } = await spotifyApi.getAudioFeaturesForTracks(
-    playlist?.tracks.items
-  );
+  // const { body: audioFeatures } = await spotifyApi.getAudioFeaturesForTracks(
+  //   playlist?.tracks.items
+  // );
 
   return (
     <div className="no-scrollbar overflow-x-hidden max-w-7xl mx-auto px-2 md:px-4 pt-10 md:pt-12">

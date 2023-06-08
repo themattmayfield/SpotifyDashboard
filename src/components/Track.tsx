@@ -34,13 +34,13 @@ export default function Track({
             <p>{track?.album.name}</p>
           </div>
           <p className="md:hidden text-[#565656]">
-            {millisToMinutesAndSeconds(JSON.stringify(track?.duration_ms))}
+            {track && millisToMinutesAndSeconds(track.duration_ms)}
           </p>
         </div>
       </div>
 
       <div className="hidden md:block text-[#565656]">
-        {millisToMinutesAndSeconds(JSON.stringify(track?.duration_ms))}
+        {track && millisToMinutesAndSeconds(track?.duration_ms)}
       </div>
     </motion.div>
   );

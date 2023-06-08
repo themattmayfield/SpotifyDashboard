@@ -1,5 +1,11 @@
-export const millisToMinutesAndSeconds = (millis) => {
-  var minutes = Math.floor(millis / 60000);
-  var seconds = ((millis % 60000) / 1000).toFixed(0);
-  return minutes + ':' + (seconds < 10 ? '0' : '') + seconds;
+export const millisToMinutesAndSeconds = (millis: number) => {
+  const seconds = Math.floor((millis / 1000) % 60);
+  const minutes = Math.floor((millis / 1000 / 60) % 60);
+
+  const getSeconds = seconds < 10 ? `0${seconds}` : seconds;
+
+  return `${minutes}:${getSeconds}`;
 };
+
+// Get year from YYYY-MM-DD
+export const getYear = (date: string) => date.split('-')[0];

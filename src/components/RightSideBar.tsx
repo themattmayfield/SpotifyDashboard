@@ -1,6 +1,10 @@
 import Link from 'next/link';
 
-export default function RightSideBar({ recentlyPlayed }) {
+export default function RightSideBar({
+  recentlyPlayed,
+}: {
+  recentlyPlayed: SpotifyApi.PlayHistoryObject[];
+}) {
   return (
     <>
       <div className="rounded-3xl bg-custom-darkgray py-4 w-full lg:w-72 text-white px-4">

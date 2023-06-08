@@ -1,4 +1,4 @@
-import { getYear } from '@/lib/formatters';
+import { getYear } from '@/lib/time';
 import spotifyApi from '@/lib/spotify';
 import handleServerSession from '@/lib/handleServerSession';
 

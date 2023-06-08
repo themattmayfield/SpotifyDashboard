@@ -1,10 +1,14 @@
 import Link from 'next/link';
-import Subtitle from './Subtitle';
+import Subtitle from '@/components/Subtitle';
 
-const TopArtists = ({ topArtistsShort }) => {
+const TopArtists = ({
+  topArtists,
+}: {
+  topArtists: SpotifyApi.ArtistObjectFull[];
+}) => {
   const Card = () => (
     <div className="grid grid-cols-2 gap-3 w-full">
-      {topArtistsShort.map((card) => (
+      {topArtists.map((card) => (
         <Link key={card.id} href={`/artists/${card.id}`}>
           <div
             style={{

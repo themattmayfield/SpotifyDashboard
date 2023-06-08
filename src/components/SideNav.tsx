@@ -6,7 +6,7 @@ import { BsMusicNoteBeamed } from 'react-icons/bs';
 import { RiHistoryLine, RiPlayListFill } from 'react-icons/ri';
 import Link from 'next/link';
 import { headers } from 'next/headers';
-import SideNavLink from './SideNavLink';
+import SideNavLink from '@/components/SideNavLink';
 
 export default function SideNav() {
   return (

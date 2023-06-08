@@ -1,14 +1,18 @@
-import Subtitle from './Subtitle';
+import Subtitle from '@/components/Subtitle';
 import Link from 'next/link';
 
-export default function TopTracks({ topTracksShort }) {
+export default function TopTracks({
+  topTracks,
+}: {
+  topTracks: SpotifyApi.TrackObjectFull[];
+}) {
   return (
     <>
       <div className="">
         <Subtitle link="/tracks" subtitle="Top Tracks of the Week" />
         <div className="rounded-3xl py-8 px-4 text-white bg-custom-darkgray2 2xl:w-[600px]">
           <div className="space-y-6">
-            {topTracksShort?.map((item) => (
+            {topTracks?.map((item) => (
               <div key={item.id} className="flex justify-between">
                 <div className="flex items-center space-x-4">
                   <Link href={`/tracks/${item.id}`}>

@@ -11,7 +11,7 @@ export default function Card({
   info,
   profile,
 }: {
-  info: any;
+  info: SpotifyApi.ArtistObjectFull;
   profile?: boolean;
 }) {
   return (

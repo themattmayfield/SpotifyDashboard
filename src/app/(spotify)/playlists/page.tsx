@@ -1,6 +1,6 @@
 import spotifyApi from '@/lib/spotify';
 import handleServerSession from '@/lib/handleServerSession';
-import StaggerChildren from './StaggerChildren';
+import StaggerChildren from '@/containers/StaggerChildren';
 import Playlist from '@/components/Playlist';
 
 export default async function Playlists() {

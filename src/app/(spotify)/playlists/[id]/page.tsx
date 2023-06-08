@@ -30,7 +30,7 @@ const Playlist = async ({ params }: { params: { id: string } }) => {
           )} */}
         </div>
         <div className="flex flex-col gap-4 no-scrollbar text-white w-full">
-          {playlist.tracks.items.map((track, index) => (
+          {playlist.tracks.items.map(({ track }, index) => (
             <Track key={index} track={track} />
           ))}
         </div>

@@ -1,7 +1,7 @@
 'use client';
 
 import React, { experimental_useOptimistic } from 'react';
-import followHandler from './followHandler';
+import followHandler from '@/components/Artist/followHandler';
 
 const FollowButton = ({
   isFollowingArtist,

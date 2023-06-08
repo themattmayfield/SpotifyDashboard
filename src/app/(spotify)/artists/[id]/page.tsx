@@ -2,7 +2,7 @@ import { useSearchParams } from 'next/navigation';
 import dynamic from 'next/dynamic';
 import spotifyApi from '@/lib/spotify';
 import { getServerSession } from 'next-auth';
-import { authOptions } from '../../auth/[...nextauth]/route';
+import { authOptions } from '../../../(auth)/api/auth/[...nextauth]/route';
 import handleServerSession from '@/lib/handleServerSession';
 import FollowButton from '@/components/Artist/FollowButton';
 const Loading = dynamic(() => import('@/components/Loading'), { ssr: false });

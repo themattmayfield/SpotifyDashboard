@@ -30,8 +30,8 @@ async function refreshAccessToken(token: JWT): Promise<JWT> {
 export const authOptions: AuthOptions = {
   providers: [
     SpotifyProvider({
-      clientId: '2f2f9d028ef14b98a6dfb63b8ef9ffb6', //process.env.NEXT_PUBLIC_CLIENT_ID,
-      clientSecret: 'd647bf71b812489a9ac5919e1f7cdc81', // process.env.NEXT_PUBLIC_CLIENT_SECRET,
+      clientId: process.env.NEXT_PUBLIC_CLIENT_ID!,
+      clientSecret: process.env.NEXT_PUBLIC_CLIENT_SECRET!,
       authorization: LOGIN_URL,
     }),
   ],

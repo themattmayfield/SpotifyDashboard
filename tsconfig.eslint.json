@@ -1,0 +1,15 @@
+{
+    "extends": "./tsconfig.json",
+    "include": [
+      ".eslintrc.js",
+      ".prettierrc.js",
+      "build.js",
+      "cypress.config.ts",
+      "cypress/**/*",  
+      "src/**/*",
+      "next.config.js",
+      "next-env.d.ts",
+      "postcss.config.js",
+      "tailwind.config.js",
+    ]
+  }

@@ -10,28 +10,33 @@ import Nav from '@/components/Nav';
 export default async function Profile() {
   await handleServerSession();
 
-  const { body: recentData } = await spotifyApi.getMyRecentlyPlayedTracks({
-    limit: 50,
-  });
+  const [
+    { body: recentlyPlayedResponse },
+    { body: topTracksResponse },
+    { body: topArtistsLongResponse },
+    { body: topArtistsShortResponse },
+  ] = await Promise.all([
+    spotifyApi.getMyRecentlyPlayedTracks({
+      limit: 50,
+    }),
+    spotifyApi.getMyTopTracks({
+      limit: 50,
+      time_range: 'long_term',
+    }),
+    spotifyApi.getMyTopArtists({
+      limit: 50,
+      time_range: 'long_term',
+    }),
+    spotifyApi.getMyTopArtists({
+      limit: 50,
+      time_range: 'short_term',
+    }),
+  ]);
 
-  const { body: tracksData } = await spotifyApi.getMyTopTracks({
-    limit: 50,
-    time_range: 'long_term',
-  });
-
-  const { body: topArtists_LONG_Data } = await spotifyApi.getMyTopArtists({
-    limit: 50,
-    time_range: 'long_term',
-  });
-  const { body: topArtists_SHORT_data } = await spotifyApi.getMyTopArtists({
-    limit: 50,
-    time_range: 'short_term',
-  });
-
-  const recentlyPlayed = recentData.items?.slice(0, 6);
-  const topTracks = tracksData.items?.slice(0, 6);
-  const topArtists_LONG = topArtists_LONG_Data.items?.slice(0, 16);
-  const topArtists_SHORT = topArtists_SHORT_data.items?.slice(0, 4);
+  const recentlyPlayed = recentlyPlayedResponse.items?.slice(0, 6);
+  const topTracks = topTracksResponse.items?.slice(0, 6);
+  const topArtists_LONG = topArtistsLongResponse.items?.slice(0, 16);
+  const topArtists_SHORT = topArtistsShortResponse.items?.slice(0, 4);
 
   return (
     <div className="h-full overflow-hidden">

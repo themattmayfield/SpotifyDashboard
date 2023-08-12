@@ -5,16 +5,17 @@ import handleServerSession from '@/lib/handleServerSession';
 
 type TRootLayoutProps = {
   children: ReactNode;
+  params: {
+    id: string;
+  };
 };
 
-/* <Head>
-        <title>Spotify | Wrapper</title>
-        <meta name="description" content="Spotify Wrapper" />
-        <link rel="icon" href="/spotify.ico" />
-      </Head> */
-
-export default async function SpotifyLayout({ children }: TRootLayoutProps) {
+export default async function SpotifyLayout({
+  children,
+  params,
+}: TRootLayoutProps) {
   await handleServerSession();
+
   return (
     <PageTransition>
       <SideNav />

@@ -7,7 +7,7 @@ const Track = async ({ params }: { params: { id: string } }) => {
   const { id } = params;
   const { body: track } = await spotifyApi.getTrack(id);
 
-  const { body: audioFeatures } = await spotifyApi.getAudioFeaturesForTrack(id);
+  // const { body: audioFeatures } = await spotifyApi.getAudioFeaturesForTrack(id);
 
   return (
     <>

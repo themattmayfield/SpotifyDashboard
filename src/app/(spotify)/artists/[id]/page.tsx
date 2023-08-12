@@ -12,10 +12,12 @@ export default async function Artist({ params }: { params: { id: string } }) {
 
   await handleServerSession();
 
-  const { body: artist } = await spotifyApi.getArtist(id);
-  const { body: followingArtist } = await spotifyApi.isFollowingArtists([id]);
+  const [{ body: artist }, { body: followingArtist }] = await Promise.all([
+    spotifyApi.getArtist(id),
+    spotifyApi.isFollowingArtists([id]),
+  ]);
 
-  const isFollowingArtist = followingArtist?.[0];
+  const isFollowingArtist = followingArtist.at(0);
 
   const followHandler = async () => {
     'use server';

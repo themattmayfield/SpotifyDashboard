@@ -18,34 +18,40 @@ export default async function Artists({
   const activeRange = range || 'long_term';
   await handleServerSession();
 
-  const { body: topArtists_LONG } = await spotifyApi.getMyTopArtists({
-    limit: 50,
-    time_range: 'long_term',
-  });
-  const { body: topArtists_MEDIUM } = await spotifyApi.getMyTopArtists({
-    limit: 50,
-    time_range: 'medium_term',
-  });
-  const { body: topArtists_SHORT } = await spotifyApi.getMyTopArtists({
-    limit: 50,
-    time_range: 'short_term',
-  });
+  const [
+    { body: topArtistsLong },
+    { body: topArtistsMedium },
+    { body: topArtistsShort },
+  ] = await Promise.all([
+    spotifyApi.getMyTopArtists({
+      limit: 50,
+      time_range: 'long_term',
+    }),
+    spotifyApi.getMyTopArtists({
+      limit: 50,
+      time_range: 'medium_term',
+    }),
+    spotifyApi.getMyTopArtists({
+      limit: 50,
+      time_range: 'short_term',
+    }),
+  ]);
 
   const terms = [
     {
       range: 'long_term',
       text: 'All Time',
-      data: topArtists_LONG,
+      data: topArtistsLong,
     },
     {
       range: 'medium_term',
       text: 'Last 6 Months',
-      data: topArtists_MEDIUM,
+      data: topArtistsMedium,
     },
     {
       range: 'short_term',
       text: 'Last 4 Weeks',
-      data: topArtists_SHORT,
+      data: topArtistsShort,
     },
   ];
 

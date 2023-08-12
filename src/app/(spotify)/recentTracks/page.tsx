@@ -1,17 +1,14 @@
 import React from 'react';
 import Track from '@/components/Track';
-import dynamic from 'next/dynamic';
 import StaggerChildren from '@/containers/StaggerChildren';
 import spotifyApi from '@/lib/spotify';
 import handleServerSession from '@/lib/handleServerSession';
-const Loading = dynamic(() => import('@/components/Loading'), { ssr: false });
 
 export default async function Recent() {
   await handleServerSession();
-  const { body } = await spotifyApi.getMyRecentlyPlayedTracks({
+  const { body: recentlyPlayed } = await spotifyApi.getMyRecentlyPlayedTracks({
     limit: 50,
   });
-  const recentlyPlayed = body.items;
 
   return (
     <>
@@ -21,7 +18,7 @@ export default async function Recent() {
         </div>
 
         <StaggerChildren className="flex flex-col gap-4 no-scrollbar text-white mb-[100px]">
-          {recentlyPlayed.map(({ track }, index) => (
+          {recentlyPlayed.items.map(({ track }, index) => (
             <Track key={index} track={track} />
           ))}
         </StaggerChildren>

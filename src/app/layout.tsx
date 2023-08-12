@@ -3,16 +3,16 @@ import { ReactNode } from 'react';
 import '@/styles/globals.css';
 
 import Providers from '@/containers/Providers';
+import { Metadata } from 'next';
 
+export const metadata: Metadata = {
+  title: 'Spotify | Wrapper',
+  description: 'Spotify Wrapper',
+  icons: '/spotify.ico',
+};
 type TRootLayoutProps = {
   children: ReactNode;
 };
-
-/* <Head>
-        <title>Spotify | Wrapper</title>
-        <meta name="description" content="Spotify Wrapper" />
-        <link rel="icon" href="/spotify.ico" />
-      </Head> */
 
 export default function RootLayout({ children }: TRootLayoutProps) {
   return (

@@ -4,7 +4,7 @@ This is a Spotify wrapper for viewing some cool Spotify analytics. Give this rep
 
 ## Live preview
 
-[Click me!](https://www.spotifydash.com/)
+[Click me!](https://www.spotifydash.co/)
 
 ![Example login screen](https://themattmayfield.com/spotifydash.png)
 

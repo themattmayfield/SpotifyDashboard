@@ -1,7 +1,7 @@
 import { getYear } from '@/lib/time';
 import spotifyApi from '@/lib/spotify';
 import handleServerSession from '@/lib/handleServerSession';
-import Chart from '@/components/Chart';
+// import Chart from '@/components/Chart';
 
 const Track = async ({ params }: { params: { id: string } }) => {
   await handleServerSession();
@@ -47,9 +47,9 @@ const Track = async ({ params }: { params: { id: string } }) => {
             </div>
           </div>
         </div>
-        <div className="w-full md:max-w-xl">
+        {/* <div className="w-full md:max-w-xl">
           {audioFeatures && <Chart features={audioFeatures} type="" />}
-        </div>
+        </div> */}
       </div>
     </>
   );

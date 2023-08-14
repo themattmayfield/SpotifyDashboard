@@ -31,7 +31,9 @@ export default async function Profile() {
       limit: 50,
       time_range: 'short_term',
     }),
-  ]);
+  ]).catch((error) => {
+    throw new Error(error);
+  });
 
   const recentlyPlayed = recentlyPlayedResponse.items?.slice(0, 6);
   const topTracks = topTracksResponse.items?.slice(0, 6);
@@ -40,7 +42,6 @@ export default async function Profile() {
 
   return (
     <div className="h-full overflow-hidden">
-      {/* @ts-expect-error Server Component */}
       <Nav />
       <div className="flex h-full">
         <div className="flex flex-col overflow-x-hidden lg:mr-4 overflow-y-scroll mb-[100px] no-scrollbar h-full">

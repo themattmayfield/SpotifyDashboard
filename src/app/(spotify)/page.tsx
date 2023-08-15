@@ -8,32 +8,32 @@ import handleServerSession from '@/lib/handleServerSession';
 import Nav from '@/components/Nav';
 
 export default async function Profile() {
-  await handleServerSession();
+  const session = await handleServerSession();
 
   const [
     { body: recentlyPlayedResponse },
     { body: topTracksResponse },
     { body: topArtistsLongResponse },
     { body: topArtistsShortResponse },
-  ] = await Promise.all([
-    spotifyApi.getMyRecentlyPlayedTracks({
-      limit: 50,
-    }),
-    spotifyApi.getMyTopTracks({
-      limit: 50,
-      time_range: 'long_term',
-    }),
-    spotifyApi.getMyTopArtists({
-      limit: 50,
-      time_range: 'long_term',
-    }),
-    spotifyApi.getMyTopArtists({
-      limit: 50,
-      time_range: 'short_term',
-    }),
-  ]).catch((error) => {
-    throw new Error(error);
-  });
+  ] =
+    session &&
+    (await Promise.all([
+      spotifyApi.getMyRecentlyPlayedTracks({
+        limit: 50,
+      }),
+      spotifyApi.getMyTopTracks({
+        limit: 50,
+        time_range: 'long_term',
+      }),
+      spotifyApi.getMyTopArtists({
+        limit: 50,
+        time_range: 'long_term',
+      }),
+      spotifyApi.getMyTopArtists({
+        limit: 50,
+        time_range: 'short_term',
+      }),
+    ]));
 
   const recentlyPlayed = recentlyPlayedResponse.items?.slice(0, 6);
   const topTracks = topTracksResponse.items?.slice(0, 6);

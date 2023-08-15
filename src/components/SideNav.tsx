@@ -1,4 +1,3 @@
-import { useRouter } from 'next/navigation';
 import { SiSpotify } from 'react-icons/si';
 import { AiFillHome } from 'react-icons/ai';
 import { GiMicrophone } from 'react-icons/gi';

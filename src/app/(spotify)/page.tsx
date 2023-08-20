@@ -61,6 +61,7 @@ export default async function Profile() {
             <TopArtists topArtists={topArtists_SHORT} />
           </div>
         </div>
+
         <div className="hidden lg:block">
           <RightSideBar recentlyPlayed={recentlyPlayed} />
         </div>

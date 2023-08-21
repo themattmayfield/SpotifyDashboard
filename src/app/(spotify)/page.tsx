@@ -35,10 +35,7 @@ export default async function Profile() {
           time_range: 'short_term',
         })
         .then(({ body }) => body.items),
-    ]).catch((error) => {
-      console.log('error', error);
-      return [[], [], [], []];
-    });
+    ]);
 
   return (
     <div className="h-full overflow-hidden">

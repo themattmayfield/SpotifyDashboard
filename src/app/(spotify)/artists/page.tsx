@@ -18,40 +18,44 @@ export default async function Artists({
   const activeRange = range || 'long_term';
   await handleServerSession();
 
-  const [
-    { body: topArtistsLong },
-    { body: topArtistsMedium },
-    { body: topArtistsShort },
-  ] = await Promise.all([
-    spotifyApi.getMyTopArtists({
-      limit: 50,
-      time_range: 'long_term',
-    }),
-    spotifyApi.getMyTopArtists({
-      limit: 50,
-      time_range: 'medium_term',
-    }),
-    spotifyApi.getMyTopArtists({
-      limit: 50,
-      time_range: 'short_term',
-    }),
-  ]);
+  const [topArtistsLong, topArtistsMedium, topArtistsShort] = await Promise.all(
+    [
+      spotifyApi
+        .getMyTopArtists({
+          limit: 50,
+          time_range: 'long_term',
+        })
+        .then(({ body }) => body.items),
+      spotifyApi
+        .getMyTopArtists({
+          limit: 50,
+          time_range: 'medium_term',
+        })
+        .then(({ body }) => body.items),
+      spotifyApi
+        .getMyTopArtists({
+          limit: 50,
+          time_range: 'short_term',
+        })
+        .then(({ body }) => body.items),
+    ]
+  ).catch(() => []);
 
   const terms = [
     {
       range: 'long_term',
       text: 'All Time',
-      data: topArtistsLong,
+      data: topArtistsLong ?? [],
     },
     {
       range: 'medium_term',
       text: 'Last 6 Months',
-      data: topArtistsMedium,
+      data: topArtistsMedium ?? [],
     },
     {
       range: 'short_term',
       text: 'Last 4 Weeks',
-      data: topArtistsShort,
+      data: topArtistsShort ?? [],
     },
   ];
 
@@ -80,7 +84,7 @@ export default async function Artists({
       <StaggerChildren className="grid grid-cols-2 md:grid-cols-3 gap-y-2 md:gap-6 no-scrollbar mb-[100px]">
         {terms
           .find(({ range }) => range === activeRange)
-          ?.data.items.map((item, index: number) => (
+          ?.data.map((item, index: number) => (
             <Card key={index} info={item} />
           ))}
       </StaggerChildren>

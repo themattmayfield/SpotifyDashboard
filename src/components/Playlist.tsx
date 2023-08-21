@@ -12,7 +12,9 @@ export default function Playlist({
   playlist,
   analytic = false,
 }: {
-  playlist: SpotifyApi.PlaylistObjectSimplified;
+  playlist:
+    | SpotifyApi.SinglePlaylistResponse
+    | SpotifyApi.PlaylistObjectSimplified;
   analytic?: boolean;
 }) {
   const imageClassess = `${

@@ -14,7 +14,7 @@ const Nav = ({ user }: { user: SpotifyApi.CurrentUsersProfileResponse }) => {
             <AiFillCaretDown className="h-4 w-4 ml-4 text-[#686868]" />
             {/* {user && ( */}
             <>
-              {user?.images?.[0].url ? (
+              {user?.images?.[0]?.url ? (
                 <img
                   className="h-10 w-10 lg:h-16 lg:w-16 rounded-full"
                   src={user.images[0].url}

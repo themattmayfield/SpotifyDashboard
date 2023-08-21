@@ -6,9 +6,12 @@ import handleServerSession from '@/lib/handleServerSession';
 
 export default async function Recent() {
   await handleServerSession();
-  const { body: recentlyPlayed } = await spotifyApi.getMyRecentlyPlayedTracks({
-    limit: 50,
-  });
+  const recentlyPlayed = await spotifyApi
+    .getMyRecentlyPlayedTracks({
+      limit: 50,
+    })
+    .then(({ body }) => body.items)
+    .catch(() => []);
 
   return (
     <>
@@ -18,7 +21,7 @@ export default async function Recent() {
         </div>
 
         <StaggerChildren className="flex flex-col gap-4 no-scrollbar text-white mb-[100px]">
-          {recentlyPlayed.items.map(({ track }, index) => (
+          {recentlyPlayed.map(({ track }, index) => (
             <Track key={index} track={track} />
           ))}
         </StaggerChildren>

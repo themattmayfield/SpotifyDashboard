@@ -20,38 +20,42 @@ export default async function Tracks({
   const { range } = searchParams;
   const activeRange = range || 'long_term';
 
-  const [{ body: long }, { body: medium }, { body: short }] = await Promise.all(
-    [
-      spotifyApi.getMyTopTracks({
+  const [long, medium, short] = await Promise.all([
+    spotifyApi
+      .getMyTopTracks({
         limit: 50,
         time_range: 'long_term',
-      }),
-      spotifyApi.getMyTopTracks({
+      })
+      .then(({ body }) => body.items),
+    spotifyApi
+      .getMyTopTracks({
         limit: 50,
         time_range: 'medium_term',
-      }),
-      spotifyApi.getMyTopTracks({
+      })
+      .then(({ body }) => body.items),
+    spotifyApi
+      .getMyTopTracks({
         limit: 50,
         time_range: 'short_term',
-      }),
-    ]
-  );
+      })
+      .then(({ body }) => body.items),
+  ]).catch(() => []);
 
   const terms = [
     {
       range: 'long_term',
       text: 'All Time',
-      data: long,
+      data: long ?? [],
     },
     {
       range: 'medium_term',
       text: 'Last 6 Months',
-      data: medium,
+      data: medium ?? [],
     },
     {
       range: 'short_term',
       text: 'Last 4 Weeks',
-      data: short,
+      data: short ?? [],
     },
   ];
 
@@ -80,7 +84,7 @@ export default async function Tracks({
         <StaggerChildren className="flex flex-col gap-4 no-scrollbar text-white mb-[100px]">
           {terms
             .find(({ range }) => range === activeRange)
-            ?.data.items.map((track, index) => (
+            ?.data.map((track, index) => (
               <Track key={index} track={track} />
             ))}
         </StaggerChildren>

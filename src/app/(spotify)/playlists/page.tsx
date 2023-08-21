@@ -6,8 +6,10 @@ import Playlist from '@/components/Playlist';
 export default async function Playlists() {
   await handleServerSession();
 
-  const { body } = await spotifyApi.getUserPlaylists();
-  const playlists = body.items;
+  const playlists = await spotifyApi
+    .getUserPlaylists()
+    .then(({ body }) => body.items)
+    .catch(() => []);
 
   return (
     <div className="no-scrollbar overflow-x-hidden max-w-7xl mx-auto px-2 md:px-4 pt-10 md:pt-24">

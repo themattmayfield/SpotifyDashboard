@@ -12,6 +12,11 @@ const handleServerSession = async () => {
   if (session?.accessToken) {
     spotifyApi.setAccessToken(session.accessToken);
   }
+  if (!session?.accessToken) {
+    console.log('NO TOKEN!!!!');
+    redirect('/login');
+  }
+
   return session;
 };
 export default handleServerSession;

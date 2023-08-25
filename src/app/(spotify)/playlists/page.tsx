@@ -1,15 +1,12 @@
-import spotifyApi from '@/lib/spotify';
-import handleServerSession from '@/lib/handleServerSession';
 import StaggerChildren from '@/containers/StaggerChildren';
 import Playlist from '@/components/Playlist';
+import handleServerSession from '@/lib/handleServerSession';
 
 export default async function Playlists() {
-  await handleServerSession();
-
+  const { spotifyApi } = await handleServerSession();
   const playlists = await spotifyApi
     .getUserPlaylists()
-    .then(({ body }) => body.items)
-    .catch(() => []);
+    .then(({ body }) => body.items);
 
   return (
     <div className="no-scrollbar overflow-x-hidden max-w-7xl mx-auto px-2 md:px-4 pt-10 md:pt-24">

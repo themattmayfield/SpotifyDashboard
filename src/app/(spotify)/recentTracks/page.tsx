@@ -1,17 +1,16 @@
 import React from 'react';
 import Track from '@/components/Track';
 import StaggerChildren from '@/containers/StaggerChildren';
-import spotifyApi from '@/lib/spotify';
+
 import handleServerSession from '@/lib/handleServerSession';
 
 export default async function Recent() {
-  await handleServerSession();
+  const { spotifyApi } = await handleServerSession();
   const recentlyPlayed = await spotifyApi
     .getMyRecentlyPlayedTracks({
       limit: 50,
     })
-    .then(({ body }) => body.items)
-    .catch(() => []);
+    .then(({ body }) => body.items);
 
   return (
     <>

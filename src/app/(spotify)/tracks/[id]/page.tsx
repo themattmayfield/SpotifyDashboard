@@ -1,11 +1,11 @@
-import { getYear } from '@/lib/time';
-import spotifyApi from '@/lib/spotify';
 import handleServerSession from '@/lib/handleServerSession';
+import { getYear } from '@/lib/time';
+
 // import Chart from '@/components/Chart';
 
 const Track = async ({ params }: { params: { id: string } }) => {
-  await handleServerSession();
   const { id } = params;
+  const { spotifyApi } = await handleServerSession();
   const { body: track } = await spotifyApi.getTrack(id);
 
   const { body: audioFeatures } = await spotifyApi.getAudioFeaturesForTrack(id);

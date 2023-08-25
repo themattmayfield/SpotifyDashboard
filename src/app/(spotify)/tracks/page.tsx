@@ -1,24 +1,20 @@
-import spotifyApi from '@/lib/spotify';
 import StaggerChildren from '@/containers/StaggerChildren';
 import Link from 'next/link';
 import Track from '@/components/Track';
 import { Suspense } from 'react';
 import LoadingComponent from '@/components/Loading';
-import handleServerSession from '@/lib/handleServerSession';
 
-const classes = {
-  active: 'border-b border-white',
-  inactive: 'border-b border-transparent',
-};
+import { cn } from '@/lib/cn';
+import handleServerSession from '@/lib/handleServerSession';
 
 export default async function Tracks({
   searchParams,
 }: {
   searchParams: { [key: string]: string | string[] | undefined };
 }) {
-  await handleServerSession();
   const { range } = searchParams;
   const activeRange = range || 'long_term';
+  const { spotifyApi } = await handleServerSession();
 
   const [long, medium, short] = await Promise.all([
     spotifyApi
@@ -39,7 +35,7 @@ export default async function Tracks({
         time_range: 'short_term',
       })
       .then(({ body }) => body.items),
-  ]).catch(() => []);
+  ]);
 
   const terms = [
     {
@@ -67,15 +63,16 @@ export default async function Tracks({
         </div>
         <div className="flex items-center justify-center space-x-4">
           {terms.map(({ text, range }) => (
-            <Link prefetch href={`/tracks?range=${range}`}>
-              <p
-                className={
-                  'cursor-pointer ' +
-                  (activeRange == range ? classes.active : classes.inactive)
-                }
-              >
-                {text}
-              </p>
+            <Link
+              className={cn(
+                'border-b hover:text-spotify-green transition duration-300 ease-in-out',
+                activeRange === range
+                  ? 'border-white hover:border-spotify-green'
+                  : 'border-transparent'
+              )}
+              href={`/tracks?range=${range}`}
+            >
+              {text}
             </Link>
           ))}
         </div>

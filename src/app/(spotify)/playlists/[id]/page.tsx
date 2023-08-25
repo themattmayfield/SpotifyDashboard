@@ -4,11 +4,10 @@ import Track from '@/components/Track';
 import PlaylistComponent from '@/components/Playlist';
 
 import dynamic from 'next/dynamic';
-import spotifyApi from '@/lib/spotify';
 import handleServerSession from '@/lib/handleServerSession';
 
 const Playlist = async ({ params }: { params: { id: string } }) => {
-  await handleServerSession();
+  const { spotifyApi } = await handleServerSession();
   const { id } = params;
 
   const { body: playlist } = await spotifyApi.getPlaylist(id);

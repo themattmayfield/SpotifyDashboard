@@ -3,13 +3,12 @@ import RightSideBar from '@/components/RightSideBar';
 import Subtitle from '@/components/Subtitle';
 import TopTracks from '@/components/TopTracks';
 import TopArtists from '@/components/TopArtists';
-import spotifyApi from '@/lib/spotify';
-import handleServerSession from '@/lib/handleServerSession';
+
 import Nav from '@/components/Nav';
+import handleServerSession from '@/lib/handleServerSession';
 
 export default async function Profile() {
-  await handleServerSession();
-
+  const { spotifyApi } = await handleServerSession();
   const [recentlyPlayed, topTracks, topArtistsLong, topArtistsShort] =
     await Promise.all([
       spotifyApi
@@ -35,16 +34,13 @@ export default async function Profile() {
           time_range: 'short_term',
         })
         .then(({ body }) => body.items),
-    ]).catch((error) => {
-      console.log('error', error);
-      return [[], [], [], []];
-    });
+    ]);
 
   return (
     <div className="h-full overflow-hidden">
       <Nav />
       <div className="flex h-full">
-        <div className="flex flex-col overflow-x-hidden lg:mr-4 overflow-y-scroll mb-[100px] no-scrollbar h-full">
+        <div className="overflow-x-hidden lg:mr-4 overflow-y-scroll mb-[100px] no-scrollbar">
           <div className="lg:hidden mb-16 px-2">
             <RightSideBar recentlyPlayed={recentlyPlayed} />
           </div>

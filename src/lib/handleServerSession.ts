@@ -17,6 +17,6 @@ const handleServerSession = async () => {
     redirect('/login');
   }
 
-  return session;
+  return { spotifyApi, session };
 };
 export default handleServerSession;

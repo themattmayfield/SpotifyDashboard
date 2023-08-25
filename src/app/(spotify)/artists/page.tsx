@@ -1,22 +1,19 @@
-import handleServerSession from '@/lib/handleServerSession';
-import spotifyApi from '@/lib/spotify';
 import Link from 'next/link';
 import Card from '@/components/Card';
 import StaggerChildren from '@/containers/StaggerChildren';
-
-const classes = {
-  active: 'border-b border-white',
-  inactive: 'border-b border-transparent',
-};
+import { cn } from '@/lib/cn';
+import handleServerSession from '@/lib/handleServerSession';
+import { Suspense } from 'react';
+import Loading from '@/app/loading';
 
 export default async function Artists({
   searchParams,
 }: {
   searchParams: { [key: string]: string | string[] | undefined };
 }) {
+  const { spotifyApi } = await handleServerSession();
   const { range } = searchParams;
   const activeRange = range || 'long_term';
-  await handleServerSession();
 
   const [topArtistsLong, topArtistsMedium, topArtistsShort] = await Promise.all(
     [
@@ -39,7 +36,7 @@ export default async function Artists({
         })
         .then(({ body }) => body.items),
     ]
-  ).catch(() => []);
+  );
 
   const terms = [
     {
@@ -68,26 +65,29 @@ export default async function Artists({
 
         <div className="flex items-center justify-center space-x-4">
           {terms.map(({ text, range }) => (
-            <Link href={`/artists/?range=${range}`}>
-              <p
-                className={
-                  'cursor-pointer ' +
-                  (activeRange == range ? classes.active : classes.inactive)
-                }
-              >
-                {text}
-              </p>
+            <Link
+              className={cn(
+                'border-b hover:text-spotify-green transition duration-300 ease-in-out',
+                activeRange === range
+                  ? 'border-white hover:border-spotify-green'
+                  : 'border-transparent'
+              )}
+              href={`/artists/?range=${range}`}
+            >
+              {text}
             </Link>
           ))}
         </div>
       </div>
-      <StaggerChildren className="grid grid-cols-2 md:grid-cols-3 gap-y-2 md:gap-6 no-scrollbar mb-[100px]">
-        {terms
-          .find(({ range }) => range === activeRange)
-          ?.data.map((item, index: number) => (
-            <Card key={index} info={item} />
-          ))}
-      </StaggerChildren>
+      <Suspense fallback={<Loading />}>
+        <StaggerChildren className="grid grid-cols-2 md:grid-cols-3 gap-y-2 md:gap-6 no-scrollbar mb-[100px]">
+          {terms
+            .find(({ range }) => range === activeRange)
+            ?.data.map((item, index: number) => (
+              <Card key={index} info={item} />
+            ))}
+        </StaggerChildren>
+      </Suspense>
     </div>
   );
 }

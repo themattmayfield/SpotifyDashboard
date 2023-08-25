@@ -16,7 +16,8 @@ const SideNavLink = ({
   const pathProp = path.split('/').at(1);
   return (
     <button
-      onClick={() => {
+      onClick={(e) => {
+        e.preventDefault();
         push(path);
       }}
       className={`${

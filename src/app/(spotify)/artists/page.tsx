@@ -5,11 +5,12 @@ import { cn } from '@/lib/cn';
 import handleServerSession from '@/lib/handleServerSession';
 import { Suspense } from 'react';
 import Loading from '@/app/loading';
+import TimePeriodLink from '@/components/TimePeriodLink';
 
 export default async function Artists({
   searchParams,
 }: {
-  searchParams: { [key: string]: string | string[] | undefined };
+  searchParams: { range: string };
 }) {
   const { spotifyApi } = await handleServerSession();
   const { range } = searchParams;
@@ -65,17 +66,11 @@ export default async function Artists({
 
         <div className="flex items-center justify-center space-x-4">
           {terms.map(({ text, range }) => (
-            <Link
-              className={cn(
-                'border-b hover:text-spotify-green transition duration-300 ease-in-out',
-                activeRange === range
-                  ? 'border-white hover:border-spotify-green'
-                  : 'border-transparent'
-              )}
-              href={`/artists/?range=${range}`}
-            >
-              {text}
-            </Link>
+            <TimePeriodLink
+              activeRange={activeRange}
+              range={range}
+              text={text}
+            />
           ))}
         </div>
       </div>

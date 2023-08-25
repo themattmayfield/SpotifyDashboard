@@ -40,7 +40,7 @@ export default async function Profile() {
     <div className="h-full overflow-hidden">
       <Nav />
       <div className="flex h-full">
-        <div className="overflow-x-hidden lg:mr-4 overflow-y-scroll mb-[100px] no-scrollbar">
+        <div className="overflow-x-hidden lg:mr-4 overflow-y-scroll no-scrollbar">
           <div className="lg:hidden mb-16 px-2">
             <RightSideBar recentlyPlayed={recentlyPlayed} />
           </div>
@@ -52,7 +52,7 @@ export default async function Profile() {
               ))}
             </div>
           </div>
-          <div className="px-2 lg:pl-2 flex flex-col xl:flex-row 2xl:flex-nowrap no-scrollbar gap-y-16 gap-x-8">
+          <div className="px-2 lg:pl-2 flex flex-col xl:flex-row 2xl:flex-nowrap no-scrollbar gap-y-16 gap-x-8 pb-[192px]">
             <TopTracks topTracks={topTracks} />
             <TopArtists topArtists={topArtistsShort} />
           </div>

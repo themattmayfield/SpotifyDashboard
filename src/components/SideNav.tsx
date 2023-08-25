@@ -27,7 +27,7 @@ const NavLinks = ({ classes }: { classes: string }) => (
   <div className={classes}>
     {navItems.map(({ path, Icon, id }) => (
       <SideNavLink key={id} path={path}>
-        <Icon className="hover:text-[#686868] transition duration-150 ease-in-out w-6 h-6 text-white" />
+        <Icon className="group-hover:text-[#686868] pointer-events-none z-0 transition duration-150 ease-in-out w-6 h-6 text-white" />
       </SideNavLink>
     ))}
   </div>

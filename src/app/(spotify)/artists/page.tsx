@@ -61,7 +61,7 @@ export default async function Artists({
     <div className="max-w-5xl mx-auto px-2 md:px-4 no-scrollbar pt-10 md:pt-24">
       <div className="bg-spotify-black w-full text-white pb-10 select-none flex flex-col md:flex-row items-center justify-between space-y-2">
         <div>
-          <p className="text-2xl font-semibold">Top Artists</p>
+          <p className="text-2xl font-semibold">Artists</p>
         </div>
 
         <div className="flex items-center justify-center space-x-4">

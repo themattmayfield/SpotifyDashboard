@@ -18,13 +18,14 @@ const SideNavLink = ({
     <button
       onClick={(e) => {
         e.preventDefault();
+        e.stopPropagation();
         push(path);
       }}
       className={`${
         currentPath === pathProp
           ? 'border-[#1DB954] bg-custom-darkgray'
           : 'border-transparent hover:bg-custom-darkgray'
-      } cursor-pointer w-full border-t-4 lg:border-t-0 lg:h-24 lg:border-l-4 flex items-center justify-center`}
+      } group z-10 cursor-pointer w-full border-t-4 lg:border-t-0 lg:h-24 lg:border-l-4 flex items-center justify-center`}
     >
       {children}
     </button>

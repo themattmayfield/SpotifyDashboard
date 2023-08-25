@@ -60,7 +60,7 @@ export default async function Tracks({
     <div className="max-w-6xl mx-auto px-2 md:px-6  pt-10 md:pt-24">
       <div className="bg-spotify-black w-full text-white pb-10 select-none flex flex-col md:flex-row items-center justify-between space-y-2">
         <div>
-          <p className="text-2xl font-semibold">Top Tracks</p>
+          <p className="text-2xl font-semibold">Tracks</p>
         </div>
         <div className="flex items-center justify-center space-x-4">
           {terms.map(({ text, range }) => (

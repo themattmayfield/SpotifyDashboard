@@ -42,17 +42,17 @@ export default async function Artists({
     {
       range: 'long_term',
       text: 'All Time',
-      data: topArtistsLong,
+      data: topArtistsLong ?? [],
     },
     {
       range: 'medium_term',
       text: 'Last 6 Months',
-      data: topArtistsMedium,
+      data: topArtistsMedium ?? [],
     },
     {
       range: 'short_term',
       text: 'Last 4 Weeks',
-      data: topArtistsShort,
+      data: topArtistsShort ?? [],
     },
   ];
 

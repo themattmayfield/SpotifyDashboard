@@ -3,10 +3,19 @@ import Playlist from '@/components/Playlist';
 import handleServerSession from '@/lib/handleServerSession';
 
 export default async function Playlists() {
+<<<<<<< HEAD
   const { spotifyApi } = await handleServerSession();
   const playlists = await spotifyApi
     .getUserPlaylists()
     .then(({ body }) => body.items);
+=======
+  await handleServerSession();
+
+  const playlists = await spotifyApi
+    .getUserPlaylists()
+    .then(({ body }) => body.items)
+    .catch(() => []);
+>>>>>>> main
 
   return (
     <div className="no-scrollbar overflow-x-hidden max-w-7xl mx-auto px-2 md:px-4 pt-10 md:pt-24">

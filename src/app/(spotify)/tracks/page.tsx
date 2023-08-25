@@ -41,17 +41,17 @@ export default async function Tracks({
     {
       range: 'long_term',
       text: 'All Time',
-      data: long,
+      data: long ?? [],
     },
     {
       range: 'medium_term',
       text: 'Last 6 Months',
-      data: medium,
+      data: medium ?? [],
     },
     {
       range: 'short_term',
       text: 'Last 4 Weeks',
-      data: short,
+      data: short ?? [],
     },
   ];
 

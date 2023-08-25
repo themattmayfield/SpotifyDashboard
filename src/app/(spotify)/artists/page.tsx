@@ -5,11 +5,12 @@ import { cn } from '@/lib/cn';
 import handleServerSession from '@/lib/handleServerSession';
 import { Suspense } from 'react';
 import Loading from '@/app/loading';
+import TimePeriodLink from '@/components/TimePeriodLink';
 
 export default async function Artists({
   searchParams,
 }: {
-  searchParams: { [key: string]: string | string[] | undefined };
+  searchParams: { range: string };
 }) {
   const { spotifyApi } = await handleServerSession();
   const { range } = searchParams;
@@ -58,24 +59,18 @@ export default async function Artists({
 
   return (
     <div className="max-w-5xl mx-auto px-2 md:px-4 no-scrollbar pt-10 md:pt-24">
-      <div className="bg-black w-full text-white pb-10 select-none flex flex-col md:flex-row items-center justify-between space-y-2">
+      <div className="bg-spotify-black w-full text-white pb-10 select-none flex flex-col md:flex-row items-center justify-between space-y-2">
         <div>
           <p className="text-2xl font-semibold">Top Artists</p>
         </div>
 
         <div className="flex items-center justify-center space-x-4">
           {terms.map(({ text, range }) => (
-            <Link
-              className={cn(
-                'border-b hover:text-spotify-green transition duration-300 ease-in-out',
-                activeRange === range
-                  ? 'border-white hover:border-spotify-green'
-                  : 'border-transparent'
-              )}
-              href={`/artists/?range=${range}`}
-            >
-              {text}
-            </Link>
+            <TimePeriodLink
+              activeRange={activeRange}
+              range={range}
+              text={text}
+            />
           ))}
         </div>
       </div>

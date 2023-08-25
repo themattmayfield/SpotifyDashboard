@@ -6,11 +6,12 @@ import LoadingComponent from '@/components/Loading';
 
 import { cn } from '@/lib/cn';
 import handleServerSession from '@/lib/handleServerSession';
+import TimePeriodLink from '@/components/TimePeriodLink';
 
 export default async function Tracks({
   searchParams,
 }: {
-  searchParams: { [key: string]: string | string[] | undefined };
+  searchParams: { range: string };
 }) {
   const { range } = searchParams;
   const activeRange = range || 'long_term';
@@ -57,23 +58,17 @@ export default async function Tracks({
 
   return (
     <div className="max-w-6xl mx-auto px-2 md:px-6  pt-10 md:pt-24">
-      <div className="bg-black w-full text-white pb-10 select-none flex flex-col md:flex-row items-center justify-between space-y-2">
+      <div className="bg-spotify-black w-full text-white pb-10 select-none flex flex-col md:flex-row items-center justify-between space-y-2">
         <div>
           <p className="text-2xl font-semibold">Top Tracks</p>
         </div>
         <div className="flex items-center justify-center space-x-4">
           {terms.map(({ text, range }) => (
-            <Link
-              className={cn(
-                'border-b hover:text-spotify-green transition duration-300 ease-in-out',
-                activeRange === range
-                  ? 'border-white hover:border-spotify-green'
-                  : 'border-transparent'
-              )}
-              href={`/tracks?range=${range}`}
-            >
-              {text}
-            </Link>
+            <TimePeriodLink
+              activeRange={activeRange}
+              range={range}
+              text={text}
+            />
           ))}
         </div>
       </div>

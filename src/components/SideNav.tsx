@@ -18,7 +18,7 @@ export default function SideNav() {
       </div>
 
       {/* Mobile */}
-      <NavLinks classes="w-full flex lg:hidden bg-black text-white top-auto fixed bottom-0 right-0 h-[70px] z-50" />
+      <NavLinks classes="w-full flex lg:hidden bg-spotify-black text-white top-auto fixed bottom-0 right-0 h-[70px] z-50" />
     </>
   );
 }

@@ -30,7 +30,7 @@ const Nav = ({ user }: { user: SpotifyApi.CurrentUsersProfileResponse }) => {
           <Popover.Overlay
             className={`${
               open ? 'opacity-90 fixed inset-0' : 'opacity-0'
-            } bg-black`}
+            } bg-spotify-black`}
           />
           <Transition
             show={open}

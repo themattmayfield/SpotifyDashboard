@@ -3,6 +3,8 @@ import Card from '@/components/Card';
 import StaggerChildren from '@/containers/StaggerChildren';
 import { cn } from '@/lib/cn';
 import handleServerSession from '@/lib/handleServerSession';
+import { Suspense } from 'react';
+import Loading from '@/app/loading';
 
 export default async function Artists({
   searchParams,
@@ -77,13 +79,15 @@ export default async function Artists({
           ))}
         </div>
       </div>
-      <StaggerChildren className="grid grid-cols-2 md:grid-cols-3 gap-y-2 md:gap-6 no-scrollbar mb-[100px]">
-        {terms
-          .find(({ range }) => range === activeRange)
-          ?.data.map((item, index: number) => (
-            <Card key={index} info={item} />
-          ))}
-      </StaggerChildren>
+      <Suspense fallback={<Loading />}>
+        <StaggerChildren className="grid grid-cols-2 md:grid-cols-3 gap-y-2 md:gap-6 no-scrollbar mb-[100px]">
+          {terms
+            .find(({ range }) => range === activeRange)
+            ?.data.map((item, index: number) => (
+              <Card key={index} info={item} />
+            ))}
+        </StaggerChildren>
+      </Suspense>
     </div>
   );
 }

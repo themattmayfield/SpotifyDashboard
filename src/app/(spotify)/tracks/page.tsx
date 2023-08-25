@@ -7,11 +7,6 @@ import LoadingComponent from '@/components/Loading';
 import { cn } from '@/lib/cn';
 import handleServerSession from '@/lib/handleServerSession';
 
-const classes = {
-  active: 'border-b border-white',
-  inactive: 'border-b border-transparent',
-};
-
 export default async function Tracks({
   searchParams,
 }: {

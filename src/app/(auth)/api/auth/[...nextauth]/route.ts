@@ -6,7 +6,9 @@ import SpotifyProvider from 'next-auth/providers/spotify';
 
 async function refreshAccessToken(token: JWT): Promise<JWT> {
   try {
-    // spotifyApi.setAccessToken(token.access_token);
+    console.log('I AM HERE IN REFRESH');
+
+    spotifyApi.setAccessToken(token.accessToken!);
     spotifyApi.setRefreshToken(token.refreshToken!);
 
     const { body: refreshedToken } = await spotifyApi.refreshAccessToken();
@@ -44,8 +46,10 @@ export const authOptions: AuthOptions = {
   },
   callbacks: {
     async jwt({ token, account, user }) {
-      // console.logrefreshToken('Token is: ', token);
-      // console.log('Account is: ', account);
+      // console.log('I AM HERE IN JWT');
+
+      // console.log('Token is: ', token);
+      // console.log('Account is: ', account?.access_token);
       // console.log('User is: ', user);
       // init signin
       if (account && user) {
@@ -58,7 +62,11 @@ export const authOptions: AuthOptions = {
       }
 
       if (token.accessTokenExpires && Date.now() < token.accessTokenExpires) {
-        // console.log('EXISTING ACCESS TOKEN IS VALUD');
+        console.log('EXISTING ACCESS TOKEN IS VALUD');
+        console.log({ token });
+        spotifyApi.setAccessToken(token.accessToken!);
+        spotifyApi.setRefreshToken(token.refreshToken!);
+
         return token;
       }
 
@@ -91,12 +99,15 @@ export const authOptions: AuthOptions = {
       //   };
       // }
     },
-
     async session({ session, token }) {
       session.accessToken = token.accessToken;
       session.error = token.error;
       session.user = token.user;
       return session;
+    },
+    async signIn({ account, user }) {
+      console.log('signed', account, user);
+      return true;
     },
   },
   logger: {

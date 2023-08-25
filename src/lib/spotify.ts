@@ -26,7 +26,15 @@ const spotifyApi = new SpotifyWebApi({
   clientId: process.env.NEXT_PUBLIC_CLIENT_ID,
   clientSecret: process.env.NEXT_PUBLIC_CLIENT_SECRET,
 });
-
+spotifyApi.clientCredentialsGrant().then(
+  function (data) {
+    console.log('The access token is ' + data.body.access_token);
+    spotifyApi.setAccessToken(data.body.access_token);
+  },
+  function (err) {
+    console.log('Something went wrong!', err);
+  }
+);
 export default spotifyApi;
 
 export { LOGIN_URL };

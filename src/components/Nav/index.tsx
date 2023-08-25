@@ -1,9 +1,8 @@
-import spotifyApi from '@/lib/spotify';
-import NavClient from './NavClient';
 import handleServerSession from '@/lib/handleServerSession';
+import NavClient from './NavClient';
 
 const Nav = async () => {
-  await handleServerSession();
+  const { spotifyApi } = await handleServerSession();
   const { body: user } = await spotifyApi.getMe();
 
   return (

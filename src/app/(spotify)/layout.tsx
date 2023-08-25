@@ -1,21 +1,12 @@
 import { ReactNode } from 'react';
 import PageTransition from '@/components/PageTransition';
 import SideNav from '@/components/SideNav';
-import handleServerSession from '@/lib/handleServerSession';
 
 type TRootLayoutProps = {
   children: ReactNode;
-  params: {
-    id: string;
-  };
 };
 
-export default async function SpotifyLayout({
-  children,
-  params,
-}: TRootLayoutProps) {
-  await handleServerSession();
-
+export default async function SpotifyLayout({ children }: TRootLayoutProps) {
   return (
     <PageTransition>
       <SideNav />

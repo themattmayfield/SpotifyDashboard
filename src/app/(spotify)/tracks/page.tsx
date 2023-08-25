@@ -1,11 +1,11 @@
-import spotifyApi from '@/lib/spotify';
 import StaggerChildren from '@/containers/StaggerChildren';
 import Link from 'next/link';
 import Track from '@/components/Track';
 import { Suspense } from 'react';
 import LoadingComponent from '@/components/Loading';
-import handleServerSession from '@/lib/handleServerSession';
+
 import { cn } from '@/lib/cn';
+import handleServerSession from '@/lib/handleServerSession';
 
 const classes = {
   active: 'border-b border-white',
@@ -17,9 +17,9 @@ export default async function Tracks({
 }: {
   searchParams: { [key: string]: string | string[] | undefined };
 }) {
-  await handleServerSession();
   const { range } = searchParams;
   const activeRange = range || 'long_term';
+  const { spotifyApi } = await handleServerSession();
 
   const [long, medium, short] = await Promise.all([
     spotifyApi
@@ -40,23 +40,23 @@ export default async function Tracks({
         time_range: 'short_term',
       })
       .then(({ body }) => body.items),
-  ]).catch(() => []);
+  ]);
 
   const terms = [
     {
       range: 'long_term',
       text: 'All Time',
-      data: long ?? [],
+      data: long,
     },
     {
       range: 'medium_term',
       text: 'Last 6 Months',
-      data: medium ?? [],
+      data: medium,
     },
     {
       range: 'short_term',
       text: 'Last 4 Weeks',
-      data: short ?? [],
+      data: short,
     },
   ];
 
@@ -71,7 +71,9 @@ export default async function Tracks({
             <Link
               className={cn(
                 'border-b hover:text-spotify-green transition duration-300 ease-in-out',
-                activeRange === range ? 'border-white' : 'border-transparent'
+                activeRange === range
+                  ? 'border-white hover:border-spotify-green'
+                  : 'border-transparent'
               )}
               href={`/tracks?range=${range}`}
             >

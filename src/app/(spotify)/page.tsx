@@ -3,13 +3,12 @@ import RightSideBar from '@/components/RightSideBar';
 import Subtitle from '@/components/Subtitle';
 import TopTracks from '@/components/TopTracks';
 import TopArtists from '@/components/TopArtists';
-import spotifyApi from '@/lib/spotify';
-import handleServerSession from '@/lib/handleServerSession';
+
 import Nav from '@/components/Nav';
+import handleServerSession from '@/lib/handleServerSession';
 
 export default async function Profile() {
-  await handleServerSession();
-
+  const { spotifyApi } = await handleServerSession();
   const [recentlyPlayed, topTracks, topArtistsLong, topArtistsShort] =
     await Promise.all([
       spotifyApi

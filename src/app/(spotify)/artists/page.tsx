@@ -1,18 +1,17 @@
-import handleServerSession from '@/lib/handleServerSession';
-import spotifyApi from '@/lib/spotify';
 import Link from 'next/link';
 import Card from '@/components/Card';
 import StaggerChildren from '@/containers/StaggerChildren';
 import { cn } from '@/lib/cn';
+import handleServerSession from '@/lib/handleServerSession';
 
 export default async function Artists({
   searchParams,
 }: {
   searchParams: { [key: string]: string | string[] | undefined };
 }) {
+  const { spotifyApi } = await handleServerSession();
   const { range } = searchParams;
   const activeRange = range || 'long_term';
-  await handleServerSession();
 
   const [topArtistsLong, topArtistsMedium, topArtistsShort] = await Promise.all(
     [
@@ -35,23 +34,23 @@ export default async function Artists({
         })
         .then(({ body }) => body.items),
     ]
-  ).catch(() => []);
+  );
 
   const terms = [
     {
       range: 'long_term',
       text: 'All Time',
-      data: topArtistsLong ?? [],
+      data: topArtistsLong,
     },
     {
       range: 'medium_term',
       text: 'Last 6 Months',
-      data: topArtistsMedium ?? [],
+      data: topArtistsMedium,
     },
     {
       range: 'short_term',
       text: 'Last 4 Weeks',
-      data: topArtistsShort ?? [],
+      data: topArtistsShort,
     },
   ];
 
@@ -67,7 +66,9 @@ export default async function Artists({
             <Link
               className={cn(
                 'border-b hover:text-spotify-green transition duration-300 ease-in-out',
-                activeRange === range ? 'border-white' : 'border-transparent'
+                activeRange === range
+                  ? 'border-white hover:border-spotify-green'
+                  : 'border-transparent'
               )}
               href={`/artists/?range=${range}`}
             >

@@ -1,16 +1,14 @@
 import dynamic from 'next/dynamic';
-import spotifyApi from '@/lib/spotify';
 
-import handleServerSession from '@/lib/handleServerSession';
 import numeral from 'numeral';
 import { revalidatePath } from 'next/cache';
+import handleServerSession from '@/lib/handleServerSession';
 
 const Loading = dynamic(() => import('@/components/Loading'), { ssr: false });
 
 export default async function Artist({ params }: { params: { id: string } }) {
   const { id } = params;
-
-  await handleServerSession();
+  const { spotifyApi } = await handleServerSession();
 
   const [{ body: artist }, { body: followingArtist }] = await Promise.all([
     spotifyApi.getArtist(id),
@@ -21,8 +19,6 @@ export default async function Artist({ params }: { params: { id: string } }) {
 
   const followHandler = async () => {
     'use server';
-
-    await handleServerSession();
 
     isFollowingArtist
       ? await spotifyApi.unfollowArtists([id])

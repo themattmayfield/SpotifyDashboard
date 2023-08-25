@@ -121,17 +121,6 @@ export const authOptions: AuthOptions = {
       console.debug(code, metadata);
     },
   },
-  logger: {
-    error(code, metadata) {
-      console.error(code, metadata);
-    },
-    warn(code) {
-      console.warn(code);
-    },
-    debug(code, metadata) {
-      console.debug(code, metadata);
-    },
-  },
 };
 
 const handler = NextAuth(authOptions);

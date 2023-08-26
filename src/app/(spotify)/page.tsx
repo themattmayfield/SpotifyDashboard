@@ -45,7 +45,12 @@ export default async function Profile() {
             <Subtitle link="/artists" subtitle="Top Artist" />
             <div className="flex flex-nowrap space-x-6 overflow-x-scroll no-scrollbar pl-2 lg:pl-0">
               {topArtistsLong.map((item, index) => (
-                <Card profile key={index} info={item} />
+                <Card
+                  imageClassName="w-[45vw] md:w-[25vw] lg:w-[25vw] xl:w-64"
+                  profile
+                  key={index}
+                  info={item}
+                />
               ))}
             </div>
           </div>

@@ -4,7 +4,6 @@ import {
   SelectContent,
   SelectItem,
   SelectTrigger,
-  SelectValue,
 } from '@/components/ui/select';
 import { ImInfinite } from 'react-icons/im';
 import { IoIosInfinite } from 'react-icons/io';
@@ -22,7 +21,7 @@ const TimePeriodSelect = ({ activeRange }: { activeRange: TTimeRange }) => {
       }}
       value={activeRange}
     >
-      <SelectTrigger className="max-w-min border-none">
+      <SelectTrigger className="max-w-min border-none outline-none ring-0 focus:ring-0 pr-1">
         {activeRange === 'long_term' ? (
           <IoIosInfinite className="h-6 w-6 mr-2" />
         ) : activeRange === 'medium_term' ? (

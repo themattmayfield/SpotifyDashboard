@@ -1,17 +1,16 @@
 import StaggerChildren from '@/containers/StaggerChildren';
-import Link from 'next/link';
 import Track from '@/components/Track';
 import { Suspense } from 'react';
 import LoadingComponent from '@/components/Loading';
 
-import { cn } from '@/lib/cn';
 import handleServerSession from '@/lib/handleServerSession';
-import TimePeriodLink from '@/components/TimePeriodLink';
+import TimePeriodSelect from '@/components/TimePeriodSelect';
+import { TTimeRange } from '@/types';
 
 export default async function Tracks({
   searchParams,
 }: {
-  searchParams: { range: string };
+  searchParams: { range: TTimeRange };
 }) {
   const { range } = searchParams;
   const activeRange = range || 'long_term';
@@ -41,35 +40,26 @@ export default async function Tracks({
   const terms = [
     {
       range: 'long_term',
-      text: 'All Time',
       data: long ?? [],
     },
     {
       range: 'medium_term',
-      text: 'Last 6 Months',
       data: medium ?? [],
     },
     {
       range: 'short_term',
-      text: 'Last 4 Weeks',
       data: short ?? [],
     },
   ];
 
   return (
-    <div className="max-w-6xl mx-auto px-2 md:px-6  pt-10 md:pt-24">
-      <div className="bg-spotify-black w-full text-white pb-10 select-none flex flex-col md:flex-row items-center justify-between space-y-2">
-        <div>
-          <p className="text-2xl font-semibold">Tracks</p>
-        </div>
-        <div className="flex items-center justify-center space-x-4">
-          {terms.map(({ text, range }) => (
-            <TimePeriodLink
-              activeRange={activeRange}
-              range={range}
-              text={text}
-            />
-          ))}
+    <div className="max-w-6xl mx-auto px-2 md:px-6">
+      <div className="bg-spotify-black w-full text-white pb-6 select-none flex flex-col md:flex-row items-center justify-between space-y-2">
+        <div className="w-full flex items-center justify-between">
+          <div>
+            <p className="text-xl sm:text-2xl font-semibold">Tracks</p>
+          </div>
+          <TimePeriodSelect activeRange={activeRange} />
         </div>
       </div>
       <Suspense fallback={<LoadingComponent />}>

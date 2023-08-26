@@ -1,4 +1,4 @@
-import StaggerChildren from '@/containers/StaggerChildren';
+// import StaggerChildren from '@/containers/StaggerChildren';
 import Track from '@/components/Track';
 import { Suspense } from 'react';
 import LoadingComponent from '@/components/Loading';
@@ -63,13 +63,13 @@ export default async function Tracks({
         </div>
       </div>
       <Suspense fallback={<LoadingComponent />}>
-        <StaggerChildren className="flex flex-col gap-4 no-scrollbar text-white mb-[100px]">
+        <div className="flex flex-col gap-4 no-scrollbar text-white mb-[100px]">
           {terms
             .find(({ range }) => range === activeRange)
             ?.data.map((track, index) => (
               <Track key={index} track={track} />
             ))}
-        </StaggerChildren>
+        </div>
       </Suspense>
     </div>
   );

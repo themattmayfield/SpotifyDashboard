@@ -1,4 +1,4 @@
-import StaggerChildren from '@/containers/StaggerChildren';
+// import StaggerChildren from '@/containers/StaggerChildren';
 import Playlist from '@/components/Playlist';
 import handleServerSession from '@/lib/handleServerSession';
 
@@ -16,11 +16,11 @@ export default async function Playlists() {
         </div>
       </div>
 
-      <StaggerChildren className="grid grid-cols-2 lg:grid-cols-3 gap-2 md:gap-6 no-scrollbar mb-[100px]">
+      <div className="grid grid-cols-2 lg:grid-cols-3 gap-2 md:gap-6 no-scrollbar mb-[100px]">
         {playlists.map((playlist, index) => (
           <Playlist key={index} playlist={playlist} />
         ))}
-      </StaggerChildren>
+      </div>
     </div>
   );
 }

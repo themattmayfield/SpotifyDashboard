@@ -38,7 +38,6 @@ export default async function Profile() {
 
   return (
     <div className="h-full overflow-hidden">
-      <Nav />
       <div className="flex h-full">
         <div className="overflow-x-hidden lg:mr-4 overflow-y-scroll no-scrollbar">
           <div className="lg:hidden mb-16 px-2">

@@ -1,9 +1,5 @@
 import Card from '@/components/Card';
-<<<<<<< HEAD
 // import StaggerChildren from '@/containers/StaggerChildren';
-=======
-import StaggerChildren from '@/containers/StaggerChildren';
->>>>>>> main
 import handleServerSession from '@/lib/handleServerSession';
 import { Suspense } from 'react';
 import Loading from '@/app/loading';

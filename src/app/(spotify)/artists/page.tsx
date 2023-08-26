@@ -1,10 +1,9 @@
 import Card from '@/components/Card';
-// import StaggerChildren from '@/containers/StaggerChildren';
 import handleServerSession from '@/lib/handleServerSession';
-import { Suspense } from 'react';
-import Loading from '@/app/loading';
-import TimePeriodSelect from '@/components/TimePeriodSelect';
+
 import { TTimeRange } from '@/types';
+import PageRangeHeader from '@/components/PageRangeHeader';
+import { PageWrapper } from '@/components/PageWrapper';
 
 export default async function Artists({
   searchParams,
@@ -60,24 +59,16 @@ export default async function Artists({
   }[];
 
   return (
-    <div className="max-w-5xl mx-auto px-2 md:px-4 no-scrollbar">
-      <div className="bg-spotify-black w-full text-white pb-6 select-none flex flex-col md:flex-row items-center justify-between space-y-2">
-        <div className="w-full flex items-center justify-between">
-          <div>
-            <p className="text-xl sm:text-2xl font-semibold">Artists</p>
-          </div>
-          <TimePeriodSelect activeRange={activeRange} />
-        </div>
+    <PageWrapper>
+      <PageRangeHeader title="Artists" activeRange={activeRange} />
+
+      <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-3 md:gap-6 no-scrollbar mb-[100px]">
+        {terms
+          .find(({ range }) => range === activeRange)
+          ?.data.map((item, index: number) => (
+            <Card key={index} info={item} />
+          ))}
       </div>
-      <Suspense fallback={<Loading />}>
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-y-2 md:gap-6 no-scrollbar mb-[100px]">
-          {terms
-            .find(({ range }) => range === activeRange)
-            ?.data.map((item, index: number) => (
-              <Card key={index} info={item} />
-            ))}
-        </div>
-      </Suspense>
-    </div>
+    </PageWrapper>
   );
 }

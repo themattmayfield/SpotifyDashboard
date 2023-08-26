@@ -10,9 +10,9 @@ export default async function SpotifyLayout({ children }: TRootLayoutProps) {
   return (
     <div className="flex bg-transparent lg:pr-6 lg:pl-2 h-full">
       <SideNav />
-      <div className="flex flex-1 flex-col overflow-hidden">
+      <div className="flex flex-1 flex-col overflow-x-hidden">
         <Nav />
-        <main className="h-full no-scrollbar overflow-scroll">{children}</main>
+        {children}
       </div>
     </div>
   );

@@ -3,8 +3,6 @@ import RightSideBar from '@/components/RightSideBar';
 import Subtitle from '@/components/Subtitle';
 import TopTracks from '@/components/TopTracks';
 import TopArtists from '@/components/TopArtists';
-
-import Nav from '@/components/Nav';
 import handleServerSession from '@/lib/handleServerSession';
 
 export default async function Profile() {

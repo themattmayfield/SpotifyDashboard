@@ -1,6 +1,6 @@
 import React from 'react';
 import Track from '@/components/Track';
-import StaggerChildren from '@/containers/StaggerChildren';
+// import StaggerChildren from '@/containers/StaggerChildren';
 
 import handleServerSession from '@/lib/handleServerSession';
 
@@ -19,11 +19,11 @@ export default async function Recent() {
           <p className="text-xl sm:text-2xl font-semibold">Recently Played</p>
         </div>
 
-        <StaggerChildren className="flex flex-col gap-4 no-scrollbar text-white mb-[100px]">
+        <div className="flex flex-col gap-4 no-scrollbar text-white mb-[100px]">
           {recentlyPlayed.map(({ track }, index) => (
             <Track key={index} track={track} />
           ))}
-        </StaggerChildren>
+        </div>
       </div>
     </>
   );

@@ -1,5 +1,4 @@
 import { ReactNode } from 'react';
-// import PageTransition from '@/components/PageTransition';
 import SideNav from '@/components/SideNav';
 import Nav from '@/components/Nav';
 type TRootLayoutProps = {

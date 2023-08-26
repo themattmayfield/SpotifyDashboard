@@ -1,12 +1,5 @@
-'use client';
 import Link from 'next/link';
 import { IoMusicalNotesSharp } from 'react-icons/io5';
-import { motion } from 'framer-motion';
-
-let motionPlaylist = {
-  hidden: { opacity: 0 },
-  show: { opacity: 1 },
-};
 
 export default function Playlist({
   playlist,
@@ -23,10 +16,7 @@ export default function Playlist({
       : 'lg:h-[25vw] lg:w-[25vw] xl:h-96 xl:w-96'
   } cursor-pointer overflow-hidden bg-custom-darkgray bg-cover bg-center h-[40vw] w-[40vw] flex items-center justify-center transition duration-300 ease-in-out transform hover:scale-105`;
   return (
-    <motion.div
-      variants={motionPlaylist}
-      className="inline-block max-w-min mx-auto "
-    >
+    <div className="inline-block max-w-min mx-auto ">
       <Link href={`/playlists/${playlist.id}`}>
         {playlist.images.length ? (
           <div
@@ -50,6 +40,6 @@ export default function Playlist({
           {playlist.tracks.total} TRACKS
         </p>
       </div>
-    </motion.div>
+    </div>
   );
 }

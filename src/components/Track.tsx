@@ -1,12 +1,5 @@
-'use client';
 import Link from 'next/link';
 import { millisToMinutesAndSeconds } from '@/lib/time';
-import { motion } from 'framer-motion';
-
-let motionTrack = {
-  hidden: { opacity: 0 },
-  show: { opacity: 1 },
-};
 
 export default function Track({
   track,
@@ -14,10 +7,7 @@ export default function Track({
   track: SpotifyApi.TrackObjectFull | null;
 }) {
   return (
-    <motion.div
-      variants={motionTrack}
-      className="flex items-center justify-between  cursor-pointer transition duration-150 ease-in-out hover:bg-custom-darkgray"
-    >
+    <div className="flex items-center justify-between  cursor-pointer transition duration-150 ease-in-out hover:bg-custom-darkgray">
       <div className="flex space-x-6 items-center">
         <Link href={`/tracks/${track?.id}`}>
           <img className="w-20 h-20" src={track?.album?.images[0].url} />
@@ -42,6 +32,6 @@ export default function Track({
       <div className="hidden md:block text-[#565656]">
         {track && millisToMinutesAndSeconds(track?.duration_ms)}
       </div>
-    </motion.div>
+    </div>
   );
 }

@@ -1,8 +1,8 @@
-import React from 'react';
 import Track from '@/components/Track';
 
 import handleServerSession from '@/lib/handleServerSession';
 import { PageWrapper } from '@/components/PageWrapper';
+import PageRangeHeader from '@/components/PageRangeHeader';
 
 export default async function Recent() {
   const { spotifyApi } = await handleServerSession();
@@ -15,10 +15,7 @@ export default async function Recent() {
   return (
     <>
       <PageWrapper>
-        <div className="bg-spotify-black w-full text-white pb-10 select-none flex flex-col md:flex-row items-center justify-between space-y-2">
-          <p className="text-xl sm:text-2xl font-semibold">Recently Played</p>
-        </div>
-
+        <PageRangeHeader title="Recently Played" />
         <div className="flex flex-col gap-4 no-scrollbar text-white mb-[100px] px-2">
           {recentlyPlayed.map(({ track }, index) => (
             <Track key={index} track={track} />

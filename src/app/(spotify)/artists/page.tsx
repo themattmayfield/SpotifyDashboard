@@ -1,20 +1,19 @@
-import Link from 'next/link';
 import Card from '@/components/Card';
 import StaggerChildren from '@/containers/StaggerChildren';
-import { cn } from '@/lib/cn';
 import handleServerSession from '@/lib/handleServerSession';
 import { Suspense } from 'react';
 import Loading from '@/app/loading';
-import TimePeriodLink from '@/components/TimePeriodLink';
+import TimePeriodSelect from '@/components/TimePeriodSelect';
+import { TTimeRange } from '@/types';
 
 export default async function Artists({
   searchParams,
 }: {
-  searchParams: { range: string };
+  searchParams: { range: TTimeRange };
 }) {
   const { spotifyApi } = await handleServerSession();
   const { range } = searchParams;
-  const activeRange = range || 'long_term';
+  const activeRange = (range || 'long_term') satisfies TTimeRange;
 
   const [topArtistsLong, topArtistsMedium, topArtistsShort] = await Promise.all(
     [
@@ -42,36 +41,32 @@ export default async function Artists({
   const terms = [
     {
       range: 'long_term',
-      text: 'All Time',
       data: topArtistsLong ?? [],
     },
     {
       range: 'medium_term',
-      text: 'Last 6 Months',
       data: topArtistsMedium ?? [],
     },
     {
       range: 'short_term',
-      text: 'Last 4 Weeks',
       data: topArtistsShort ?? [],
     },
-  ];
+  ] satisfies {
+    range: TTimeRange;
+    data:
+      | SpotifyApi.ArtistObjectFull[]
+      | SpotifyApi.ArtistObjectFull[]
+      | SpotifyApi.ArtistObjectFull[];
+  }[];
 
   return (
     <div className="max-w-5xl mx-auto px-2 md:px-4 no-scrollbar">
-      <div className="bg-spotify-black w-full text-white pb-10 select-none flex flex-col md:flex-row items-center justify-between space-y-2">
-        <div>
-          <p className="text-2xl font-semibold">Artists</p>
-        </div>
-
-        <div className="flex items-center justify-center space-x-4">
-          {terms.map(({ text, range }) => (
-            <TimePeriodLink
-              activeRange={activeRange}
-              range={range}
-              text={text}
-            />
-          ))}
+      <div className="bg-spotify-black w-full text-white pb-6 select-none flex flex-col md:flex-row items-center justify-between space-y-2">
+        <div className="w-full flex items-center justify-between">
+          <div>
+            <p className="text-xl sm:text-2xl font-semibold">Artists</p>
+          </div>
+          <TimePeriodSelect activeRange={activeRange} />
         </div>
       </div>
       <Suspense fallback={<Loading />}>

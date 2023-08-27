@@ -41,7 +41,7 @@ function AnimatedBars() {
           <motion.span
             key={index}
             {...bar}
-            className="w-2.5 h-5 ease-in-out bg-[#383838]"
+            className="w-2.5 h-5 ease-in-out bg-custom-gray"
           />
         ))}
       </div>

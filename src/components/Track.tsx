@@ -3,8 +3,10 @@ import { millisToMinutesAndSeconds } from '@/lib/time';
 
 export default function Track({
   track,
+  withTrackDuration = true,
 }: {
   track: SpotifyApi.TrackObjectFull | null;
+  withTrackDuration?: boolean;
 }) {
   return (
     <div className="flex items-center justify-between  cursor-pointer transition duration-150 ease-in-out hover:bg-custom-darkgray">

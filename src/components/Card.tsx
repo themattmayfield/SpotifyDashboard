@@ -11,7 +11,7 @@ export default function Card({
   imageClassName?: string;
 }) {
   return (
-    <div className="">
+    <div>
       <Link href={`/artists/${info.id}`}>
         <div
           style={{

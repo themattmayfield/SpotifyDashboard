@@ -3,6 +3,8 @@ import handleServerSession from '@/lib/handleServerSession';
 import { TTimeRange } from '@/types';
 import PageRangeHeader from '@/components/PageRangeHeader';
 import { PageWrapper } from '@/components/PageWrapper';
+import TrackLoading from '@/components/Loading/TrackLoading';
+import { Suspense } from 'react';
 
 export default async function Tracks({
   searchParams,

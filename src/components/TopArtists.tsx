@@ -16,7 +16,7 @@ const TopArtists = ({
                 ? `url(${card.images[0].url})`
                 : 'none',
             }}
-            className={`rounded--3xl rounded-lg h-[45vw] w-[45vw] lg:h-[16vw] xl:w-full bg-custom-darkgray bg-cover bg-center cursor-pointer ${
+            className={`rounded-3xl h-[45vw] w-[45vw] lg:h-[16vw] xl:w-full bg-custom-darkgray bg-cover bg-center cursor-pointer ${
               !card.images.length && 'p-12'
             }`}
           >

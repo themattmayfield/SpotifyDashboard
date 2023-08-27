@@ -22,6 +22,7 @@ module.exports = {
         'custom-darkgray': '#1B1B1B',
         'custom-darkgray2': '#0E0E0E',
         'spotify-black': '#121212',
+        'custom-gray': '#383838',
       },
       keyframes: {
         'accordion-down': {

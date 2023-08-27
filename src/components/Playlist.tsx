@@ -13,8 +13,8 @@ export default function Playlist({
   const imageClassess = `${
     analytic
       ? 'md:w-48 md:h-48 lg:w-52 lg:h-52 xl:w-80 xl:h-80'
-      : 'lg:h-[25vw] lg:w-[25vw] xl:h-96 xl:w-96'
-  } cursor-pointer overflow-hidden bg-custom-darkgray bg-cover bg-center h-[40vw] w-[40vw] flex items-center justify-center transition duration-300 ease-in-out transform hover:scale-105`;
+      : 'lg:h-[25vw] lg:w-[25vw] 2xl:h-64 2xl:w-64'
+  } cursor-pointer overflow-hidden bg-custom-darkgray bg-cover bg-center h-[45vw] w-[45vw] flex items-center justify-center transition duration-300 ease-in-out transform hover:scale-105`;
   return (
     <div className="inline-block max-w-min mx-auto ">
       <Link href={`/playlists/${playlist.id}`}>

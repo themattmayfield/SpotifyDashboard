@@ -1,9 +1,9 @@
 import Card from '@/components/Card';
 import RightSideBar from '@/components/RightSideBar';
 import Subtitle from '@/components/Subtitle';
-import TopTracks from '@/components/TopTracks';
 import TopArtists from '@/components/TopArtists';
 import handleServerSession from '@/lib/handleServerSession';
+import Track from '@/components/Track';
 
 export default async function Profile() {
   const { spotifyApi } = await handleServerSession();
@@ -55,7 +55,18 @@ export default async function Profile() {
             </div>
           </div>
           <div className="px-2 lg:pl-2 flex flex-col xl:flex-row 2xl:flex-nowrap no-scrollbar gap-y-16 gap-x-8 pb-[192px]">
-            <TopTracks topTracks={topTracks} />
+            <div className="space-y-6">
+              <div className="">
+                <Subtitle link="/tracks" subtitle="Top Tracks of the Week" />
+                <div className="rounded-3xl py-8 px-4 text-white bg-custom-darkgray2 2xl:w-[600px]">
+                  <div className="space-y-6">
+                    {topTracks?.map((item) => (
+                      <Track track={item} withTrackDuration={false} />
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
             <TopArtists topArtists={topArtistsShort} />
           </div>
         </div>

@@ -12,6 +12,20 @@ import { IoTimeOutline } from 'react-icons/io5';
 import { MdOutlineBolt } from 'react-icons/md';
 import { TTimeRange } from '@/types';
 
+const data = [
+  {
+    label: 'All Time',
+    value: 'long_term',
+  },
+  {
+    label: 'Last 6 Months',
+    value: 'medium_term',
+  },
+  {
+    label: 'Last 4 Weeks',
+    value: 'short_term',
+  },
+];
 const TimePeriodSelect = ({ activeRange }: { activeRange: TTimeRange }) => {
   const { push } = useRouter();
   return (
@@ -32,10 +46,18 @@ const TimePeriodSelect = ({ activeRange }: { activeRange: TTimeRange }) => {
 
         {/* <SelectValue /> */}
       </SelectTrigger>
-      <SelectContent onClick={(e) => e.stopPropagation()}>
-        <SelectItem value="long_term">All Time</SelectItem>
-        <SelectItem value="medium_term">Last 6 Months</SelectItem>
-        <SelectItem value="short_term">Last 4 weeks</SelectItem>
+      <SelectContent
+        className="bg-custom-darkgray border-none"
+        onClick={(e) => e.stopPropagation()}
+      >
+        {data.map(({ label, value }) => (
+          <SelectItem
+            className="focus:bg-[#686868] text-white cursor-pointer"
+            value={value}
+          >
+            {label}
+          </SelectItem>
+        ))}
       </SelectContent>
     </Select>
   );

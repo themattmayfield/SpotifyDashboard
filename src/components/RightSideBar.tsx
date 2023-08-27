@@ -12,33 +12,20 @@ export default function RightSideBar({
   return (
     <>
       <div className="rounded-3xl bg-custom-darkgray py-4 w-full lg:w-72 text-white px-4">
-        {isLoading ? (
-          <Skeleton className="h-7 mb-6 rounded-full bg-custom-gray w-36" />
-        ) : (
-          <p className="text-xl mb-6 ">Recently Played</p>
-        )}
+        <p className="text-xl mb-6 ">Recently Played</p>
         <div className="">
           <div className="grid grid-cols-2 lg:flex flex-col gap-x-2 lg:gap-x-0 gap-y-2 lg:space-y-6">
-            {isLoading && [
-              ...Array(6).map(() => (
-                <Skeleton className="rounded-full bg-custom-gray w-8 h-8 sm:w-12 sm:h-12 lg:w-16 lg:h-16" />
-              )),
-            ]}
             {recentlyPlayed?.map((item, index) => (
               <div key={index} className="flex">
                 <div className="mr-4">
-                  {isLoading ? (
-                    <Skeleton className="rounded-full bg-custom-gray w-8 h-8 sm:w-12 sm:h-12 lg:w-16 lg:h-16" />
-                  ) : (
-                    <Link href={`/artists/${item.track.artists[0].id}`}>
-                      <div
-                        className="rounded-full bg-cover bg-custom-darkgray bg-center w-8 h-8 sm:w-12 sm:h-12 lg:w-16 lg:h-16 cursor-pointer"
-                        style={{
-                          backgroundImage: `url(${item.track.album.images[0].url})`,
-                        }}
-                      ></div>
-                    </Link>
-                  )}
+                  <Link href={`/artists/${item.track.artists[0].id}`}>
+                    <div
+                      className="rounded-full bg-cover bg-custom-darkgray bg-center w-8 h-8 sm:w-12 sm:h-12 lg:w-16 lg:h-16 cursor-pointer"
+                      style={{
+                        backgroundImage: `url(${item.track.album.images[0].url})`,
+                      }}
+                    ></div>
+                  </Link>
                 </div>
 
                 <div

@@ -1,10 +1,6 @@
-import dynamic from 'next/dynamic';
-
 import numeral from 'numeral';
 import { revalidatePath } from 'next/cache';
 import handleServerSession from '@/lib/handleServerSession';
-
-const Loading = dynamic(() => import('@/components/Loading'), { ssr: false });
 
 export default async function Artist({ params }: { params: { id: string } }) {
   const { id } = params;

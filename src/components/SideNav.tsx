@@ -10,7 +10,7 @@ export default function SideNav() {
   return (
     <>
       {/* Desktop */}
-      <div className="rounded-xl py-4 w-32 h-screen sticky top-0 hidden lg:flex flex-col space-y-6 items-center pt-12">
+      <div className="rounded-xl py-4 w-32 h-screen sticky top-0 hidden lg:flex flex-col space-y-6 items-center pt-12 shrink-0">
         <div className="mb-12">
           <SiSpotify className="w-14 h-14 text-[#1DB954]" />
         </div>

@@ -8,9 +8,9 @@ type TRootLayoutProps = {
 
 export default async function SpotifyLayout({ children }: TRootLayoutProps) {
   return (
-    <div className="flex bg-transparent lg:pr-6 lg:pl-2 h-full">
+    <div className="flex h-screen bg-transparent lg:pr-6 lg:pl-2">
       <SideNav />
-      <div className="flex flex-1 flex-col overflow-x-hidden">
+      <div className="flex flex-col min-h-screen overflow-x-hidden flex-grow">
         <Nav />
         {children}
       </div>

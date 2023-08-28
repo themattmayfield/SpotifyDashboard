@@ -36,9 +36,9 @@ export default async function Profile() {
     ]);
 
   return (
-    <div className="h-full overflow-hidden">
-      <div className="flex h-full">
-        <div className="overflow-x-hidden lg:mr-4 overflow-y-scroll no-scrollbar">
+    <div className="flex-grow">
+      <div className="flex">
+        <div className="overflow-x-hidden lg:mr-4 no-scrollbar">
           <div className="lg:hidden mb-16 px-2">
             <RightSideBar recentlyPlayed={recentlyPlayed} />
           </div>

@@ -20,7 +20,7 @@ export default function RootLayout({ children }: TRootLayoutProps) {
       <head>
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
       </head>
-      <body className="no-scrollbar">
+      <body className="h-screen">
         <Providers>{children}</Providers>
       </body>
     </html>

@@ -2,11 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-/* body {
-  display: flex;
-  flex-direction: column;
-  height: 100vh;
-} */
 body {
   background-color: #121212;
 }

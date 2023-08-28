@@ -6,22 +6,18 @@ import { RiHistoryLine, RiPlayListFill } from 'react-icons/ri';
 
 import SideNavLink from '@/components/SideNavLink';
 
-export default function SideNav() {
-  return (
-    <>
-      {/* Desktop */}
-      <div className="rounded-xl py-4 w-32 h-screen sticky top-0 hidden lg:flex flex-col space-y-6 items-center pt-12 shrink-0">
-        <div className="mb-12">
-          <SiSpotify className="w-14 h-14 text-[#1DB954]" />
-        </div>
-        <NavLinks classes="w-full flex flex-col items-center" />
-      </div>
+export const DesktopNav = () => (
+  <div className="rounded-xl py-4 w-32 h-screen sticky top-0 hidden lg:flex flex-col space-y-6 items-center pt-12 shrink-0">
+    <div className="mb-12">
+      <SiSpotify className="w-14 h-14 text-[#1DB954]" />
+    </div>
+    <NavLinks classes="w-full flex flex-col items-center" />
+  </div>
+);
 
-      {/* Mobile */}
-      <NavLinks classes="w-full flex lg:hidden bg-spotify-black text-white top-auto fixed bottom-0 right-0 h-[70px] z-50" />
-    </>
-  );
-}
+export const MobileNav = () => (
+  <NavLinks classes="w-full flex lg:hidden bg-spotify-black text-white sticky bottom-0 h-[70px] shrink-0 z-50" />
+);
 
 const NavLinks = ({ classes }: { classes: string }) => (
   <div className={classes}>

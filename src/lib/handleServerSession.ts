@@ -13,7 +13,7 @@ const handleServerSession = async () => {
     spotifyApi.setAccessToken(session.accessToken);
   }
   if (!session?.accessToken) {
-    console.log('NO TOKEN!!!!');
+    // console.log('NO TOKEN!!!!');
     redirect('/login');
   }
 

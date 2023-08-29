@@ -1,5 +1,4 @@
 import numeral from 'numeral';
-// import { revalidatePath } from 'next/cache';
 import handleServerSession from '@/lib/handleServerSession';
 import FollowButton from './FollowButton';
 import { followHandler } from './action';

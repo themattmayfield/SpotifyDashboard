@@ -1,4 +1,3 @@
-import LoadingComponent from '@/components/Loading';
 import PlaylistLoading from '@/components/Loading/PlaylistLoading';
 import PageRangeHeader from '@/components/PageRangeHeader';
 import { PageWrapper } from '@/components/PageWrapper';

@@ -4,7 +4,6 @@ import Subtitle from '@/components/Subtitle';
 import TopArtists from '@/components/TopArtists';
 import handleServerSession from '@/lib/handleServerSession';
 import Track from '@/components/Track';
-import Loading from './loading';
 
 export default async function Profile() {
   const { spotifyApi } = await handleServerSession();

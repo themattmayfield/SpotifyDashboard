@@ -7,7 +7,7 @@ const loading = () => {
   return (
     <PageWrapper>
       <PageRangeHeader title="Tracks" activeRange="long_term" />
-      <div className="flex flex-col gap-4 no-scrollbar text-white mb-[100px] px-2">
+      <div className="flex flex-col gap-4 no-scrollbar text-white mb-[150px] px-2">
         <TrackLoading count={12} />
       </div>
     </PageWrapper>

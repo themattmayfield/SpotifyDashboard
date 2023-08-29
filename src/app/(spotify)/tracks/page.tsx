@@ -55,7 +55,7 @@ export default async function Tracks({
     <PageWrapper>
       <PageRangeHeader activeRange={activeRange} title="Tracks" />
 
-      <div className="flex flex-col gap-4 no-scrollbar text-white mb-[100px] px-2">
+      <div className="flex flex-col gap-4 no-scrollbar text-white mb-[150px] px-2">
         {terms
           .find(({ range }) => range === activeRange)
           ?.data.map((track, index) => (

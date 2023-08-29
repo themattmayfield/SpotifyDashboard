@@ -16,7 +16,7 @@ export default async function Recent() {
     <>
       <PageWrapper>
         <PageRangeHeader title="Recently Played" />
-        <div className="flex flex-col gap-4 no-scrollbar text-white mb-[100px] px-2">
+        <div className="flex flex-col gap-4 no-scrollbar text-white mb-[150px] px-2">
           {recentlyPlayed.map(({ track }, index) => (
             <Track key={index} track={track} />
           ))}

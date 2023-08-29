@@ -59,7 +59,7 @@ const Nav = ({ user }: { user: SpotifyApi.CurrentUsersProfileResponse }) => {
             <a
               onClick={() => signOut()}
               target="_blank"
-              className="text-sm cursor-pointer hover:text-white text-red-600"
+              className="text-sm cursor-pointer hover:text-red-400 text-red-600"
             >
               Logout
             </a>

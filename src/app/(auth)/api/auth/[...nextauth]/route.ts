@@ -62,8 +62,8 @@ export const authOptions: AuthOptions = {
       }
 
       if (token.accessTokenExpires && Date.now() < token.accessTokenExpires) {
-        console.log('EXISTING ACCESS TOKEN IS VALUD');
-        console.log({ token });
+        // console.log('EXISTING ACCESS TOKEN IS VALUD');
+        // console.log({ token });
         spotifyApi.setAccessToken(token.accessToken!);
         spotifyApi.setRefreshToken(token.refreshToken!);
 

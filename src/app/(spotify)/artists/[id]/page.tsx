@@ -1,6 +1,8 @@
 import numeral from 'numeral';
-import { revalidatePath } from 'next/cache';
+// import { revalidatePath } from 'next/cache';
 import handleServerSession from '@/lib/handleServerSession';
+import FollowButton from './FollowButton';
+import { followHandler } from './action';
 
 export default async function Artist({ params }: { params: { id: string } }) {
   const { id } = params;
@@ -13,16 +15,6 @@ export default async function Artist({ params }: { params: { id: string } }) {
 
   const isFollowingArtist = followingArtist.at(0);
 
-  const followHandler = async () => {
-    'use server';
-
-    isFollowingArtist
-      ? await spotifyApi.unfollowArtists([id])
-      : await spotifyApi.followArtists([id]);
-
-    revalidatePath('/artists/[id]');
-  };
-
   return (
     <div className="flex flex-col items-center text-center text-white pt-10 md:pt-24 space-y-4 md:space-y-8 no-scrollbar">
       <div
@@ -33,16 +25,7 @@ export default async function Artist({ params }: { params: { id: string } }) {
       />
 
       <p className="text-4xl md:text-7xl">{artist.name}</p>
-      <form action={followHandler}>
-        <button
-          type="submit"
-          className={`bg-transparent border text-white rounded px-4 py-1 cursor-pointer focus:outline-none hover:bg-custom-darkgray transition duration-300 ease-in-out ${
-            isFollowingArtist ? 'border-white' : 'border-gray-900'
-          }`}
-        >
-          {isFollowingArtist ? 'Following' : `Follow`}
-        </button>
-      </form>
+      <FollowButton isFollowingArtist={!!isFollowingArtist} id={id} />
       <div className="flex space-x-12 items-center justify-center">
         <div>
           <p className="text-xl md:text-3xl">

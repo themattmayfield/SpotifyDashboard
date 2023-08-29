@@ -8,7 +8,7 @@ const Nav = async () => {
   const { body: user } = await spotifyApi.getMe();
 
   return (
-    <header className="z-[999] flex justify-between lg:justify-end px-4 py-4 lg:p-6 sticky top-0 bg-spotify-black">
+    <header className="z-50 flex justify-between lg:justify-end px-4 py-4 lg:p-6 sticky top-0 bg-spotify-black">
       <Link href="/">
         <SiSpotify className="lg:hidden w-10 h-10 text-[#1DB954]" />
       </Link>

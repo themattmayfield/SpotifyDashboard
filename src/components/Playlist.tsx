@@ -13,7 +13,7 @@ export default function Playlist({
 }) {
   const imageClassess = `${
     analytic
-      ? 'md:w-48 md:h-48 lg:w-52 lg:h-52 xl:w-80 xl:h-80'
+      ? 'md:w-48 md:h-48 lg:w-52 lg:h-52 xl:w-80 xl:h-80 mx-auto'
       : 'lg:h-[25vw] lg:w-[25vw] 2xl:h-64 2xl:w-64'
   } cursor-pointer overflow-hidden bg-custom-darkgray bg-cover bg-center h-[45vw] w-[45vw] flex items-center justify-center transition duration-300 ease-in-out transform hover:scale-105`;
   return (
@@ -33,11 +33,11 @@ export default function Playlist({
       )}
 
       <div
-        className={`text-center mt-4 w-[45vw] lg:w-[25vw] 2xl:w-64 ${
+        className={`text-center mt-4 w-[45vw] lg:w-[25vw] 2xl:w-64 mx-auto ${
           analytic && 'space-y-2'
         }`}
       >
-        <p className="text-white truncate overflow-hidden">{playlist.name}</p>
+        <p className="text-white truncate overflow-hidden ">{playlist.name}</p>
         {analytic && (
           <p className="text-white">By {playlist.owner.display_name}</p>
         )}

@@ -1,19 +1,23 @@
 import handleServerSession from '@/lib/handleServerSession';
 import { getYear } from '@/lib/time';
-
-// import Chart from '@/components/Chart';
+import { Legend, Tooltip } from 'chart.js';
+import { Bar } from 'react-chartjs-2';
+import { BarChart, CartesianGrid, XAxis, YAxis } from 'recharts';
+import Test from './Test';
 
 const Track = async ({ params }: { params: { id: string } }) => {
   const { id } = params;
   const { spotifyApi } = await handleServerSession();
-  const { body: track } = await spotifyApi.getTrack(id);
 
-  const { body: audioFeatures } = await spotifyApi.getAudioFeaturesForTrack(id);
+  const [track, audioFeatures] = await Promise.all([
+    spotifyApi.getTrack(id).then(({ body }) => body),
+    spotifyApi.getAudioFeaturesForTrack(id).then(({ body }) => body),
+  ]);
 
   return (
     <>
-      <div className="no-scrollbar overflow-x-hidden max-w-7xl mx-auto px-2 md:px-4 pt-10 md:pt-12 pb-24 flex flex-col items-center">
-        <div className="flex flex-col items-center md:flex-row text-[#565656] md:space-x-8">
+      <div className="no-scrollbar overflow-x-hidden max-w-7xl px-2 md:px-4 pt-10 md:pt-12 pb-24 flex flex-col items-center mb-[150px]">
+        <div className="max-auto flex flex-col items-center md:flex-row text-[#565656] md:space-x-8">
           <img
             className="w-48 h-48 md:w-72 md:h-72"
             src={track.album.images[0].url}
@@ -47,9 +51,10 @@ const Track = async ({ params }: { params: { id: string } }) => {
             </div>
           </div>
         </div>
-        {/* <div className="w-full md:max-w-xl">
-          {audioFeatures && <Chart features={audioFeatures} type="" />}
-        </div> */}
+
+        <div className="w-400 h-[800px] mt-6">
+          <Test features={audioFeatures} />
+        </div>
       </div>
     </>
   );

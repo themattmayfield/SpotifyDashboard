@@ -1,7 +1,8 @@
+import React from 'react';
+
 import TrackLoading from '@/components/Loading/TrackLoading';
 import PageRangeHeader from '@/components/PageRangeHeader';
 import { PageWrapper } from '@/components/PageWrapper';
-import React from 'react';
 
 const loading = () => {
   return (

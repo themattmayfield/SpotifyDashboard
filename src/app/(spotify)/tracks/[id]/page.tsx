@@ -1,5 +1,6 @@
-import handleServerSession from '@/lib/handleServerSession';
+import { getAudioFeaturesForTrack, getTrack } from '@/lib/spotify';
 import { getYear } from '@/lib/time';
+
 // import { Legend, Tooltip } from 'chart.js';
 // import { Bar } from 'react-chartjs-2';
 // import { BarChart, CartesianGrid, XAxis, YAxis } from 'recharts';
@@ -7,11 +8,10 @@ import Test from './Test';
 
 const Track = async ({ params }: { params: { id: string } }) => {
   const { id } = params;
-  const { spotifyApi } = await handleServerSession();
 
   const [track, audioFeatures] = await Promise.all([
-    spotifyApi.getTrack(id).then(({ body }) => body),
-    spotifyApi.getAudioFeaturesForTrack(id).then(({ body }) => body),
+    getTrack(id),
+    getAudioFeaturesForTrack(id),
   ]);
 
   return (

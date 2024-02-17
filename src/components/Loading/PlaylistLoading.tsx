@@ -1,4 +1,5 @@
 import React from 'react';
+
 import { Skeleton } from '../ui/skeleton';
 // import randomIntFromInterval from '@/lib/randomIntFromInterval';
 
@@ -15,7 +16,7 @@ const PlaylistLoading = ({
       : 'lg:h-[25vw] lg:w-[25vw] 2xl:h-64 2xl:w-64'
   } overflow-hidden h-[45vw] w-[45vw] flex items-center justify-center`;
 
-  return [...Array(count)].map((_,idx) => (
+  return [...Array(count)].map((_, idx) => (
     <div key={idx} className="inline-block max-w-min mx-auto">
       <Skeleton className={imageClassess} />
       <div className={`text-center mt-4 space-y-1`}>

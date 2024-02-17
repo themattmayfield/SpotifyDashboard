@@ -5,11 +5,11 @@ import {
   SelectItem,
   SelectTrigger,
 } from '@/components/ui/select';
-import { IoIosInfinite } from 'react-icons/io';
+import type { TTimeRange } from '@/types';
 import { useRouter } from 'next/navigation';
+import { IoIosInfinite } from 'react-icons/io';
 import { IoTimeOutline } from 'react-icons/io5';
 import { MdOutlineBolt } from 'react-icons/md';
-import { TTimeRange } from '@/types';
 
 const data = [
   {
@@ -49,8 +49,9 @@ const TimePeriodSelect = ({ activeRange }: { activeRange: TTimeRange }) => {
         className="bg-custom-darkgray border-none"
         onClick={(e) => e.stopPropagation()}
       >
-        {data.map(({ label, value }) => (
+        {data.map(({ label, value }, idx) => (
           <SelectItem
+            key={idx}
             className="focus:bg-[#686868] text-white cursor-pointer"
             value={value}
           >

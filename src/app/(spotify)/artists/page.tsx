@@ -1,8 +1,7 @@
 import Card from '@/components/Card';
-import handleServerSession from '@/lib/handleServerSession';
-
 import PageRangeHeader from '@/components/PageRangeHeader';
 import { PageWrapper } from '@/components/PageWrapper';
+import { getTopArtists } from '@/lib/spotify';
 import { type TTimeRange } from '@/types';
 
 export default async function Artists({
@@ -10,31 +9,24 @@ export default async function Artists({
 }: {
   searchParams: { range: TTimeRange };
 }) {
-  const { spotifyApi } = await handleServerSession();
   const { range } = searchParams;
   const activeRange = (range || 'long_term') satisfies TTimeRange;
 
   const [topArtistsLong, topArtistsMedium, topArtistsShort] = await Promise.all(
     [
-      spotifyApi
-        .getMyTopArtists({
-          limit: 50,
-          time_range: 'long_term',
-        })
-        .then(({ body }) => body.items),
-      spotifyApi
-        .getMyTopArtists({
-          limit: 50,
-          time_range: 'medium_term',
-        })
-        .then(({ body }) => body.items),
-      spotifyApi
-        .getMyTopArtists({
-          limit: 50,
-          time_range: 'short_term',
-        })
-        .then(({ body }) => body.items),
-    ]
+      getTopArtists({
+        limit: '50',
+        timeRange: 'long_term',
+      }),
+      getTopArtists({
+        limit: '50',
+        timeRange: 'medium_term',
+      }),
+      getTopArtists({
+        limit: '50',
+        timeRange: 'short_term',
+      }),
+    ],
   );
 
   const terms = [
@@ -65,9 +57,7 @@ export default async function Artists({
       <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-3 md:gap-6 no-scrollbar mb-[150px]">
         {terms
           .find(({ range }) => range === activeRange)
-          ?.data.map((item, index: number) => (
-            <Card key={index} info={item} />
-          ))}
+          ?.data.map((item, index: number) => <Card key={index} info={item} />)}
       </div>
     </PageWrapper>
   );

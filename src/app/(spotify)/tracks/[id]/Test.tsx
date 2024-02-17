@@ -1,18 +1,6 @@
 'use client';
 
-import {
-  BarChart,
-  Bar,
-  Cell,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  Legend,
-  ResponsiveContainer,
-  Text,
-  Label,
-} from 'recharts';
+import { BarChart, Bar, Cell, Tooltip, ResponsiveContainer } from 'recharts';
 const properties = [
   'acousticness',
   'danceability',
@@ -51,7 +39,6 @@ const Test = ({
 }) => {
   const avg = (arr: any) =>
     arr.reduce((a: number, b: number) => a + b, 0) / arr.length;
-  console.log(features);
 
   const createDataset = () => {
     const dataset = {} as Record<(typeof properties)[number], any>;
@@ -63,10 +50,9 @@ const Test = ({
     return dataset;
   };
 
-  const labels = Object.keys(createDataset());
-  const datas = Object.values(createDataset());
+  // const labels = Object.keys(createDataset());
+  // const datas = Object.values(createDataset());
   const entries = Object.entries(createDataset());
-  console.log(entries);
 
   const data = entries
     .map(([label, value], index) => {

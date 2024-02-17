@@ -1,5 +1,6 @@
-import TimePeriodSelect from './TimePeriodSelect';
 import type { TTimeRange } from '@/types';
+
+import TimePeriodSelect from './TimePeriodSelect';
 
 const PageRangeHeader = ({
   activeRange,

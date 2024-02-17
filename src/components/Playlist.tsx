@@ -1,6 +1,6 @@
 import Link from 'next/link';
-import { IoMusicalNotesSharp } from 'react-icons/io5';
 import pluralize from 'pluralize';
+import { IoMusicalNotesSharp } from 'react-icons/io5';
 
 export default function Playlist({
   playlist,
@@ -44,7 +44,7 @@ export default function Playlist({
         <p className="text-xs text-[#565656] break-words">
           {`${playlist.tracks.total} ${pluralize(
             'TRACK',
-            playlist.tracks.total
+            playlist.tracks.total,
           )}`}
         </p>
       </div>

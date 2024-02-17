@@ -1,11 +1,16 @@
 import React from 'react';
-import { Skeleton } from '../ui/skeleton';
+
 import randomIntFromInterval from '@/lib/randomIntFromInterval';
 
+import { Skeleton } from '../ui/skeleton';
+
 const TrackLoading = ({ count }: { count: number }) => {
-  return [...Array(count)].map((_, index) => {
+  return [...Array(count)].map((index) => {
     return (
-      <div className="flex items-center justify-between cursor-pointer transition duration-150 ease-in-out hover:bg-custom-darkgray">
+      <div
+        key={index}
+        className="flex items-center justify-between cursor-pointer transition duration-150 ease-in-out hover:bg-custom-darkgray"
+      >
         <div className="flex space-x-6 items-center w-full">
           <Skeleton className="w-20 h-20 shrink-0" />
           <div className="flex flex-col space-y-1 w-full">

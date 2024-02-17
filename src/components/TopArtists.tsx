@@ -1,5 +1,5 @@
-import Link from 'next/link';
 import Subtitle from '@/components/Subtitle';
+import Link from 'next/link';
 
 const TopArtists = ({
   topArtists,

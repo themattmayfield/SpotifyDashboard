@@ -3,7 +3,7 @@ import React from 'react';
 import Track from '@/components/Track';
 import PlaylistComponent from '@/components/Playlist';
 
-import dynamic from 'next/dynamic';
+// import dynamic from 'next/dynamic';
 import handleServerSession from '@/lib/handleServerSession';
 
 const Playlist = async ({ params }: { params: { id: string } }) => {

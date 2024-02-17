@@ -1,4 +1,4 @@
-import SpotifyWebApi from 'spotify-web-api-node';
+import SpotifyWebApi from "spotify-web-api-node";
 
 const scope = [
   'user-read-private',

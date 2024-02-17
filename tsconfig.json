@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "target": "es6",
+    "target": "es5",
     "lib": [
       "dom",
       "dom.iterable",
@@ -11,7 +11,6 @@
     "strict": true,
     "forceConsistentCasingInFileNames": true,
     "noEmit": true,
-    "incremental": true,
     "esModuleInterop": true,
     "module": "esnext",
     "moduleResolution": "node",
@@ -21,9 +20,10 @@
     "baseUrl": ".",
     "paths": {
       "@/*": [
-        "src/*"
+        "./src/*"
       ]
     },
+    "incremental": true,
     "plugins": [
       {
         "name": "next"
@@ -32,14 +32,11 @@
   },
   "include": [
     "next-env.d.ts",
-    "src/**/*",
+    "**/*.ts",
+    "**/*.tsx",
     ".next/types/**/*.ts"
-  ],
+, "typescriptExtendedRules.js"  ],
   "exclude": [
-    ".next",
-    "build",
-    "compile",
-    "node_modules",
-    "out"
+    "node_modules"
   ]
 }

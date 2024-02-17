@@ -1,15 +1,7 @@
 import SpotifyProviderButton from '@/components/SpotifyProviderButton';
-import { getServerSession } from 'next-auth';
-import { authOptions } from '@/app/(auth)/api/auth/[...nextauth]/route';
 
-import { redirect } from 'next/navigation';
 
 const Login = async () => {
-  // const session = await getServerSession(authOptions);
-  // if (session?.accessToken && session?.error !== 'RefreshAccessTokenError') {
-  //   spotifyApi.setAccessToken(session.accessToken);
-  //   redirect('/');
-  // }
   return (
     <div className="flex flex-col justify-center items-center h-screen bg-spotify-dark">
       <h1 className="text-4xl text-white mb-6">Spotify Profile</h1>

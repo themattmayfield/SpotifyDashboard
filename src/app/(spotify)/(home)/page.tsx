@@ -60,7 +60,7 @@ export default async function Profile() {
               <div className="rounded-3xl py-8 px-4 text-white bg-custom-darkgray2 2xl:w-[600px]">
                 <div className="space-y-6">
                   {topTracks?.map((item) => (
-                    <Track track={item} withTrackDuration={false} />
+                    <Track key={item.id} track={item} withTrackDuration={false} />
                   ))}
                 </div>
               </div>

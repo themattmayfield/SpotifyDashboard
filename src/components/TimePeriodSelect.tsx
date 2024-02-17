@@ -5,7 +5,6 @@ import {
   SelectItem,
   SelectTrigger,
 } from '@/components/ui/select';
-import { ImInfinite } from 'react-icons/im';
 import { IoIosInfinite } from 'react-icons/io';
 import { useRouter } from 'next/navigation';
 import { IoTimeOutline } from 'react-icons/io5';

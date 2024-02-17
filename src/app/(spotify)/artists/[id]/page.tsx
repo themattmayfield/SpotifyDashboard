@@ -1,7 +1,6 @@
 import numeral from 'numeral';
 import handleServerSession from '@/lib/handleServerSession';
 import FollowButton from './FollowButton';
-import { followHandler } from './action';
 
 export default async function Artist({ params }: { params: { id: string } }) {
   const { id } = params;

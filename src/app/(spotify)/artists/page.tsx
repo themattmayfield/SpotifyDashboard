@@ -1,9 +1,9 @@
 import Card from '@/components/Card';
 import handleServerSession from '@/lib/handleServerSession';
 
-import { TTimeRange } from '@/types';
 import PageRangeHeader from '@/components/PageRangeHeader';
 import { PageWrapper } from '@/components/PageWrapper';
+import { type TTimeRange } from '@/types';
 
 export default async function Artists({
   searchParams,

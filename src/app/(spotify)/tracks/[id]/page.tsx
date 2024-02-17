@@ -1,8 +1,8 @@
 import handleServerSession from '@/lib/handleServerSession';
 import { getYear } from '@/lib/time';
-import { Legend, Tooltip } from 'chart.js';
-import { Bar } from 'react-chartjs-2';
-import { BarChart, CartesianGrid, XAxis, YAxis } from 'recharts';
+// import { Legend, Tooltip } from 'chart.js';
+// import { Bar } from 'react-chartjs-2';
+// import { BarChart, CartesianGrid, XAxis, YAxis } from 'recharts';
 import Test from './Test';
 
 const Track = async ({ params }: { params: { id: string } }) => {

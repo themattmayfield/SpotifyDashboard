@@ -1,6 +1,4 @@
-**/node_modules/*
-**/build/*
-**/out/*
 **/.next/*
-changelog/
-src/types/generated.ts
+**/.vercel/*
+**/node_modules/*
+src/types_db.ts

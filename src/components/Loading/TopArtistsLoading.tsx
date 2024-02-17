@@ -1,4 +1,3 @@
-import Link from 'next/link';
 import Subtitle from '@/components/Subtitle';
 import { Skeleton } from '../ui/skeleton';
 

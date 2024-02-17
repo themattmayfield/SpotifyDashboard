@@ -13,7 +13,7 @@ if (typeof client_id !== 'string') {
   throw new Error('No clientID');
 }
 
-const redirect_uri = 'http://localhost:3000/api/callback';
+const redirect_uri = `${process.env.WEB_URL}/api/callback`;
 const scope = [
   'user-read-private',
   'user-read-email',

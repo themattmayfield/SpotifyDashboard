@@ -1,9 +1,8 @@
-import { ReactNode } from 'react';
+import type { ReactNode } from 'react';
 
 import '@/styles/globals.css';
 
-import Providers from '@/containers/Providers';
-import { Metadata } from 'next';
+import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
   title: 'Spotify | Wrapper',
@@ -21,7 +20,7 @@ export default function RootLayout({ children }: TRootLayoutProps) {
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
       </head>
       <body className="no-scrollbar overflow-hidden">
-        <Providers>{children}</Providers>
+      {children}
       </body>
     </html>
   );

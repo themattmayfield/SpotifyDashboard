@@ -1,14 +1,15 @@
 'use client';
 
-import { signOut } from 'next-auth/react';
+import { useState } from 'react';
+
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover';
+import { logout } from '@/lib/auth';
 import { AiFillCaretDown } from 'react-icons/ai';
 import { RiUser6Fill } from 'react-icons/ri';
-import { useState } from 'react';
 
 const Nav = ({ user }: { user: SpotifyApi.CurrentUsersProfileResponse }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -56,13 +57,14 @@ const Nav = ({ user }: { user: SpotifyApi.CurrentUsersProfileResponse }) => {
             >
               Support me by buy me a ☕
             </a>
-            <a
-              onClick={() => signOut()}
-              target="_blank"
-              className="text-sm cursor-pointer hover:text-red-400 text-red-600"
-            >
-              Logout
-            </a>
+            <form action={logout}>
+              <button
+                className="text-sm cursor-pointer hover:text-red-400 text-red-600"
+                type="submit"
+              >
+                Logout
+              </button>
+            </form>
           </div>
         </PopoverContent>
       </Popover>

@@ -2,36 +2,16 @@ import Card from '@/components/Card';
 import RightSideBar from '@/components/RightSideBar';
 import Subtitle from '@/components/Subtitle';
 import TopArtists from '@/components/TopArtists';
-import handleServerSession from '@/lib/handleServerSession';
 import Track from '@/components/Track';
+import { getRecentlyPlayed, getTopArtists, getTopTracks } from '@/lib/spotify';
 
 export default async function Profile() {
-  const { spotifyApi } = await handleServerSession();
   const [recentlyPlayed, topTracks, topArtistsLong, topArtistsShort] =
     await Promise.all([
-      spotifyApi
-        .getMyRecentlyPlayedTracks({
-          limit: 6,
-        })
-        .then(({ body }) => body.items),
-      spotifyApi
-        .getMyTopTracks({
-          limit: 6,
-          time_range: 'long_term',
-        })
-        .then(({ body }) => body.items),
-      spotifyApi
-        .getMyTopArtists({
-          limit: 16,
-          time_range: 'long_term',
-        })
-        .then(({ body }) => body.items),
-      spotifyApi
-        .getMyTopArtists({
-          limit: 4,
-          time_range: 'short_term',
-        })
-        .then(({ body }) => body.items),
+      getRecentlyPlayed({ limit: '6' }),
+      getTopTracks({ limit: '6', timeRange: 'long_term' }),
+      getTopArtists({ limit: '16', timeRange: 'long_term' }),
+      getTopArtists({ limit: '4', timeRange: 'short_term' }),
     ]);
 
   return (
@@ -60,7 +40,11 @@ export default async function Profile() {
               <div className="rounded-3xl py-8 px-4 text-white bg-custom-darkgray2 2xl:w-[600px]">
                 <div className="space-y-6">
                   {topTracks?.map((item) => (
-                    <Track track={item} withTrackDuration={false} />
+                    <Track
+                      key={item.id}
+                      track={item}
+                      withTrackDuration={false}
+                    />
                   ))}
                 </div>
               </div>

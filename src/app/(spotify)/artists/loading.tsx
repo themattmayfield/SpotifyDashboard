@@ -1,7 +1,8 @@
+import React from 'react';
+
 import CardLoading from '@/components/Loading/CardLoading';
 import PageRangeHeader from '@/components/PageRangeHeader';
 import { PageWrapper } from '@/components/PageWrapper';
-import React from 'react';
 
 const loading = () => {
   return (

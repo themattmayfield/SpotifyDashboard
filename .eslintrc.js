@@ -1,27 +1,40 @@
+const typescriptExtendedRules = require('./typescriptExtendedRules.js');
+
 module.exports = {
   root: true,
   parser: '@typescript-eslint/parser',
   plugins: ['@typescript-eslint'],
-  extends: ['plugin:@next/next/recommended'],
+  extends: 'next/core-web-vitals',
   parserOptions: {
     tsconfigRootDir: __dirname,
     sourceType: 'module',
-    project: './tsconfig.eslint.json',
-  },
-  env: {
-    es6: true,
-    browser: true,
-    jest: true,
-    node: true,
+    project: './tsconfig.eslint.json'
   },
   rules: {
+    ...typescriptExtendedRules,
     'no-restricted-exports': [
       'off',
       {
-        restrictedNamedExports: ['default'],
-      },
+        restrictedNamedExports: ['default']
+      }
     ],
-    '@next/next/no-img-element': 0,
+    'no-restricted-imports': [
+      'error',
+      {
+        paths: [
+          {
+            name: 'clsx',
+            message:
+              'Please use `import { cn } @surecraft-apps/common/services` instead'
+          },
+          {
+            name: 'classnames',
+            message:
+              'Please use `import { cn } @surecraft-apps/common/services` instead'
+          }
+        ]
+      }
+    ],
     'react/react-in-jsx-scope': 0,
     'react/display-name': 0,
     'react/prop-types': 0,
@@ -37,8 +50,8 @@ module.exports = {
     'no-console': [
       2,
       {
-        allow: ['warn', 'error'],
-      },
-    ],
-  },
+        allow: ['warn', 'error']
+      }
+    ]
+  }
 };

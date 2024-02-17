@@ -1,6 +1,7 @@
-import { ReactNode } from 'react';
-import SideNav from '@/components/SideNav';
+import { type ReactNode } from 'react';
+
 import Nav from '@/components/Nav';
+import SideNav from '@/components/SideNav';
 
 type TRootLayoutProps = {
   children: ReactNode;

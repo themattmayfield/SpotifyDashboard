@@ -1,6 +1,6 @@
 // @ts-nocheck
 'use client';
-import React, { useEffect } from 'react';
+
 import { Bar } from 'react-chartjs-2';
 
 const properties = [
@@ -13,7 +13,7 @@ const properties = [
   'valence',
 ];
 
-const MyChart = ({ features, type }) => {
+const MyChart = ({ features }) => {
   const avg = (arr) => arr.reduce((a, b) => a + b, 0) / arr.length;
 
   const createDataset = () => {
@@ -57,52 +57,52 @@ const MyChart = ({ features, type }) => {
       },
     ],
   };
-  const options = {
-    layout: {
-      padding: {
-        left: 0,
-        right: 0,
-        top: 0,
-        bottom: 0,
-      },
-    },
-    title: {
-      display: true,
-      text: `Audio Features`,
-      fontSize: 18,
-      // fontFamily: `${fonts.primary}`,
-      fontColor: '#ffffff',
-      padding: 30,
-    },
-    legend: {
-      display: false,
-    },
-    scales: {
-      xAxes: [
-        {
-          gridLines: {
-            color: 'rgba(255, 255, 255, 0.3)',
-          },
-          ticks: {
-            // fontFamily: `${fonts.primary}`,
-            fontSize: 12,
-          },
-        },
-      ],
-      yAxes: [
-        {
-          gridLines: {
-            color: 'rgba(255, 255, 255, 0.3)',
-          },
-          ticks: {
-            beginAtZero: true,
-            // fontFamily: `${fonts.primary}`,
-            fontSize: 12,
-          },
-        },
-      ],
-    },
-  };
+  // const options = {
+  //   layout: {
+  //     padding: {
+  //       left: 0,
+  //       right: 0,
+  //       top: 0,
+  //       bottom: 0,
+  //     },
+  //   },
+  //   title: {
+  //     display: true,
+  //     text: `Audio Features`,
+  //     fontSize: 18,
+  //     // fontFamily: `${fonts.primary}`,
+  //     fontColor: '#ffffff',
+  //     padding: 30,
+  //   },
+  //   legend: {
+  //     display: false,
+  //   },
+  //   scales: {
+  //     xAxes: [
+  //       {
+  //         gridLines: {
+  //           color: 'rgba(255, 255, 255, 0.3)',
+  //         },
+  //         ticks: {
+  //           // fontFamily: `${fonts.primary}`,
+  //           fontSize: 12,
+  //         },
+  //       },
+  //     ],
+  //     yAxes: [
+  //       {
+  //         gridLines: {
+  //           color: 'rgba(255, 255, 255, 0.3)',
+  //         },
+  //         ticks: {
+  //           beginAtZero: true,
+  //           // fontFamily: `${fonts.primary}`,
+  //           fontSize: 12,
+  //         },
+  //       },
+  //     ],
+  //   },
+  // };
 
   return <Bar id="chart" data={data} width="400" height="400" />;
 };

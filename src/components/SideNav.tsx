@@ -1,10 +1,9 @@
-import { SiSpotify } from 'react-icons/si';
-import { AiFillHome } from 'react-icons/ai';
-import { GiMicrophone } from 'react-icons/gi';
-import { BsMusicNoteBeamed } from 'react-icons/bs';
-import { RiHistoryLine, RiPlayListFill } from 'react-icons/ri';
-
 import SideNavLink from '@/components/SideNavLink';
+import { AiFillHome } from 'react-icons/ai';
+import { BsMusicNoteBeamed } from 'react-icons/bs';
+import { GiMicrophone } from 'react-icons/gi';
+import { RiHistoryLine, RiPlayListFill } from 'react-icons/ri';
+import { SiSpotify } from 'react-icons/si';
 
 export default function SideNav() {
   return (

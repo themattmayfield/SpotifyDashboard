@@ -1,10 +1,8 @@
-import Track from '@/components/Track';
-import handleServerSession from '@/lib/handleServerSession';
-import { TTimeRange } from '@/types';
 import PageRangeHeader from '@/components/PageRangeHeader';
 import { PageWrapper } from '@/components/PageWrapper';
-import TrackLoading from '@/components/Loading/TrackLoading';
-import { Suspense } from 'react';
+import Track from '@/components/Track';
+import { getTopTracks } from '@/lib/spotify';
+import type { TTimeRange } from '@/types';
 
 export default async function Tracks({
   searchParams,
@@ -13,27 +11,20 @@ export default async function Tracks({
 }) {
   const { range } = searchParams;
   const activeRange = range || 'long_term';
-  const { spotifyApi } = await handleServerSession();
 
   const [long, medium, short] = await Promise.all([
-    spotifyApi
-      .getMyTopTracks({
-        limit: 50,
-        time_range: 'long_term',
-      })
-      .then(({ body }) => body.items),
-    spotifyApi
-      .getMyTopTracks({
-        limit: 50,
-        time_range: 'medium_term',
-      })
-      .then(({ body }) => body.items),
-    spotifyApi
-      .getMyTopTracks({
-        limit: 50,
-        time_range: 'short_term',
-      })
-      .then(({ body }) => body.items),
+    getTopTracks({
+      limit: '50',
+      timeRange: 'long_term',
+    }),
+    getTopTracks({
+      limit: '50',
+      timeRange: 'medium_term',
+    }),
+    getTopTracks({
+      limit: '50',
+      timeRange: 'short_term',
+    }),
   ]);
 
   const terms = [
@@ -58,9 +49,7 @@ export default async function Tracks({
       <div className="flex flex-col gap-4 no-scrollbar text-white mb-[150px] px-2">
         {terms
           .find(({ range }) => range === activeRange)
-          ?.data.map((track, index) => (
-            <Track key={index} track={track} />
-          ))}
+          ?.data.map((track) => <Track key={track.id} track={track} />)}
       </div>
     </PageWrapper>
   );

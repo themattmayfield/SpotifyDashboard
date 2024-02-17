@@ -1,6 +1,6 @@
-import Link from 'next/link';
 import { Skeleton } from '@/components/ui/skeleton';
 import { cn } from '@/lib/cn';
+import Link from 'next/link';
 
 export default function RightSideBar({
   isLoading,
@@ -31,7 +31,7 @@ export default function RightSideBar({
                 <div
                   className={cn(
                     'overflow-hidden flex flex-col',
-                    isLoading && 'space-y-1'
+                    isLoading && 'space-y-1',
                   )}
                 >
                   {isLoading ? (

@@ -1,14 +1,10 @@
-import PlaylistLoading from '@/components/Loading/PlaylistLoading';
 import PageRangeHeader from '@/components/PageRangeHeader';
 import { PageWrapper } from '@/components/PageWrapper';
 import Playlist from '@/components/Playlist';
-import handleServerSession from '@/lib/handleServerSession';
+import { getUserPlaylists } from '@/lib/spotify';
 
 export default async function Playlists() {
-  const { spotifyApi } = await handleServerSession();
-  const playlists = await spotifyApi
-    .getUserPlaylists()
-    .then(({ body }) => body.items);
+  const playlists = await getUserPlaylists();
 
   return (
     <PageWrapper>

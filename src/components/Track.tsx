@@ -1,5 +1,5 @@
-import Link from 'next/link';
 import { millisToMinutesAndSeconds } from '@/lib/time';
+import Link from 'next/link';
 
 export default function Track({
   track,

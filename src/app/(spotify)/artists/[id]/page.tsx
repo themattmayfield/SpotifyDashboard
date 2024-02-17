@@ -1,18 +1,15 @@
+import { getArtist, getIsFollowingArtists } from '@/lib/spotify';
 import numeral from 'numeral';
-import handleServerSession from '@/lib/handleServerSession';
+
 import FollowButton from './FollowButton';
-import { followHandler } from './action';
 
 export default async function Artist({ params }: { params: { id: string } }) {
   const { id } = params;
-  const { spotifyApi } = await handleServerSession();
 
-  const [{ body: artist }, { body: followingArtist }] = await Promise.all([
-    spotifyApi.getArtist(id),
-    spotifyApi.isFollowingArtists([id]),
+  const [artist, isFollowingArtist] = await Promise.all([
+    getArtist(id),
+    getIsFollowingArtists({ type: 'artist', id: id }),
   ]);
-
-  const isFollowingArtist = followingArtist.at(0);
 
   return (
     <div className="flex flex-col items-center text-center text-white pt-10 md:pt-24 space-y-4 md:space-y-8 no-scrollbar">

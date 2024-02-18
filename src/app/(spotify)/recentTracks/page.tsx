@@ -1,10 +1,9 @@
 import PageRangeHeader from '@/components/PageRangeHeader';
 import { PageWrapper } from '@/components/PageWrapper';
 import Track from '@/components/Track';
-import { spotifyApi } from '@/lib/spotify';
+import { getRecentlyPlayed } from '@/lib/spotify';
 
 export default async function Recent() {
-  const { getRecentlyPlayed } = spotifyApi();
   const recentlyPlayed = await getRecentlyPlayed({
     limit: '50',
   });

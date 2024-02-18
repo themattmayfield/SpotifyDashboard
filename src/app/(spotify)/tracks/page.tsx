@@ -1,7 +1,7 @@
 import PageRangeHeader from '@/components/PageRangeHeader';
 import { PageWrapper } from '@/components/PageWrapper';
 import Track from '@/components/Track';
-import { spotifyApi } from '@/lib/spotify';
+import { getTopTracks } from '@/lib/spotify';
 import type { TTimeRange } from '@/types';
 
 export default async function Tracks({
@@ -11,7 +11,6 @@ export default async function Tracks({
 }) {
   const { range } = searchParams;
   const activeRange = range || 'long_term';
-  const { getTopTracks } = spotifyApi();
 
   const [long, medium, short] = await Promise.all([
     getTopTracks({

@@ -1,11 +1,10 @@
-import { spotifyApi } from '@/lib/spotify';
+import { getMe } from '@/lib/spotify';
 import Link from 'next/link';
 import { SiSpotify } from 'react-icons/si';
 
 import NavClient from './NavClient';
 
 const Nav = async () => {
-  const { getMe } = spotifyApi();
   const user = await getMe();
 
   return (

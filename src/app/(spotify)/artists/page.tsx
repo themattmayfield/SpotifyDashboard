@@ -1,7 +1,7 @@
 import Card from '@/components/Card';
 import PageRangeHeader from '@/components/PageRangeHeader';
 import { PageWrapper } from '@/components/PageWrapper';
-import { spotifyApi } from '@/lib/spotify';
+import { getTopArtists } from '@/lib/spotify';
 import { type TTimeRange } from '@/types';
 
 export default async function Artists({
@@ -11,7 +11,6 @@ export default async function Artists({
 }) {
   const { range } = searchParams;
   const activeRange = (range || 'long_term') satisfies TTimeRange;
-  const { getTopArtists } = spotifyApi();
 
   const [topArtistsLong, topArtistsMedium, topArtistsShort] = await Promise.all(
     [

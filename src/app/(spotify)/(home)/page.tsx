@@ -3,10 +3,9 @@ import RightSideBar from '@/components/RightSideBar';
 import Subtitle from '@/components/Subtitle';
 import TopArtists from '@/components/TopArtists';
 import Track from '@/components/Track';
-import { spotifyApi } from '@/lib/spotify';
+import { getRecentlyPlayed, getTopTracks, getTopArtists } from '@/lib/spotify';
 
 export default async function Profile() {
-  const { getRecentlyPlayed, getTopTracks, getTopArtists } = spotifyApi();
   const [recentlyPlayed, topTracks, topArtistsLong, topArtistsShort] =
     await Promise.all([
       getRecentlyPlayed({ limit: '6' }),

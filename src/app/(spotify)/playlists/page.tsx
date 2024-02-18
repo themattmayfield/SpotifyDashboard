@@ -1,10 +1,9 @@
 import PageRangeHeader from '@/components/PageRangeHeader';
 import { PageWrapper } from '@/components/PageWrapper';
 import Playlist from '@/components/Playlist';
-import { spotifyApi } from '@/lib/spotify';
+import { getUserPlaylists } from '@/lib/spotify';
 
 export default async function Playlists() {
-  const { getUserPlaylists } = spotifyApi();
   const playlists = await getUserPlaylists();
 
   return (

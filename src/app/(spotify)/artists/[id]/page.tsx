@@ -1,11 +1,11 @@
-import { getArtist, getIsFollowingArtists } from '@/lib/spotify';
+import { spotifyApi } from '@/lib/spotify';
 import numeral from 'numeral';
 
 import FollowButton from './FollowButton';
 
 export default async function Artist({ params }: { params: { id: string } }) {
   const { id } = params;
-
+  const { getArtist, getIsFollowingArtists } = spotifyApi();
   const [artist, isFollowingArtist] = await Promise.all([
     getArtist(id),
     getIsFollowingArtists({ type: 'artist', id: id }),

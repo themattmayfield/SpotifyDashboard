@@ -3,13 +3,13 @@ import React from 'react';
 // import Chart from '@/components/Chart';
 import PlaylistComponent from '@/components/Playlist';
 import Track from '@/components/Track';
-import { getPlaylist } from '@/lib/spotify';
+import { spotifyApi } from '@/lib/spotify';
 
 // import dynamic from 'next/dynamic';
 
 const Playlist = async ({ params }: { params: { id: string } }) => {
   const { id } = params;
-
+  const { getPlaylist } = spotifyApi();
   const playlist = await getPlaylist(id);
 
   // might need to check if playlists exists??

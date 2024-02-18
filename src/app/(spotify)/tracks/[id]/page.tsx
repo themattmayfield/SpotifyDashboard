@@ -1,4 +1,4 @@
-import { getAudioFeaturesForTrack, getTrack } from '@/lib/spotify';
+import { spotifyApi } from '@/lib/spotify';
 import { getYear } from '@/lib/time';
 
 // import { Legend, Tooltip } from 'chart.js';
@@ -8,7 +8,7 @@ import Test from './Test';
 
 const Track = async ({ params }: { params: { id: string } }) => {
   const { id } = params;
-
+  const { getAudioFeaturesForTrack, getTrack } = spotifyApi();
   const [track, audioFeatures] = await Promise.all([
     getTrack(id),
     getAudioFeaturesForTrack(id),

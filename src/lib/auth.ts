@@ -112,9 +112,17 @@ export const updateSession = async (request: NextRequest) => {
       value: response.access_token,
       maxAge: response.expires_in,
     });
-    res.cookies.set({ name: 'refresh_token', value: response.refresh_token });
+    response.refresh_token &&
+      res.cookies.set({ name: 'refresh_token', value: response.refresh_token });
 
     return res;
   }
-  return;
+  const res = NextResponse.next();
+  refresh_token &&
+    res.cookies.set({
+      name: 'refresh_token',
+      value: refresh_token!,
+      maxAge: 2147483647,
+    });
+  return res;
 };

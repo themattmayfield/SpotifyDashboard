@@ -51,7 +51,7 @@ const Nav = ({ user }: { user: SpotifyApi.CurrentUsersProfileResponse }) => {
               Hope you enjoy exploring your Spotify favorites
             </p>
             <a
-              href="https:ko-fi.com/P5P21JZUH"
+              href="https://ko-fi.com/P5P21JZUH"
               target="_blank"
               className="text-sm animate-bounce hover:underline cursor-pointer text-gray-400"
             >

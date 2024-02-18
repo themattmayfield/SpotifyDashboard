@@ -1,14 +1,14 @@
 import { Skeleton } from '@/components/ui/skeleton';
 import { cn } from '@/lib/cn';
+import { getRecentlyPlayed } from '@/lib/spotify';
 import Link from 'next/link';
 
-export default function RightSideBar({
+export default async function RightSideBar({
   isLoading,
-  recentlyPlayed,
 }: {
   isLoading?: boolean;
-  recentlyPlayed?: SpotifyApi.PlayHistoryObject[];
 }) {
+  const recentlyPlayed = await getRecentlyPlayed({ limit: '6' });
   return (
     <>
       <div className="rounded-3xl bg-custom-darkgray py-4 w-full lg:w-72 text-white px-4">

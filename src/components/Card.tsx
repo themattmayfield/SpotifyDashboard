@@ -1,27 +1,32 @@
 import { cn } from '@/lib/cn';
+import { getTopArtists } from '@/lib/spotify';
+import type { TTimeRange } from '@/types';
 import Link from 'next/link';
 
-export default function Card({
-  info,
+export default async function Card({
   profile,
   imageClassName,
+  limit,
+  timeRange,
 }: {
-  info: SpotifyApi.ArtistObjectFull;
   profile?: boolean;
   imageClassName?: string;
+  limit: string;
+  timeRange: TTimeRange;
 }) {
-  return (
-    <div>
-      <Link href={`/artists/${info.id}`}>
+  const topArtists = await getTopArtists({ limit, timeRange });
+  return topArtists.map((artist) => (
+    <div key={artist.id}>
+      <Link href={`/artists/${artist.id}`}>
         <div
           style={{
-            backgroundImage: `url(${info.images[1].url})`,
+            backgroundImage: `url(${artist.images[1].url})`,
           }}
           className={cn(
             'cursor-pointer rounded-3xl h-[60vw]  md:h-[40vw]  lg:h-[40vw]  xl:h-96  overflow-hidden bg-custom-darkgray bg-cover bg-center flex items-center justify-center',
             !profile &&
               'transition duration-300 ease-in-out transform hover:scale-105',
-            imageClassName
+            imageClassName,
           )}
         >
           <div
@@ -29,11 +34,11 @@ export default function Card({
             style={{ background: 'rgba(0, 0, 0, 0.45)' }}
           >
             <div className="text-center text-2xl md:text-4xl text-white">
-              {info.name}
+              {artist.name}
             </div>
           </div>
         </div>
       </Link>
     </div>
-  );
+  ));
 }

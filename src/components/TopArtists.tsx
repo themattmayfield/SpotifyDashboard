@@ -1,11 +1,12 @@
 import Subtitle from '@/components/Subtitle';
+import { getTopArtists } from '@/lib/spotify';
 import Link from 'next/link';
 
-const TopArtists = ({
-  topArtists,
-}: {
-  topArtists: SpotifyApi.ArtistObjectFull[];
-}) => {
+const TopArtists = async () => {
+  const topArtists = await getTopArtists({
+    limit: '4',
+    timeRange: 'short_term',
+  });
   const Card = () => (
     <div className="grid grid-cols-2 gap-3 w-full">
       {topArtists.map((card) => (

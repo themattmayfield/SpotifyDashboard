@@ -1,10 +1,9 @@
-// import { cookies } from 'next/headers';
+import { spotifyTokenUrl } from '@/constants';
 
 export async function POST(request: Request) {
   const client_id = process.env.NEXT_PUBLIC_CLIENT_ID!;
   const client_secret = process.env.NEXT_PUBLIC_CLIENT_SECRET;
 
-  const tokenUrl = 'https://accounts.spotify.com/api/token';
   const headers = {
     'content-type': 'application/x-www-form-urlencoded',
     Authorization: `Basic ${Buffer.from(
@@ -18,15 +17,13 @@ export async function POST(request: Request) {
     client_id,
   });
 
-  const body = await fetch(tokenUrl, {
+  const body = await fetch(spotifyTokenUrl, {
     method: 'POST',
     headers,
     body: queryParamString.toString(),
   });
 
   const data = await body.json();
-  //   cookies().set('test', 'test');
-  //   cookies().set('access_token', data.access_token, { maxAge: data.expires_in });
 
   return Response.json(data);
 }

@@ -1,10 +1,10 @@
+import { spotifyBaseUrl } from '@/constants';
 import { cookies } from 'next/headers';
 
-let baseURL = 'https://api.spotify.com';
 const WEB_URL = process.env.WEB_URL;
 
 let originalRequest = async (url: string, config: any) => {
-  url = `${baseURL}${url}`;
+  url = `${spotifyBaseUrl}${url}`;
   let response = await fetch(url, config);
   if (response.status === 204) {
     return { response };

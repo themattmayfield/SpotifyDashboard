@@ -1,5 +1,6 @@
 'use server';
 
+import { spotifyTokenUrl } from '@/constants';
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 import { NextResponse, type NextRequest } from 'next/server';
@@ -27,7 +28,7 @@ const scope = [
   'user-read-playback-state',
   'user-modify-playback-state',
 ].join(',');
-const tokenUrl = 'https://accounts.spotify.com/api/token';
+
 const headers = {
   'content-type': 'application/x-www-form-urlencoded',
   Authorization: `Basic ${Buffer.from(`${client_id}:${client_secret}`).toString(
@@ -63,7 +64,7 @@ export const requestAccessToken = async (code: string) => {
     grant_type: 'authorization_code',
   });
 
-  const response = await fetch(tokenUrl, {
+  const response = await fetch(spotifyTokenUrl, {
     method: 'POST',
     headers,
     body: queryParamString.toString(),
@@ -97,7 +98,7 @@ export const updateSession = async (request: NextRequest) => {
       client_id,
     });
 
-    const body = await fetch(tokenUrl, {
+    const body = await fetch(spotifyTokenUrl, {
       method: 'POST',
       headers,
       body: queryParamString.toString(),

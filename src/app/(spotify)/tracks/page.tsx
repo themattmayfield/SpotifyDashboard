@@ -19,7 +19,7 @@ export default async function Tracks({
       <PageRangeHeader activeRange={activeRange} title="Tracks" />
 
       <div className="flex flex-col gap-4 no-scrollbar text-white mb-[150px] px-2">
-        <Suspense fallback={<TrackLoading count={12} />}>
+        <Suspense key={range} fallback={<TrackLoading count={12} />}>
           <Track
             type="topTracks"
             limit="50"

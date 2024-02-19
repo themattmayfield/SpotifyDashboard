@@ -19,7 +19,7 @@ export default async function Artists({
       <PageRangeHeader title="Artists" activeRange={activeRange} />
 
       <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-3 md:gap-6 no-scrollbar mb-[150px]">
-        <Suspense fallback={<CardLoading count={50} />}>
+        <Suspense key={range} fallback={<CardLoading count={50} />}>
           <Card timeRange={activeRange} limit="50" />
         </Suspense>
       </div>

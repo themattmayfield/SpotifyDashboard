@@ -28,8 +28,8 @@ const Track = async ({ params }: { params: { id: string } }) => {
             </p>
             <div className="md:text-2xl">
               {track.artists &&
-                track.artists.map(({ name }, i) => (
-                  <span key={i}>
+                track.artists.map(({ name, id }, i) => (
+                  <span key={id}>
                     {name}
                     {track.artists.length > 0 && i === track.artists.length - 1
                       ? ''

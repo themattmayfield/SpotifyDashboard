@@ -1,3 +1,4 @@
+import { getPlaylist, getUserPlaylists } from '@/lib/spotify';
 import Link from 'next/link';
 import pluralize from 'pluralize';
 import { IoMusicalNotesSharp } from 'react-icons/io5';
@@ -51,3 +52,23 @@ export default function Playlist({
     </div>
   );
 }
+
+export const UserPlaylists = async ({ analytic }: { analytic?: boolean }) => {
+  const playlists = await getUserPlaylists();
+
+  return playlists.map((playlist) => (
+    <Playlist analytic={analytic} key={playlist.id} playlist={playlist} />
+  ));
+};
+
+export const SinglePlaylist = async ({
+  id,
+  analytic,
+}: {
+  id: string;
+  analytic?: boolean;
+}) => {
+  const playlist = await getPlaylist(id);
+
+  return <Playlist analytic={analytic} playlist={playlist} />;
+};

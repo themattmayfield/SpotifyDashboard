@@ -35,7 +35,7 @@ export default async function Track(props: TCommon & TConditionalProps) {
   return topTracks.map((track) => (
     <div
       key={track?.id}
-      className="overflow-x-hidden flex items-center justify-between  cursor-pointer transition duration-150 ease-in-out hover:bg-custom-darkgray"
+      className="overflow-x-hidden flex items-center justify-between cursor-pointer transition duration-150 ease-in-out hover:bg-custom-darkgray"
     >
       <div className="flex space-x-4 items-center">
         <Link className="shrink-0" href={`/tracks/${track?.id}`}>
@@ -43,7 +43,9 @@ export default async function Track(props: TCommon & TConditionalProps) {
         </Link>
         <div className="flex flex-col">
           <Link href={`/tracks/${track?.id}`}>
-            <p className="hover:underline whitespace-nowrap">{track?.name}</p>
+            <p className="hover:underline whitespace-nowrap truncate max-w-[300px]">
+              {track?.name}
+            </p>
           </Link>
           <div className="flex flex-col md:flex-row text-[#565656]">
             <Link href={`/artists/${track?.artists[0].id}`}>

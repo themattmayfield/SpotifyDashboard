@@ -24,14 +24,14 @@ export default async function RightSideBar({
                       style={{
                         backgroundImage: `url(${item.track.album.images[0].url})`,
                       }}
-                    ></div>
+                    />
                   </Link>
                 </div>
 
                 <div
                   className={cn(
                     'overflow-hidden flex flex-col',
-                    isLoading && 'space-y-1',
+                    isLoading && 'space-y-1'
                   )}
                 >
                   {isLoading ? (

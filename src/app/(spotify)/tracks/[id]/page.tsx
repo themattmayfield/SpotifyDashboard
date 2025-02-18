@@ -27,16 +27,15 @@ const Track = async ({ params }: { params: { id: string } }) => {
               {track.name}
             </p>
             <div className="md:text-2xl">
-              {track.artists &&
-                track.artists.map(({ name, id }, i) => (
-                  <span key={id}>
-                    {name}
-                    {track.artists.length > 0 && i === track.artists.length - 1
-                      ? ''
-                      : ','}
-                    &nbsp;
-                  </span>
-                ))}
+              {track?.artists.map(({ name, id }, i) => (
+                <span key={id}>
+                  {name}
+                  {track.artists.length > 0 && i === track.artists.length - 1
+                    ? ''
+                    : ','}
+                  &nbsp;
+                </span>
+              ))}
             </div>
             <div className="md:text-lg">
               <a

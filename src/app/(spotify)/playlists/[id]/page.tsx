@@ -1,4 +1,4 @@
-import React, { Suspense } from 'react';
+import { Suspense } from 'react';
 
 // import Chart from '@/components/Chart';
 import PlaylistLoading from '@/components/Loading/PlaylistLoading';

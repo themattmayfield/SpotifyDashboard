@@ -1,7 +1,4 @@
-import React from 'react';
-
 import { Skeleton } from '../ui/skeleton';
-// import randomIntFromInterval from '@/lib/randomIntFromInterval';
 
 const PlaylistLoading = ({
   analytic = false,
@@ -19,7 +16,7 @@ const PlaylistLoading = ({
   return [...Array(count)].map((_, idx) => (
     <div key={idx} className="inline-block max-w-min mx-auto">
       <Skeleton className={imageClassess} />
-      <div className={`text-center mt-4 space-y-1`}>
+      <div className="text-center mt-4 space-y-1">
         <Skeleton className="h-5 w-16 sm:w-32 md:48 mx-auto" />
         {analytic && <Skeleton className="h-5" />}
       </div>

@@ -16,6 +16,7 @@ const SideNavLink = ({
   const pathProp = path.split('/').at(1);
   return (
     <button
+      type="button"
       onClick={(e) => {
         e.preventDefault();
         e.stopPropagation();

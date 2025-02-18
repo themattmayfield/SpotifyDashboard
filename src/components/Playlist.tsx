@@ -45,7 +45,7 @@ export default function Playlist({
         <p className="text-xs text-[#565656] break-words">
           {`${playlist.tracks.total} ${pluralize(
             'TRACK',
-            playlist.tracks.total,
+            playlist.tracks.total
           )}`}
         </p>
       </div>

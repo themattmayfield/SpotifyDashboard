@@ -1,16 +1,20 @@
 {
   "name": "spotify-dashboard",
-  "version": "0.1.0",
   "private": true,
+  "version": "0.0.0",
+  "license": "MIT",
   "scripts": {
     "dev": "next dev",
-    "dev:turbo": "next dev --turbo",
-    "build": "next build",
-    "start": "next start",
-    "lint": "next lint",
-    "type-check": "tsc --pretty --noEmit"
+    "sso": "source .env && aws sso login --sso-session=${AWS_SSO_SESSION}",
+    "deploy": "sst deploy",
+    "refresh": "sst refresh",
+    "type-check": "tsc --noEmit",
+    "lint": "biome check .",
+    "lint:fix": "biome check . --write",
+    "format": "biome format . --write && biome check . --write --unsafe"
   },
   "dependencies": {
+    "sst": "^3",
     "@radix-ui/react-icons": "1.3.0",
     "@radix-ui/react-popover": "1.0.6",
     "@radix-ui/react-select": "1.2.2",
@@ -20,7 +24,6 @@
     "chart.js": "4.3.3",
     "class-variance-authority": "0.7.0",
     "clsx": "2.0.0",
-    "framer-motion": "10.12.16",
     "next": "14.1.0",
     "numeral": "2.0.6",
     "pluralize": "8.0.0",
@@ -31,24 +34,16 @@
     "recharts": "^2.8.0",
     "tailwind-merge": "1.14.0",
     "tailwindcss": "3.3.2",
-    "tailwindcss-animate": "1.0.6",
-    "typescript": "5.2.2"
+    "tailwindcss-animate": "1.0.6"
   },
   "devDependencies": {
-    "@ianvs/prettier-plugin-sort-imports": "4.1.1",
+    "@biomejs/biome": "1.9.2",
     "@types/node": "20.8.10",
     "@types/pluralize": "0.0.30",
     "@types/react": "18.2.34",
     "@types/react-dom": "18.2.14",
     "autoprefixer": "10.4.14",
-    "@typescript-eslint/eslint-plugin": "6.9.1",
-    "@typescript-eslint/parser": "6.9.1",
-    "eslint": "8.53.0",
-    "eslint-config-next": "14.0.1",
-    "eslint-config-prettier": "9.0.0",
-    "eslint-plugin-react": "7.32.2",
-    "eslint-plugin-tailwindcss": "3.12.0",
     "postcss": "8.4.23",
-    "prettier": "3.0.3"
+    "typescript": "5.2.2"
   }
 }

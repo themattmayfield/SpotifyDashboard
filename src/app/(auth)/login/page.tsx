@@ -1,7 +1,5 @@
-
-import { login } from "@/lib/auth";
-import { redirect } from "next/navigation";
-
+import { login } from '@/lib/auth';
+import { redirect } from 'next/navigation';
 
 const Login = async () => {
   return (
@@ -9,17 +7,17 @@ const Login = async () => {
       <h1 className="text-4xl text-white mb-6">Spotify Profile</h1>
       <form
         action={async () => {
-          "use server";
+          'use server';
           await login();
-          redirect("/");
+          redirect('/');
         }}
       >
         <button
-        type='submit'
-      className="tracking-widest focus:outline-none no-underline transition duration-300 ease-in-out hover:bg-[#1ed760] bg-spotify-green text-white py-3.5 px-8 uppercase rounded-full"
-    >
-      LOG IN TO SPOTIFY
-    </button>
+          type="submit"
+          className="tracking-widest focus:outline-none no-underline transition duration-300 ease-in-out hover:bg-[#1ed760] bg-spotify-green text-white py-3.5 px-8 uppercase rounded-full"
+        >
+          LOG IN TO SPOTIFY
+        </button>
       </form>
     </div>
   );

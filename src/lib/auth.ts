@@ -32,7 +32,7 @@ const scope = [
 const headers = {
   'content-type': 'application/x-www-form-urlencoded',
   Authorization: `Basic ${Buffer.from(`${client_id}:${client_secret}`).toString(
-    'base64',
+    'base64'
   )}`,
 };
 export const login = async () => {
@@ -122,7 +122,7 @@ export const updateSession = async (request: NextRequest) => {
   refresh_token &&
     res.cookies.set({
       name: 'refresh_token',
-      value: refresh_token!,
+      value: refresh_token,
       maxAge: 2147483647,
     });
   return res;

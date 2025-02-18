@@ -17,7 +17,7 @@ const FollowButton = ({
           isFollowingArtist ? 'border-spotify-green' : 'border-custom-gray'
         }`}
       >
-        {isFollowingArtist ? 'Following' : `Follow`}
+        {isFollowingArtist ? 'Following' : 'Follow'}
       </button>
     </form>
   );

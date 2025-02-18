@@ -20,7 +20,7 @@ const MyChart = ({ features }) => {
     const dataset = {};
     properties.forEach((prop) => {
       dataset[prop] = features.length
-        ? avg(features.map((feat) => feat && feat[prop]))
+        ? avg(features.map((feat) => feat?.[prop]))
         : features[prop];
     });
     return dataset;

@@ -44,7 +44,7 @@ const Test = ({
     const dataset = {} as Record<(typeof properties)[number], any>;
     properties.forEach((prop: (typeof properties)[number]) => {
       dataset[prop] = features?.length
-        ? avg(features.map((feat: any) => feat && feat[prop]))
+        ? avg(features.map((feat: any) => feat?.[prop]))
         : features[prop];
     });
     return dataset;

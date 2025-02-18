@@ -24,13 +24,13 @@ export default async function Track(props: TCommon & TConditionalProps) {
   const topTracks =
     props.type === 'playlist'
       ? await getPlaylist(props.playlistId).then((data) =>
-          data.tracks.items.map(({ track }) => track),
+          data.tracks.items.map(({ track }) => track)
         )
       : props.type === 'topTracks'
-      ? await getTopTracks({ limit: props.limit, timeRange: props.timeRange })
-      : await getRecentlyPlayed({
-          limit: props.limit,
-        }).then((data) => data.map(({ track }) => track));
+        ? await getTopTracks({ limit: props.limit, timeRange: props.timeRange })
+        : await getRecentlyPlayed({
+            limit: props.limit,
+          }).then((data) => data.map(({ track }) => track));
 
   return topTracks.map((track) => (
     <div
@@ -39,7 +39,11 @@ export default async function Track(props: TCommon & TConditionalProps) {
     >
       <div className="flex space-x-4 items-center">
         <Link className="shrink-0" href={`/tracks/${track?.id}`}>
-          <img className="w-20 h-20" src={track?.album?.images[0].url} />
+          <img
+            className="w-20 h-20"
+            src={track?.album?.images[0].url}
+            alt={track?.name}
+          />
         </Link>
         <div className="flex flex-col">
           <Link href={`/tracks/${track?.id}`}>

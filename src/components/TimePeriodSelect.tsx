@@ -29,7 +29,7 @@ const TimePeriodSelect = ({ activeRange }: { activeRange: TTimeRange }) => {
   const { push } = useRouter();
   return (
     <Select
-      onValueChange={(range) => {
+      onValueChange={(range: TTimeRange) => {
         push(`?range=${range}`);
       }}
       value={activeRange}
@@ -47,7 +47,7 @@ const TimePeriodSelect = ({ activeRange }: { activeRange: TTimeRange }) => {
       </SelectTrigger>
       <SelectContent
         className="bg-custom-darkgray border-none"
-        onClick={(e) => e.stopPropagation()}
+        onClick={(e: React.MouseEvent<HTMLDivElement>) => e.stopPropagation()}
       >
         {data.map(({ label, value }, idx) => (
           <SelectItem

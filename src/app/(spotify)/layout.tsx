@@ -1,4 +1,4 @@
-import { type ReactNode } from 'react';
+import type { ReactNode } from 'react';
 
 import Nav from '@/components/Nav';
 import SideNav from '@/components/SideNav';

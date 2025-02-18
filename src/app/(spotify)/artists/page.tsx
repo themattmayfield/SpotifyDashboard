@@ -4,7 +4,7 @@ import Card from '@/components/Card';
 import CardLoading from '@/components/Loading/CardLoading';
 import PageRangeHeader from '@/components/PageRangeHeader';
 import { PageWrapper } from '@/components/PageWrapper';
-import { type TTimeRange } from '@/types';
+import type { TTimeRange } from '@/types';
 
 export default async function Artists({
   searchParams,

@@ -1,9 +1,0 @@
-{
-  "extends": "./tsconfig.json",
-  "include": [
-    ".eslintrc.js",
-    "next.config.js",
-    "postcss.config.js",
-    "./src/**/*",
-  ]
-}

@@ -1,5 +1,3 @@
-import React from 'react';
-
 import randomIntFromInterval from '@/lib/randomIntFromInterval';
 
 import { Skeleton } from '../ui/skeleton';
@@ -18,7 +16,7 @@ const TrackLoading = ({ count }: { count: number }) => {
               style={{
                 width: `${randomIntFromInterval(50, 200)}px`,
               }}
-              className={`h-6`}
+              className={'h-6'}
             />
             <Skeleton
               style={{

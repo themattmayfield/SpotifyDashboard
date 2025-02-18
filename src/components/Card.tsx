@@ -26,7 +26,7 @@ export default async function Card({
             'cursor-pointer rounded-3xl h-[60vw]  md:h-[40vw]  lg:h-[40vw]  xl:h-96  overflow-hidden bg-custom-darkgray bg-cover bg-center flex items-center justify-center',
             !profile &&
               'transition duration-300 ease-in-out transform hover:scale-105',
-            imageClassName,
+            imageClassName
           )}
         >
           <div

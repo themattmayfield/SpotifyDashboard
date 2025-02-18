@@ -8,7 +8,7 @@ const TopArtistsLoading = () => {
       {[...Array(4)].map((index) => (
         <Skeleton
           key={index}
-          className={`rounded-3xl h-[45vw] w-[45vw] lg:w-[26vw] lg:h-[26vw] xl:w-full `}
+          className="rounded-3xl h-[45vw] w-[45vw] lg:w-[26vw] lg:h-[26vw] xl:w-full"
         />
       ))}
     </div>

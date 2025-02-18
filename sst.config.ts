@@ -16,14 +16,12 @@ export default $config({
   },
   async run() {
     new sst.aws.Nextjs('MyWeb', {
-      ...(process.env.SST_STAGE && {
-        domain: {
-          name: 'spotifydash.co',
-          dns: sst.vercel.dns({
-            domain: 'spotifydash.co',
-          }),
-        },
-      }),
+      domain: {
+        name: 'spotifydash.co',
+        dns: sst.vercel.dns({
+          domain: 'spotifydash.co',
+        }),
+      },
     });
   },
 });

@@ -5,6 +5,7 @@
   "license": "MIT",
   "scripts": {
     "dev": "next dev",
+    "build": "next build",
     "sso": "source .env && aws sso login --sso-session=${AWS_SSO_SESSION}",
     "deploy": "sst deploy",
     "refresh": "sst refresh",

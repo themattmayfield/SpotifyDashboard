@@ -9,12 +9,19 @@ import { generateRandomString } from './generateRandomString';
 
 const client_id = process.env.NEXT_PUBLIC_CLIENT_ID;
 const client_secret = process.env.NEXT_PUBLIC_CLIENT_SECRET;
+const web_url = process.env.WEB_URL;
 
 if (typeof client_id !== 'string') {
   throw new Error('No clientID');
 }
 
-const redirect_uri = `${process.env.WEB_URL}/api/callback`;
+if (typeof web_url !== 'string') {
+  throw new Error('No web url', {
+    cause: { client_id, client_secret, web_url },
+  });
+}
+
+const redirect_uri = `${web_url}/api/callback`;
 const scope = [
   'user-read-private',
   'user-read-email',

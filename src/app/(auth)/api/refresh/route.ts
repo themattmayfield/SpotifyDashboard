@@ -1,8 +1,8 @@
 import { spotifyTokenUrl } from '@/constants';
-
+import { Resource } from 'sst';
 export async function POST(request: Request) {
-  const client_id = process.env.NEXT_PUBLIC_CLIENT_ID;
-  const client_secret = process.env.NEXT_PUBLIC_CLIENT_SECRET;
+  const client_id = Resource.NEXT_PUBLIC_CLIENT_ID.value;
+  const client_secret = Resource.NEXT_PUBLIC_CLIENT_SECRET.value;
 
   if (!client_id || !client_secret) {
     return Response.json(

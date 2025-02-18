@@ -4,24 +4,15 @@ import { spotifyTokenUrl } from '@/constants';
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 import { NextResponse, type NextRequest } from 'next/server';
+import { Resource } from 'sst';
 
 import { generateRandomString } from './generateRandomString';
 
-const client_id = process.env.NEXT_PUBLIC_CLIENT_ID;
-const client_secret = process.env.NEXT_PUBLIC_CLIENT_SECRET;
-const web_url = process.env.WEB_URL;
+const client_id = Resource.NEXT_PUBLIC_CLIENT_ID.value;
+const client_secret = Resource.NEXT_PUBLIC_CLIENT_SECRET.value;
+const NEXT_PUBLIC_WEB_URL = Resource.NEXT_PUBLIC_WEB_URL.value;
 
-if (typeof client_id !== 'string') {
-  throw new Error('No clientID');
-}
-
-if (typeof web_url !== 'string') {
-  throw new Error('No web url', {
-    cause: { client_id, client_secret, web_url },
-  });
-}
-
-const redirect_uri = `${web_url}/api/callback`;
+const redirect_uri = `${NEXT_PUBLIC_WEB_URL}/api/callback`;
 const scope = [
   'user-read-private',
   'user-read-email',

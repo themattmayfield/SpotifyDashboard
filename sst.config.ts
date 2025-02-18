@@ -15,7 +15,17 @@ export default $config({
     };
   },
   async run() {
+    const NEXT_PUBLIC_WEB_URL = new sst.Secret('NEXT_PUBLIC_WEB_URL');
+    const NEXT_PUBLIC_CLIENT_SECRET = new sst.Secret(
+      'NEXT_PUBLIC_CLIENT_SECRET'
+    );
+    const NEXT_PUBLIC_CLIENT_ID = new sst.Secret('NEXT_PUBLIC_CLIENT_ID');
     new sst.aws.Nextjs('MyWeb', {
+      link: [
+        NEXT_PUBLIC_WEB_URL,
+        NEXT_PUBLIC_CLIENT_SECRET,
+        NEXT_PUBLIC_CLIENT_ID,
+      ],
       domain: {
         name: 'spotifydash.co',
         dns: sst.vercel.dns({

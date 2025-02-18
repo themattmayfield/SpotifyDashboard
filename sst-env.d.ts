@@ -9,6 +9,18 @@ declare module "sst" {
       "type": "sst.aws.Nextjs"
       "url": string
     }
+    "NEXT_PUBLIC_CLIENT_ID": {
+      "type": "sst.sst.Secret"
+      "value": string
+    }
+    "NEXT_PUBLIC_CLIENT_SECRET": {
+      "type": "sst.sst.Secret"
+      "value": string
+    }
+    "NEXT_PUBLIC_WEB_URL": {
+      "type": "sst.sst.Secret"
+      "value": string
+    }
   }
 }
 /// <reference path="sst-env.d.ts" />

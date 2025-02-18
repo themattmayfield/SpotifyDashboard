@@ -1,7 +1,8 @@
 import { spotifyBaseUrl } from '@/constants';
 import { cookies } from 'next/headers';
+import { Resource } from 'sst';
 
-const WEB_URL = process.env.WEB_URL;
+const NEXT_PUBLIC_WEB_URL = Resource.NEXT_PUBLIC_WEB_URL.value;
 
 const originalRequest = async (url: string, config: any) => {
   const urlWithBase = `${spotifyBaseUrl}${url}`;
@@ -14,7 +15,7 @@ const originalRequest = async (url: string, config: any) => {
 };
 
 const refreshToken = async (refreshToken: string) => {
-  const response = await fetch(`${WEB_URL}/api/refresh/`, {
+  const response = await fetch(`${NEXT_PUBLIC_WEB_URL}/api/refresh/`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',

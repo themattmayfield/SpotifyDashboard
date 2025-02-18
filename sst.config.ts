@@ -20,6 +20,7 @@ export default $config({
       'NEXT_PUBLIC_CLIENT_SECRET'
     );
     const NEXT_PUBLIC_CLIENT_ID = new sst.Secret('NEXT_PUBLIC_CLIENT_ID');
+
     new sst.aws.Nextjs('MyWeb', {
       link: [
         NEXT_PUBLIC_WEB_URL,

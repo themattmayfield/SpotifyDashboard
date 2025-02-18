@@ -23,7 +23,7 @@
 
 
 # local env files
-.env
+.env*
 
 # vercel
 .vercel

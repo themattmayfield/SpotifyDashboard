@@ -19,7 +19,7 @@ export default function Playlist({
   } cursor-pointer overflow-hidden bg-custom-darkgray bg-cover bg-center h-[45vw] w-[45vw] flex items-center justify-center transition duration-300 ease-in-out transform hover:scale-105`;
   return (
     <div className="inline-block max-w-min mx-auto">
-      {playlist.images.length ? (
+      {playlist.images?.length ? (
         <Link
           style={{
             backgroundImage: `url(${playlist.images[0].url})`,

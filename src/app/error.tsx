@@ -3,6 +3,10 @@
 import Link from 'next/link';
 
 export default function Error({ error }: { error: Error }) {
+  const errorMessage = error.message.includes('Server Components render')
+    ? 'blah blah server components blah blah'
+    : error.message;
+
   return (
     <div className="flex flex-col items-center justify-center h-screen bg-spotify-dark text-white">
       <h1 className="text-4xl font-bold mb-4">
@@ -12,7 +16,7 @@ export default function Error({ error }: { error: Error }) {
         Don't worry, he's been notified and sent back to debugging school.
       </p>
       <div className="text-sm text-gray-400 mb-8">
-        Error details (for the nerds): {error.message}
+        Error details (for the nerds): {errorMessage}
       </div>
       <Link
         href="/"

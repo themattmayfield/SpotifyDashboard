@@ -1,6 +1,6 @@
 import { Suspense } from 'react';
 
-// import Chart from '@/components/Chart';
+// import Chart from '@/components/Chart.client';
 import PlaylistLoading from '@/components/Loading/PlaylistLoading';
 import TrackLoading from '@/components/Loading/TrackLoading';
 import { SinglePlaylist } from '@/components/Playlist';
@@ -8,7 +8,8 @@ import Track from '@/components/Track';
 
 // import dynamic from 'next/dynamic';
 
-const Playlist = ({ params }: { params: { id: string } }) => {
+const Playlist = async (props: { params: Promise<{ id: string }> }) => {
+  const params = await props.params;
   const { id } = params;
 
   // might need to check if playlists exists??

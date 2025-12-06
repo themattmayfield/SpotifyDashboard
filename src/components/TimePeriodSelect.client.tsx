@@ -4,7 +4,7 @@ import {
   SelectContent,
   SelectItem,
   SelectTrigger,
-} from '@/components/ui/select';
+} from '@/components/ui/select.client';
 import type { TTimeRange } from '@/types';
 import { useRouter } from 'next/navigation';
 import { IoIosInfinite } from 'react-icons/io';

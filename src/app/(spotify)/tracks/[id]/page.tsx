@@ -4,9 +4,10 @@ import { getYear } from '@/lib/time';
 // import { Legend, Tooltip } from 'chart.js';
 // import { Bar } from 'react-chartjs-2';
 // import { BarChart, CartesianGrid, XAxis, YAxis } from 'recharts';
-import Test from './Test';
+import Test from './Test.client';
 
-const Track = async ({ params }: { params: { id: string } }) => {
+const Track = async (props: { params: Promise<{ id: string }> }) => {
+  const params = await props.params;
   const { id } = params;
   const [track, audioFeatures] = await Promise.all([
     getTrack(id),

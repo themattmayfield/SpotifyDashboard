@@ -6,11 +6,10 @@ import PageRangeHeader from '@/components/PageRangeHeader';
 import { PageWrapper } from '@/components/PageWrapper';
 import type { TTimeRange } from '@/types';
 
-export default async function Artists({
-  searchParams,
-}: {
-  searchParams: { range: TTimeRange };
+export default async function Artists(props: {
+  searchParams: Promise<{ range: TTimeRange }>;
 }) {
+  const searchParams = await props.searchParams;
   const { range } = searchParams;
   const activeRange = (range || 'long_term') satisfies TTimeRange;
 

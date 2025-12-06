@@ -6,7 +6,7 @@ import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from '@/components/ui/popover';
+} from '@/components/ui/popover.client';
 import { logout } from '@/lib/auth';
 import { AiFillCaretDown } from 'react-icons/ai';
 import { RiUser6Fill } from 'react-icons/ri';

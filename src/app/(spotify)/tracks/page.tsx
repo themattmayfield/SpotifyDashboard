@@ -6,11 +6,10 @@ import { PageWrapper } from '@/components/PageWrapper';
 import Track from '@/components/Track';
 import type { TTimeRange } from '@/types';
 
-export default async function Tracks({
-  searchParams,
-}: {
-  searchParams: { range: TTimeRange };
+export default async function Tracks(props: {
+  searchParams: Promise<{ range: TTimeRange }>;
 }) {
+  const searchParams = await props.searchParams;
   const { range } = searchParams;
   const activeRange = range || 'long_term';
 

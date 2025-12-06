@@ -4,13 +4,12 @@ import { spotifyTokenUrl } from '@/constants';
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 import { NextResponse, type NextRequest } from 'next/server';
-import { Resource } from 'sst';
 
 import { generateRandomString } from './generateRandomString';
 
-const client_id = Resource.NEXT_PUBLIC_CLIENT_ID.value;
-const client_secret = Resource.NEXT_PUBLIC_CLIENT_SECRET.value;
-const NEXT_PUBLIC_WEB_URL = Resource.NEXT_PUBLIC_WEB_URL.value;
+const client_id = process.env.NEXT_PUBLIC_CLIENT_ID || '';
+const client_secret = process.env.NEXT_PUBLIC_CLIENT_SECRET || '';
+const NEXT_PUBLIC_WEB_URL = process.env.NEXT_PUBLIC_WEB_URL || '';
 
 const redirect_uri = `${NEXT_PUBLIC_WEB_URL}/api/callback`;
 const scope = [
@@ -51,11 +50,14 @@ export const login = async () => {
 };
 
 export const logout = async () => {
-  cookies().set('access_token', '', { expires: new Date(0) });
-  cookies().set('refresh_token', '', { expires: new Date(0) });
+  const cookieStore = await cookies();
+  cookieStore.set('access_token', '', { expires: new Date(0) });
+  cookieStore.set('refresh_token', '', { expires: new Date(0) });
   redirect('/login');
 };
 export const requestAccessToken = async (code: string) => {
+  const cookieStore = await cookies();
+
   const queryParamString = new URLSearchParams({
     code,
     redirect_uri,
@@ -69,8 +71,8 @@ export const requestAccessToken = async (code: string) => {
   });
   const res = await response.json();
 
-  cookies().set('access_token', res.access_token, { maxAge: res.expires_in });
-  cookies().set('refresh_token', res.refresh_token);
+  cookieStore.set('access_token', res.access_token, { maxAge: res.expires_in });
+  cookieStore.set('refresh_token', res.refresh_token);
 
   return res;
 };

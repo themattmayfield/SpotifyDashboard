@@ -2,7 +2,7 @@ import { getMe } from '@/lib/spotify';
 import Link from 'next/link';
 import { SiSpotify } from 'react-icons/si';
 
-import NavClient from './NavClient';
+import NavClient from './NavClient.client';
 
 const Nav = async () => {
   const user = await getMe();

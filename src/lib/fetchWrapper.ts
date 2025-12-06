@@ -1,8 +1,7 @@
 import { spotifyBaseUrl } from '@/constants';
 import { cookies } from 'next/headers';
-import { Resource } from 'sst';
 
-const NEXT_PUBLIC_WEB_URL = Resource.NEXT_PUBLIC_WEB_URL.value;
+const NEXT_PUBLIC_WEB_URL = process.env.WEB_URL;
 
 const originalRequest = async (url: string, config: any) => {
   const urlWithBase = `${spotifyBaseUrl}${url}`;
@@ -28,8 +27,8 @@ const refreshToken = async (refreshToken: string) => {
 };
 
 const fetchWrapper = async (url: string, config: RequestInit = {}) => {
-  let accessToken = cookies().get('access_token')?.value || null;
-  const refresh = cookies().get('refresh_token')?.value || null;
+  let accessToken = (await cookies()).get('access_token')?.value || null;
+  const refresh = (await cookies()).get('refresh_token')?.value || null;
 
   if (!accessToken || !refresh) {
     return { response: { status: 401 }, data: { error: 'Unauthorized' } };

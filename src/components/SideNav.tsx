@@ -1,4 +1,4 @@
-import SideNavLink from '@/components/SideNavLink';
+import SideNavLink from '@/components/SideNavLink.client';
 import { AiFillHome } from 'react-icons/ai';
 import { BsMusicNoteBeamed } from 'react-icons/bs';
 import { GiMicrophone } from 'react-icons/gi';

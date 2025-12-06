@@ -1,5 +1,3 @@
-'use client';
-
 import { useState } from 'react';
 
 import {
@@ -7,12 +5,22 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover.client';
-import { logout } from '@/lib/auth';
+import { logoutFn } from '@/lib/auth';
 import { AiFillCaretDown } from 'react-icons/ai';
 import { RiUser6Fill } from 'react-icons/ri';
 
-const Nav = ({ user }: { user: SpotifyApi.CurrentUsersProfileResponse }) => {
+interface NavClientProps {
+  user: SpotifyApi.CurrentUsersProfileResponse;
+}
+
+const NavClient = ({ user }: NavClientProps) => {
   const [isOpen, setIsOpen] = useState(false);
+
+  const handleLogout = async (e: React.FormEvent) => {
+    e.preventDefault();
+    await logoutFn();
+  };
+
   return (
     <>
       {isOpen && (
@@ -28,7 +36,6 @@ const Nav = ({ user }: { user: SpotifyApi.CurrentUsersProfileResponse }) => {
             className="rounded-full h-10 lg:h-16 bg-custom-darkgray flex justify-between items-center space-x-2 lg:space-x-3 focus:outline-none"
           >
             <AiFillCaretDown className="h-4 w-4 ml-4 text-[#686868]" />
-            {/* {user && ( */}
             {user?.images?.[0]?.url ? (
               <img
                 className="h-10 w-10 lg:h-16 lg:w-16 rounded-full"
@@ -40,7 +47,6 @@ const Nav = ({ user }: { user: SpotifyApi.CurrentUsersProfileResponse }) => {
                 <RiUser6Fill className="text-[#686868] h-full w-full" />
               </div>
             )}
-            {/* )} */}
           </button>
         </PopoverTrigger>
         <PopoverContent
@@ -60,7 +66,7 @@ const Nav = ({ user }: { user: SpotifyApi.CurrentUsersProfileResponse }) => {
             >
               Support me by buy me a ☕
             </a>
-            <form action={logout}>
+            <form onSubmit={handleLogout}>
               <button
                 className="text-sm cursor-pointer hover:text-red-400 text-red-600"
                 type="submit"
@@ -75,4 +81,4 @@ const Nav = ({ user }: { user: SpotifyApi.CurrentUsersProfileResponse }) => {
   );
 };
 
-export default Nav;
+export default NavClient;

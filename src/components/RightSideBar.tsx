@@ -1,7 +1,8 @@
+import { Link } from '@tanstack/react-router';
+
 import { Skeleton } from '@/components/ui/skeleton';
 import { cn } from '@/lib/cn';
 import { getRecentlyPlayed } from '@/lib/spotify';
-import Link from 'next/link';
 
 export default async function RightSideBar({
   isLoading,
@@ -18,7 +19,10 @@ export default async function RightSideBar({
             {recentlyPlayed?.map((item, index) => (
               <div key={index} className="flex">
                 <div className="mr-4">
-                  <Link href={`/artists/${item.track.artists[0].id}`}>
+                  <Link
+                    to="/artists/$id"
+                    params={{ id: item.track.artists[0].id }}
+                  >
                     <div
                       className="rounded-full bg-cover bg-custom-darkgray bg-center w-8 h-8 sm:w-12 sm:h-12 lg:w-16 lg:h-16 cursor-pointer"
                       style={{
@@ -39,7 +43,8 @@ export default async function RightSideBar({
                   ) : (
                     <Link
                       className="overflow-hidden truncate lg:w-48 cursor-pointer hover:underline"
-                      href={`/artists/${item.track.artists[0].id}`}
+                      to="/artists/$id"
+                      params={{ id: item.track.artists[0].id }}
                     >
                       {item.track.artists[0].name}
                     </Link>
@@ -50,7 +55,8 @@ export default async function RightSideBar({
                   ) : (
                     <Link
                       className="text-xs text-[#565656] overflow-hidden truncate lg:w-48 hover:underline cursor-pointer"
-                      href={`/tracks/${item.track.id}`}
+                      to="/tracks/$id"
+                      params={{ id: item.track.id }}
                     >
                       {item.track.name}
                     </Link>
@@ -67,7 +73,7 @@ export default async function RightSideBar({
           ) : (
             <Link
               className="bg-custom-gray flex justify-center hover:bg-[#686868] transition duration-300 ease-in-out text-sm rounded-3xl px-4 py-3 sm:py-4 w-full focus:outline-none"
-              href="/recentTracks"
+              to="/recentTracks"
             >
               View All
             </Link>

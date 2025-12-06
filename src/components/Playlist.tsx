@@ -1,15 +1,22 @@
-import { getPlaylist, getUserPlaylists } from '@/lib/spotify';
-import Link from 'next/link';
+import { Link } from '@tanstack/react-router';
 import pluralize from 'pluralize';
 import { IoMusicalNotesSharp } from 'react-icons/io5';
+
+import { getPlaylist, getUserPlaylists } from '@/lib/spotify';
+
+type PlaylistType = {
+  id: string;
+  name: string;
+  images?: { url: string }[] | null;
+  owner: { display_name?: string };
+  tracks: { total: number };
+};
 
 export default function Playlist({
   playlist,
   analytic = false,
 }: {
-  playlist:
-    | SpotifyApi.SinglePlaylistResponse
-    | SpotifyApi.PlaylistObjectSimplified;
+  playlist: PlaylistType;
   analytic?: boolean;
 }) {
   const imageClassess = `${
@@ -25,10 +32,15 @@ export default function Playlist({
             backgroundImage: `url(${playlist.images[0].url})`,
           }}
           className={imageClassess}
-          href={`/playlists/${playlist.id}`}
+          to="/playlists/$id"
+          params={{ id: playlist.id }}
         />
       ) : (
-        <Link href={`/playlists/${playlist.id}`} className={imageClassess}>
+        <Link
+          to="/playlists/$id"
+          params={{ id: playlist.id }}
+          className={imageClassess}
+        >
           <IoMusicalNotesSharp className="text-white h-24 w-24 " />
         </Link>
       )}
@@ -56,7 +68,7 @@ export default function Playlist({
 export const UserPlaylists = async ({ analytic }: { analytic?: boolean }) => {
   const playlists = await getUserPlaylists();
 
-  return playlists.map((playlist) => (
+  return playlists.map((playlist: PlaylistType) => (
     <Playlist analytic={analytic} key={playlist.id} playlist={playlist} />
   ));
 };

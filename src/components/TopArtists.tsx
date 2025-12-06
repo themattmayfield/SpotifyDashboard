@@ -1,6 +1,7 @@
+import { Link } from '@tanstack/react-router';
+
 import Subtitle from '@/components/Subtitle';
 import { getTopArtists } from '@/lib/spotify';
-import Link from 'next/link';
 
 const TopArtists = async () => {
   const topArtists = await getTopArtists({
@@ -10,7 +11,7 @@ const TopArtists = async () => {
   const Card = () => (
     <div className="grid grid-cols-2 gap-3 w-full">
       {topArtists.map((card) => (
-        <Link key={card.id} href={`/artists/${card.id}`}>
+        <Link key={card.id} to="/artists/$id" params={{ id: card.id }}>
           <div
             style={{
               backgroundImage: card.images.length

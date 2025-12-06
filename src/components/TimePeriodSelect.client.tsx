@@ -1,4 +1,3 @@
-'use client';
 import {
   Select,
   SelectContent,
@@ -6,7 +5,7 @@ import {
   SelectTrigger,
 } from '@/components/ui/select.client';
 import type { TTimeRange } from '@/types';
-import { useRouter } from 'next/navigation';
+import { useNavigate } from '@tanstack/react-router';
 import { IoIosInfinite } from 'react-icons/io';
 import { IoTimeOutline } from 'react-icons/io5';
 import { MdOutlineBolt } from 'react-icons/md';
@@ -26,11 +25,11 @@ const data = [
   },
 ];
 const TimePeriodSelect = ({ activeRange }: { activeRange: TTimeRange }) => {
-  const { push } = useRouter();
+  const navigate = useNavigate();
   return (
     <Select
       onValueChange={(range: TTimeRange) => {
-        push(`?range=${range}`);
+        navigate({ search: { range } });
       }}
       value={activeRange}
     >

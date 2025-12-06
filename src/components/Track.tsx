@@ -1,7 +1,8 @@
+import { Link } from '@tanstack/react-router';
+
 import { getPlaylist, getRecentlyPlayed, getTopTracks } from '@/lib/spotify';
 import { millisToMinutesAndSeconds } from '@/lib/time';
 import type { TTimeRange } from '@/types';
-import Link from 'next/link';
 
 type TCommon = {
   withTrackDuration: boolean;
@@ -24,35 +25,41 @@ export default async function Track(props: TCommon & TConditionalProps) {
   const topTracks =
     props.type === 'playlist'
       ? await getPlaylist(props.playlistId).then((data) =>
-          data.tracks.items.map(({ track }) => track)
+          data.tracks.items.map(
+            ({ track }: { track: SpotifyApi.TrackObjectFull }) => track
+          )
         )
       : props.type === 'topTracks'
         ? await getTopTracks({ limit: props.limit, timeRange: props.timeRange })
         : await getRecentlyPlayed({
             limit: props.limit,
-          }).then((data) => data.map(({ track }) => track));
+          }).then((data) =>
+            data.map(
+              ({ track }: { track: SpotifyApi.TrackObjectFull }) => track
+            )
+          );
 
-  return topTracks.map((track) => (
+  return topTracks.map((track: SpotifyApi.TrackObjectFull) => (
     <div
       key={track?.id}
       className="overflow-x-hidden flex items-center justify-between cursor-pointer transition duration-150 ease-in-out hover:bg-custom-darkgray"
     >
       <div className="flex space-x-4 items-center">
-        <Link className="shrink-0" href={`/tracks/${track?.id}`}>
+        <Link className="shrink-0" to="/tracks/$id" params={{ id: track?.id }}>
           <img
             className="w-20 h-20"
-            src={track?.album?.images[0].url}
+            src={track?.album?.images[0]?.url}
             alt={track?.name}
           />
         </Link>
         <div className="flex flex-col">
-          <Link href={`/tracks/${track?.id}`}>
+          <Link to="/tracks/$id" params={{ id: track?.id }}>
             <p className="hover:underline whitespace-nowrap truncate max-w-[300px]">
               {track?.name}
             </p>
           </Link>
           <div className="flex flex-col md:flex-row text-[#565656]">
-            <Link href={`/artists/${track?.artists[0].id}`}>
+            <Link to="/artists/$id" params={{ id: track?.artists[0].id }}>
               <p className="hover:underline whitespace-nowrap">
                 {track?.artists[0].name}
               </p>

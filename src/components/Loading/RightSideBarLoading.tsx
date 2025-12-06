@@ -1,4 +1,3 @@
-// import Link from 'next/link';
 import { Skeleton } from '@/components/ui/skeleton';
 import { cn } from '@/lib/cn';
 import randomIntFromInterval from '@/lib/randomIntFromInterval';

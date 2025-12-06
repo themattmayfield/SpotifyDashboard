@@ -1,6 +1,4 @@
 // @ts-nocheck
-'use client';
-
 import { Bar } from 'react-chartjs-2';
 
 const properties = [

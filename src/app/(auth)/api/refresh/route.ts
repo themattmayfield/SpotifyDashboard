@@ -1,7 +1,7 @@
 import { spotifyTokenUrl } from '@/constants';
 export async function POST(request: Request) {
-  const client_id = process.env.NEXT_PUBLIC_CLIENT_ID;
-  const client_secret = process.env.NEXT_PUBLIC_CLIENT_SECRET;
+  const client_id = process.env.SPOTIFY_CLIENT_ID;
+  const client_secret = process.env.SPOTIFY_CLIENT_SECRET;
 
   if (!client_id || !client_secret) {
     return Response.json(

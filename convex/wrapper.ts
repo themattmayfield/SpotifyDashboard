@@ -29,7 +29,7 @@ const track = v.object({
 export const getUser = query({
   args: { ...auth, userId: v.string() },
   handler: async (ctx, args) => {
-    requireSecret(args.secret);
+    await requireSecret(args.secret);
     return ctx.db
       .query('users')
       .withIndex('by_spotify_id', (q) => q.eq('spotifyUserId', args.userId))
@@ -54,7 +54,13 @@ export const sync = mutation({
     ),
   },
   handler: async (ctx, args) => {
-    requireSecret(args.secret);
+    await requireSecret(args.secret);
+    const deletion = await ctx.db
+      .query('deletionCutoffs')
+      .withIndex('by_user', (q) => q.eq('userId', args.user.id))
+      .order('desc')
+      .first();
+    const cutoff = deletion?.cutoff ?? -1;
     let user = await ctx.db
       .query('users')
       .withIndex('by_spotify_id', (q) => q.eq('spotifyUserId', args.user.id))
@@ -80,16 +86,18 @@ export const sync = mutation({
       user = await ctx.db.get(id);
     }
     for (const snapshot of args.snapshots) {
-      const old = await ctx.db
-        .query('topSnapshots')
-        .withIndex('by_user_kind_range_day', (q) =>
-          q
-            .eq('userId', args.user.id)
-            .eq('kind', snapshot.kind)
-            .eq('range', snapshot.range)
-            .eq('day', snapshot.day)
-        )
-        .unique();
+      const old = (
+        await ctx.db
+          .query('topSnapshots')
+          .withIndex('by_user_kind_range_day', (q) =>
+            q
+              .eq('userId', args.user.id)
+              .eq('kind', snapshot.kind)
+              .eq('range', snapshot.range)
+              .eq('day', snapshot.day)
+          )
+          .collect()
+      ).find((row) => row._creationTime > cutoff);
       if (old)
         await ctx.db.patch(old._id, {
           items: snapshot.items,
@@ -103,12 +111,14 @@ export const sync = mutation({
         });
       if (snapshot.kind === 'artists')
         for (const artist of snapshot.items) {
-          const first = await ctx.db
-            .query('artistFirstTop')
-            .withIndex('by_user_artist', (q) =>
-              q.eq('userId', args.user.id).eq('artistId', artist.id)
-            )
-            .unique();
+          const first = (
+            await ctx.db
+              .query('artistFirstTop')
+              .withIndex('by_user_artist', (q) =>
+                q.eq('userId', args.user.id).eq('artistId', artist.id)
+              )
+              .collect()
+          ).find((row) => row._creationTime > cutoff);
           if (!first)
             await ctx.db.insert('artistFirstTop', {
               userId: args.user.id,
@@ -118,12 +128,14 @@ export const sync = mutation({
         }
     }
     for (const play of args.plays) {
-      const old = await ctx.db
-        .query('plays')
-        .withIndex('by_user_played', (q) =>
-          q.eq('userId', args.user.id).eq('playedAt', play.playedAt)
-        )
-        .unique();
+      const old = (
+        await ctx.db
+          .query('plays')
+          .withIndex('by_user_played', (q) =>
+            q.eq('userId', args.user.id).eq('playedAt', play.playedAt)
+          )
+          .collect()
+      ).find((row) => row._creationTime > cutoff);
       if (old) continue;
       await ctx.db.insert('plays', { userId: args.user.id, ...play });
       for (const a of play.track.artists)
@@ -140,7 +152,7 @@ export const sync = mutation({
 export const latestSnapshots = query({
   args: { ...auth, userId: v.string() },
   handler: async (ctx, args) => {
-    requireSecret(args.secret);
+    await requireSecret(args.secret);
     return (
       await Promise.all(
         (['artists', 'tracks'] as const).flatMap((snapshotKind) =>
@@ -165,7 +177,7 @@ export const latestSnapshots = query({
 export const movementSnapshots = query({
   args: { ...auth, userId: v.string(), kind, range },
   handler: async (ctx, args) => {
-    requireSecret(args.secret);
+    await requireSecret(args.secret);
     const base = () =>
       ctx.db
         .query('topSnapshots')
@@ -197,7 +209,7 @@ export const movementSnapshots = query({
 export const recapSnapshots = query({
   args: { ...auth, userId: v.string(), start: v.number(), end: v.number() },
   handler: async (ctx, args) => {
-    requireSecret(args.secret);
+    await requireSecret(args.secret);
     return Promise.all(
       (['artists', 'tracks'] as const).map(async (snapshotKind) => {
         const base = () =>
@@ -228,7 +240,7 @@ export const playsPage = query({
     limit: v.number(),
   },
   handler: async (ctx, args) => {
-    requireSecret(args.secret);
+    await requireSecret(args.secret);
     return ctx.db
       .query('plays')
       .withIndex('by_user_played', (q) => {
@@ -248,7 +260,7 @@ export const playsRange = query({
     limit: v.number(),
   },
   handler: async (ctx, args) => {
-    requireSecret(args.secret);
+    await requireSecret(args.secret);
     return ctx.db
       .query('plays')
       .withIndex('by_user_played', (q) =>
@@ -263,7 +275,7 @@ export const playsRange = query({
 export const artistFirstSeen = query({
   args: { ...auth, userId: v.string(), artistIds: v.array(v.string()) },
   handler: async (ctx, args) => {
-    requireSecret(args.secret);
+    await requireSecret(args.secret);
     return Object.fromEntries(
       await Promise.all(
         args.artistIds.map(async (id) => [
@@ -285,7 +297,7 @@ export const artistFirstSeen = query({
 export const artistHistory = query({
   args: { ...auth, userId: v.string(), artistId: v.string() },
   handler: async (ctx, args) => {
-    requireSecret(args.secret);
+    await requireSecret(args.secret);
     const base = () =>
       ctx.db
         .query('playArtists')
@@ -316,7 +328,7 @@ export const artistHistory = query({
 export const friends = query({
   args: { ...auth, userId: v.string() },
   handler: async (ctx, args) => {
-    requireSecret(args.secret);
+    await requireSecret(args.secret);
     const [a, b] = await Promise.all([
       ctx.db
         .query('friendships')
@@ -333,7 +345,7 @@ export const friends = query({
 export const friendship = query({
   args: { ...auth, userA: v.string(), userB: v.string() },
   handler: async (ctx, args) => {
-    requireSecret(args.secret);
+    await requireSecret(args.secret);
     return ctx.db
       .query('friendships')
       .withIndex('by_pair', (q) =>
@@ -345,7 +357,7 @@ export const friendship = query({
 export const invite = query({
   args: { ...auth, token: v.string() },
   handler: async (ctx, args) => {
-    requireSecret(args.secret);
+    await requireSecret(args.secret);
     return ctx.db
       .query('invites')
       .withIndex('by_token', (q) => q.eq('token', args.token))
@@ -361,7 +373,18 @@ export const createInvite = mutation({
     expiresAt: v.number(),
   },
   handler: async (ctx, args) => {
-    requireSecret(args.secret);
+    await requireSecret(args.secret);
+    const active = await ctx.db
+      .query('invites')
+      .withIndex('by_inviter', (q) => q.eq('inviterUserId', args.userId))
+      .filter((q) =>
+        q.and(
+          q.eq(q.field('revokedAt'), undefined),
+          q.gt(q.field('expiresAt'), args.now)
+        )
+      )
+      .take(21);
+    if (active.length >= 20) throw new Error('Too many active invites');
     await ctx.db.insert('invites', {
       token: args.token,
       inviterUserId: args.userId,
@@ -381,7 +404,7 @@ export const acceptInvite = mutation({
     }),
   },
   handler: async (ctx, args) => {
-    requireSecret(args.secret);
+    await requireSecret(args.secret);
     const invite = await ctx.db
       .query('invites')
       .withIndex('by_token', (q) => q.eq('token', args.token))
@@ -425,7 +448,7 @@ export const acceptInvite = mutation({
 export const removeFriend = mutation({
   args: { ...auth, userA: v.string(), userB: v.string() },
   handler: async (ctx, args) => {
-    requireSecret(args.secret);
+    await requireSecret(args.secret);
     const row = await ctx.db
       .query('friendships')
       .withIndex('by_pair', (q) =>
@@ -439,7 +462,40 @@ export const removeFriend = mutation({
 export const deleteUser = mutation({
   args: { ...auth, userId: v.string() },
   handler: async (ctx, args) => {
-    requireSecret(args.secret);
+    await requireSecret(args.secret);
+    const newestOwned = await Promise.all([
+      ctx.db
+        .query('plays')
+        .withIndex('by_user', (q) => q.eq('userId', args.userId))
+        .order('desc')
+        .first(),
+      ctx.db
+        .query('playArtists')
+        .withIndex('by_user', (q) => q.eq('userId', args.userId))
+        .order('desc')
+        .first(),
+      ctx.db
+        .query('topSnapshots')
+        .withIndex('by_user', (q) => q.eq('userId', args.userId))
+        .order('desc')
+        .first(),
+      ctx.db
+        .query('artistFirstTop')
+        .withIndex('by_user', (q) => q.eq('userId', args.userId))
+        .order('desc')
+        .first(),
+    ]);
+    const cutoff = Math.max(
+      0,
+      ...newestOwned.map((row) => row?._creationTime ?? 0)
+    );
+    const existingCutoff = await ctx.db
+      .query('deletionCutoffs')
+      .withIndex('by_user', (q) => q.eq('userId', args.userId))
+      .unique();
+    if (existingCutoff) await ctx.db.patch(existingCutoff._id, { cutoff });
+    else
+      await ctx.db.insert('deletionCutoffs', { userId: args.userId, cutoff });
     const user = await ctx.db
       .query('users')
       .withIndex('by_spotify_id', (q) => q.eq('spotifyUserId', args.userId))
@@ -463,28 +519,37 @@ export const deleteUser = mutation({
       await ctx.db.delete(row._id);
     await ctx.scheduler.runAfter(0, internal.wrapper.deleteBatch, {
       userId: args.userId,
+      cutoff,
     });
   },
 });
 export const deleteBatch = internalMutation({
-  args: { userId: v.string() },
+  args: { userId: v.string(), cutoff: v.number() },
   handler: async (ctx, args) => {
     const groups = [
       await ctx.db
         .query('plays')
-        .withIndex('by_user_played', (q) => q.eq('userId', args.userId))
+        .withIndex('by_user', (q) =>
+          q.eq('userId', args.userId).lte('_creationTime', args.cutoff)
+        )
         .take(500),
       await ctx.db
         .query('playArtists')
-        .withIndex('by_user', (q) => q.eq('userId', args.userId))
+        .withIndex('by_user', (q) =>
+          q.eq('userId', args.userId).lte('_creationTime', args.cutoff)
+        )
         .take(500),
       await ctx.db
         .query('topSnapshots')
-        .withIndex('by_user', (q) => q.eq('userId', args.userId))
+        .withIndex('by_user', (q) =>
+          q.eq('userId', args.userId).lte('_creationTime', args.cutoff)
+        )
         .take(500),
       await ctx.db
         .query('artistFirstTop')
-        .withIndex('by_user', (q) => q.eq('userId', args.userId))
+        .withIndex('by_user', (q) =>
+          q.eq('userId', args.userId).lte('_creationTime', args.cutoff)
+        )
         .take(500),
     ];
     for (const rows of groups)
@@ -492,6 +557,14 @@ export const deleteBatch = internalMutation({
     if (groups.some((x) => x.length === 500))
       await ctx.scheduler.runAfter(0, internal.wrapper.deleteBatch, {
         userId: args.userId,
+        cutoff: args.cutoff,
       });
+    else {
+      const deletion = await ctx.db
+        .query('deletionCutoffs')
+        .withIndex('by_user', (q) => q.eq('userId', args.userId))
+        .unique();
+      if (deletion?.cutoff === args.cutoff) await ctx.db.delete(deletion._id);
+    }
   },
 });

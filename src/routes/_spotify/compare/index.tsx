@@ -11,6 +11,7 @@ function Compare() {
   const data = Route.useLoaderData();
   const router = useRouter();
   const [link, setLink] = useState('');
+  const [inviteError, setInviteError] = useState('');
   if (!data.enabled)
     return (
       <main className="p-8 text-white">
@@ -20,8 +21,16 @@ function Compare() {
         </p>
       </main>
     );
-  const invite = async () =>
-    setLink(`${location.origin}/compare/invite/${await createInvite()}`);
+  const invite = async () => {
+    setInviteError('');
+    try {
+      setLink(`${location.origin}/compare/invite/${await createInvite()}`);
+    } catch {
+      setInviteError(
+        'You already have 20 active invites. Try again after one expires.'
+      );
+    }
+  };
   return (
     <main className="p-6 text-white md:p-10">
       <div className="flex items-center justify-between">
@@ -34,6 +43,9 @@ function Compare() {
           Invite a friend
         </button>
       </div>
+      {inviteError && (
+        <p className="mt-4 text-sm text-red-400">{inviteError}</p>
+      )}
       {link && (
         <div className="mt-6 rounded-xl bg-custom-darkgray p-4">
           <p className="break-all">{link}</p>

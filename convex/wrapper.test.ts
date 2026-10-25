@@ -111,6 +111,96 @@ test('movement falls back to oldest snapshot and records first top day', async (
   expect(history.firstTopDay).toBe('2026-01-01');
 });
 
+test('rejects the twenty-first active invite', async () => {
+  const t = convexTest(schema, modules);
+  const now = Date.now();
+  for (let index = 0; index < 20; index++)
+    await t.mutation(api.wrapper.createInvite, {
+      secret,
+      userId: 'a',
+      token: `token-${index}`,
+      now,
+      expiresAt: now + 10_000,
+    });
+  await expect(
+    t.mutation(api.wrapper.createInvite, {
+      secret,
+      userId: 'a',
+      token: 'token-20',
+      now,
+      expiresAt: now + 10_000,
+    })
+  ).rejects.toThrow('Too many active invites');
+});
+
+test('batched deletion clears old rows and preserves a sync after deletion', async () => {
+  const t = convexTest(schema, modules);
+  const now = Date.now();
+  await t.mutation(api.wrapper.sync, {
+    secret,
+    user: user('a'),
+    now,
+    snapshots: [],
+    plays: [],
+  });
+  await t.run(async (ctx) => {
+    for (let index = 0; index < 501; index++) {
+      const playedAt = now - index;
+      await ctx.db.insert('plays', {
+        userId: 'a',
+        playedAt,
+        trackId: track.id,
+        track,
+      });
+      await ctx.db.insert('playArtists', {
+        userId: 'a',
+        artistId: 'artist',
+        playedAt,
+      });
+      await ctx.db.insert('topSnapshots', {
+        userId: 'a',
+        kind: 'artists',
+        range: 'short_term',
+        takenAt: playedAt,
+        day: `old-${index}`,
+        items: [],
+      });
+      await ctx.db.insert('artistFirstTop', {
+        userId: 'a',
+        artistId: `old-${index}`,
+        day: 'old',
+      });
+    }
+  });
+  await t.mutation(api.wrapper.deleteUser, { secret, userId: 'a' });
+  await t.mutation(api.wrapper.sync, {
+    secret,
+    user: user('a'),
+    now: now + 1,
+    snapshots: [
+      {
+        kind: 'artists',
+        range: 'short_term',
+        day: 'new',
+        items: [{ id: 'new', name: 'New', image: null }],
+      },
+    ],
+    plays: [{ playedAt: now + 1, trackId: track.id, track }],
+  });
+  await t.finishAllScheduledFunctions(() => {});
+  const counts = await t.run(async (ctx) =>
+    Promise.all([
+      ctx.db.query('plays').collect(),
+      ctx.db.query('playArtists').collect(),
+      ctx.db.query('topSnapshots').collect(),
+      ctx.db.query('artistFirstTop').collect(),
+      ctx.db.query('deletionCutoffs').collect(),
+    ])
+  );
+  for (const rows of counts.slice(0, 4)) expect(rows).toHaveLength(1);
+  expect(counts[4]).toHaveLength(0);
+});
+
 test('deletion removes user A data and preserves B', async () => {
   const t = convexTest(schema, modules);
   const now = Date.now();

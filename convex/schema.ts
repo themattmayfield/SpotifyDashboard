@@ -46,7 +46,9 @@ export default defineSchema({
     playedAt: v.number(),
     trackId: v.string(),
     track,
-  }).index('by_user_played', ['userId', 'playedAt']),
+  })
+    .index('by_user_played', ['userId', 'playedAt'])
+    .index('by_user', ['userId']),
   playArtists: defineTable({
     userId: v.string(),
     artistId: v.string(),
@@ -61,6 +63,10 @@ export default defineSchema({
   })
     .index('by_user_artist', ['userId', 'artistId'])
     .index('by_user', ['userId']),
+  deletionCutoffs: defineTable({
+    userId: v.string(),
+    cutoff: v.number(),
+  }).index('by_user', ['userId']),
   invites: defineTable({
     token: v.string(),
     inviterUserId: v.string(),

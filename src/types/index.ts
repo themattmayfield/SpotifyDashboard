@@ -21,7 +21,17 @@ export type Track = {
   image: string | null;
   thumb: string | null;
   artists: ArtistRef[];
-  album: { name: string; url: string | null; year: string | null };
+  album: {
+    name: string;
+    url: string | null;
+    releaseDate: string | null;
+    type: string | null;
+    totalTracks: number | null;
+  };
+  popularity: number | null;
+  explicit: boolean;
+  trackNumber: number | null;
+  uri: string;
   url: string | null;
 };
 
@@ -41,13 +51,12 @@ export type PlaylistDetail = Playlist & { tracks: Track[] | null };
 
 export type User = { name: string; image: string | null };
 
-export const audioFeatureKeys = [
-  'acousticness',
-  'danceability',
-  'energy',
-  'instrumentalness',
-  'liveness',
-  'speechiness',
-  'valence',
-] as const;
-export type AudioFeatures = Record<(typeof audioFeatureKeys)[number], number>;
+export type Playback = {
+  isPlaying: boolean;
+  progressMs: number;
+  track: Track;
+};
+
+export type PlaybackControlResult =
+  | { ok: true }
+  | { ok: false; reason: 'no-device' | 'premium-required' };

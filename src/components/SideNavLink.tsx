@@ -20,7 +20,7 @@ export default function SideNavLink({
       inactiveProps={{
         className: 'border-transparent hover:bg-custom-darkgray',
       }}
-      className="group z-10 flex w-full cursor-pointer items-center justify-center border-t-4 lg:h-24 lg:border-l-4 lg:border-t-0"
+      className="group z-10 flex w-full cursor-pointer flex-col items-center justify-center border-t-4 lg:h-24 lg:border-l-4 lg:border-t-0"
     >
       {children}
     </Link>

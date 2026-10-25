@@ -8,9 +8,9 @@ import SideNavLink from '@/components/SideNavLink';
 
 const navItems = [
   { path: '/', label: 'Home', Icon: AiFillHome },
-  { path: '/artists', label: 'Top artists', Icon: GiMicrophone },
-  { path: '/tracks', label: 'Top tracks', Icon: BsMusicNoteBeamed },
-  { path: '/recentTracks', label: 'Recently played', Icon: RiHistoryLine },
+  { path: '/artists', label: 'Artists', Icon: GiMicrophone },
+  { path: '/tracks', label: 'Tracks', Icon: BsMusicNoteBeamed },
+  { path: '/recentTracks', label: 'Recent', Icon: RiHistoryLine },
   { path: '/playlists', label: 'Playlists', Icon: RiPlayListFill },
 ] as const;
 
@@ -35,6 +35,7 @@ const NavLinks = ({ className }: { className: string }) => (
     {navItems.map(({ path, label, Icon }) => (
       <SideNavLink key={path} path={path} label={label}>
         <Icon className="pointer-events-none z-0 h-6 w-6 text-white transition duration-150 ease-in-out group-hover:text-custom-lightgray" />
+        <span className="mt-1 text-[10px] lg:text-xs">{label}</span>
       </SideNavLink>
     ))}
   </div>

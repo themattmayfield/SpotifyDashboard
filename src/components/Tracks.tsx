@@ -1,6 +1,7 @@
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { Link } from '@tanstack/react-router';
 
+import { EmptyState } from '@/components/EmptyState';
 import { Skeleton } from '@/components/ui/skeleton';
 import { formatDuration } from '@/lib/format';
 import { spotifyQueries } from '@/lib/queries';
@@ -27,6 +28,7 @@ export function TrackList({
   showDuration = true,
   ranked = false,
 }: { tracks: Track[] } & ListOptions) {
+  if (!tracks.length) return <EmptyState />;
   return (
     <ol className="flex flex-col gap-4">
       {tracks.map((track, index) => (

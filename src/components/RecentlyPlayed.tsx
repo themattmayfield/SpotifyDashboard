@@ -2,6 +2,7 @@ import { useSuspenseQuery } from '@tanstack/react-query';
 import { Link } from '@tanstack/react-router';
 import type { ReactNode } from 'react';
 
+import { EmptyState } from '@/components/EmptyState';
 import { Skeleton } from '@/components/ui/skeleton';
 import { spotifyQueries } from '@/lib/queries';
 
@@ -11,6 +12,7 @@ export function RecentlyPlayed() {
   const { data } = useSuspenseQuery(spotifyQueries.recentlyPlayed());
   return (
     <Panel>
+      {!data.length && <EmptyState />}
       {data.slice(0, previewCount).map(({ playedAt, track }) => {
         const artist = track.artists[0];
         return (

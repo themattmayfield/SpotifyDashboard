@@ -2,6 +2,7 @@ import { createFileRoute } from '@tanstack/react-router';
 import { Suspense } from 'react';
 
 import { ArtistTiles, ArtistTilesSkeleton } from '@/components/ArtistTiles';
+import { NowPlaying } from '@/components/NowPlaying';
 import {
   RecentlyPlayed,
   RecentlyPlayedSkeleton,
@@ -25,7 +26,8 @@ export const Route = createFileRoute('/_spotify/')({
 function Home() {
   return (
     <div className="flex flex-col gap-16 lg:flex-row lg:gap-4">
-      <aside className="px-2 lg:order-last lg:px-0">
+      <aside className="flex flex-col gap-4 px-2 lg:order-last lg:w-72 lg:px-0">
+        <NowPlaying />
         <Suspense fallback={<RecentlyPlayedSkeleton />}>
           <RecentlyPlayed />
         </Suspense>

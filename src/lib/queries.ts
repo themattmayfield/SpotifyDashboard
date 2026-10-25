@@ -9,7 +9,7 @@ import type {
 } from '@/types';
 import {
   getArtist,
-  getAudioFeatures,
+  getCurrentPlayback,
   getIsFollowingArtist,
   getMe,
   getPlaylist,
@@ -65,10 +65,10 @@ export const spotifyQueries = {
       queryKey: ['spotify', 'track', id],
       queryFn: () => getTrack({ data: id }),
     }),
-  audioFeatures: (id: string) =>
+  playback: () =>
     queryOptions({
-      queryKey: ['spotify', 'audioFeatures', id],
-      queryFn: () => getAudioFeatures({ data: id }),
+      queryKey: ['spotify', 'playback'],
+      queryFn: () => getCurrentPlayback(),
     }),
 };
 

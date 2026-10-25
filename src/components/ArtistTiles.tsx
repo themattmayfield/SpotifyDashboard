@@ -1,6 +1,7 @@
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { Link } from '@tanstack/react-router';
 
+import { EmptyState } from '@/components/EmptyState';
 import { Skeleton } from '@/components/ui/skeleton';
 import { cn } from '@/lib/cn';
 import { spotifyQueries } from '@/lib/queries';
@@ -12,6 +13,7 @@ type Props = { range: TTimeRange; limit?: number; className?: string };
 
 export function ArtistTiles({ range, limit, className }: Props) {
   const { data } = useSuspenseQuery(spotifyQueries.topArtists(range));
+  if (!data.length) return <EmptyState />;
   return data
     .slice(0, limit)
     .map((artist) => (

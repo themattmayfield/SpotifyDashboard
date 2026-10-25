@@ -1,17 +1,16 @@
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { Link, createFileRoute } from '@tanstack/react-router';
-import { Fragment, Suspense } from 'react';
+import { Fragment, useState } from 'react';
 
-import { AudioFeatures } from '@/components/AudioFeatures';
 import { OpenInSpotify } from '@/components/OpenInSpotify';
 import { Skeleton } from '@/components/ui/skeleton';
 import { formatDuration } from '@/lib/format';
 import { pageTitle } from '@/lib/head';
 import { cachedTrack, spotifyQueries } from '@/lib/queries';
+import { playTrack } from '@/lib/spotify';
 
 export const Route = createFileRoute('/_spotify/tracks/$id')({
   loader: ({ context: { queryClient }, params }) => {
-    queryClient.prefetchQuery(spotifyQueries.audioFeatures(params.id));
     return queryClient.ensureQueryData({
       ...spotifyQueries.track(params.id),
       ...cachedTrack(queryClient, params.id),
@@ -30,6 +29,17 @@ const imageClassName = 'h-48 w-48 md:h-72 md:w-72';
 function Page() {
   const { id } = Route.useParams();
   const { data: track } = useSuspenseQuery(spotifyQueries.track(id));
+  const [message, setMessage] = useState<string>();
+  const play = async () => {
+    const result = await playTrack({ data: id });
+    setMessage(
+      result.ok
+        ? undefined
+        : result.reason === 'no-device'
+          ? 'Open Spotify on a device to control playback.'
+          : 'Playback control requires Spotify Premium.'
+    );
+  };
   return (
     <div className={containerClassName}>
       <div className={headerClassName}>
@@ -67,22 +77,67 @@ function Page() {
             ) : (
               track.album.name
             )}
-            {track.album.year && <> &middot; {track.album.year}</>} &middot;{' '}
-            {formatDuration(track.durationMs)}
+            {track.album.releaseDate && (
+              <> &middot; {track.album.releaseDate.split('-')[0]}</>
+            )}{' '}
+            &middot; {formatDuration(track.durationMs)}
           </p>
           <OpenInSpotify url={track.url} />
+          <button
+            type="button"
+            onClick={play}
+            className="rounded-full bg-spotify-green px-6 py-2 text-white"
+          >
+            Play
+          </button>
+          {message && <p className="text-sm">{message}</p>}
         </div>
       </div>
-      <Suspense fallback={null}>
-        <TrackAudioFeatures id={id} />
-      </Suspense>
+      <section className="w-full max-w-2xl rounded-2xl bg-custom-darkgray p-6 text-white">
+        <h2 className="mb-4 text-xl">Track details</h2>
+        {track.popularity !== null && (
+          <div>
+            <div className="flex justify-between">
+              <span>Popularity</span>
+              <span>{track.popularity}/100</span>
+            </div>
+            <div className="mt-2 h-2 rounded bg-custom-gray">
+              <div
+                className="h-full rounded bg-spotify-green"
+                style={{ width: `${track.popularity}%` }}
+              />
+            </div>
+          </div>
+        )}
+        <dl className="mt-5 grid grid-cols-2 gap-4 text-sm">
+          <Detail label="Duration" value={formatDuration(track.durationMs)} />
+          <Detail
+            label="Release date"
+            value={track.album.releaseDate ?? 'Unknown'}
+          />
+          <Detail label="Explicit" value={track.explicit ? 'Yes' : 'No'} />
+          <Detail label="Album type" value={track.album.type ?? 'Unknown'} />
+          <Detail
+            label="Track"
+            value={
+              track.trackNumber
+                ? `${track.trackNumber}${track.album.totalTracks ? ` of ${track.album.totalTracks}` : ''}`
+                : 'Unknown'
+            }
+          />
+        </dl>
+      </section>
     </div>
   );
 }
 
-function TrackAudioFeatures({ id }: { id: string }) {
-  const { data } = useSuspenseQuery(spotifyQueries.audioFeatures(id));
-  return data && <AudioFeatures features={data} />;
+function Detail({ label, value }: { label: string; value: string }) {
+  return (
+    <div>
+      <dt className="text-custom-muted">{label}</dt>
+      <dd className="mt-1 capitalize">{value}</dd>
+    </div>
+  );
 }
 
 function TrackSkeleton() {

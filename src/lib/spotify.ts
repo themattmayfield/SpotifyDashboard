@@ -1,9 +1,9 @@
 import { createServerFn } from '@tanstack/react-start';
 
 import { type TTimeRange, timeRanges } from '@/types';
+import type { Playback, PlaybackControlResult } from '@/types';
 import {
   toArtist,
-  toAudioFeatures,
   toPlayedTrack,
   toPlaylist,
   toPlaylistDetail,
@@ -135,12 +135,63 @@ export const getTrack = createServerFn({ method: 'GET' })
     )
   );
 
-/** Resolves to null for apps that no longer have access to audio features. */
-export const getAudioFeatures = createServerFn({ method: 'GET' })
-  .validator(validateId)
-  .handler(async ({ data }) => {
-    const features = await spotifyFetchOrNull<SpotifyApi.AudioFeaturesResponse>(
-      `/v1/audio-features/${data}`
+type RawPlayback = SpotifyApi.CurrentPlaybackResponse & {
+  item: SpotifyApi.TrackObjectFull | SpotifyApi.EpisodeObject | null;
+};
+
+export const getCurrentPlayback = createServerFn({ method: 'GET' }).handler(
+  async (): Promise<Playback | null> => {
+    const response = await spotifyFetch<RawPlayback | undefined>(
+      '/v1/me/player'
     );
-    return features ? toAudioFeatures(features) : null;
-  });
+    if (!response?.item || response.item.type !== 'track') return null;
+    return {
+      isPlaying: response.is_playing,
+      progressMs: response.progress_ms ?? 0,
+      track: toTrack(response.item),
+    };
+  }
+);
+
+async function playbackControl(
+  path: string,
+  method: 'PUT' | 'POST',
+  body?: object
+): Promise<PlaybackControlResult> {
+  try {
+    await spotifyFetch<void>(path, {
+      method,
+      headers: body ? { 'Content-Type': 'application/json' } : undefined,
+      body: body ? JSON.stringify(body) : undefined,
+    });
+    return { ok: true };
+  } catch (error) {
+    if (error instanceof SpotifyApiError && error.status === 404)
+      return { ok: false, reason: 'no-device' };
+    if (error instanceof SpotifyApiError && error.status === 403)
+      return { ok: false, reason: 'premium-required' };
+    throw error;
+  }
+}
+
+export const setPlayback = createServerFn({ method: 'POST' })
+  .validator((playing: unknown) => Boolean(playing))
+  .handler(({ data }) =>
+    playbackControl(`/v1/me/player/${data ? 'play' : 'pause'}`, 'PUT')
+  );
+
+export const skipPlayback = createServerFn({ method: 'POST' })
+  .validator((direction: unknown) => {
+    if (direction !== 'next' && direction !== 'previous')
+      throw new Error('Invalid direction');
+    return direction;
+  })
+  .handler(({ data }) => playbackControl(`/v1/me/player/${data}`, 'POST'));
+
+export const playTrack = createServerFn({ method: 'POST' })
+  .validator(validateId)
+  .handler(({ data }) =>
+    playbackControl('/v1/me/player/play', 'PUT', {
+      uris: [`spotify:track:${data}`],
+    })
+  );

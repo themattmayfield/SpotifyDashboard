@@ -21,11 +21,45 @@ export type Track = {
   image: string | null;
   thumb: string | null;
   artists: ArtistRef[];
-  album: { name: string; url: string | null; year: string | null };
+  album: {
+    name: string;
+    url: string | null;
+    releaseDate: string | null;
+    type: string | null;
+    totalTracks: number | null;
+  };
+  popularity: number | null;
+  explicit: boolean;
+  trackNumber: number | null;
+  uri: string;
+  url: string | null;
+  previewUrl: string | null;
+};
+
+export type Album = {
+  id: string;
+  name: string;
+  image: string | null;
+  releaseDate: string | null;
+  type: string | null;
   url: string | null;
 };
 
 export type PlayedTrack = { playedAt: string; track: Track };
+export type SnapshotItem = {
+  id: string;
+  name: string;
+  image: string | null;
+  subtitle?: string;
+  durationMs?: number;
+};
+export type StoredTrack = {
+  id: string;
+  name: string;
+  image: string | null;
+  artists: ArtistRef[];
+  durationMs: number;
+};
 
 export type Playlist = {
   id: string;
@@ -39,15 +73,14 @@ export type Playlist = {
 /** `tracks` is null when Spotify withholds playlist contents. */
 export type PlaylistDetail = Playlist & { tracks: Track[] | null };
 
-export type User = { name: string; image: string | null };
+export type User = { id: string; name: string; image: string | null };
 
-export const audioFeatureKeys = [
-  'acousticness',
-  'danceability',
-  'energy',
-  'instrumentalness',
-  'liveness',
-  'speechiness',
-  'valence',
-] as const;
-export type AudioFeatures = Record<(typeof audioFeatureKeys)[number], number>;
+export type Playback = {
+  isPlaying: boolean;
+  progressMs: number;
+  track: Track;
+};
+
+export type PlaybackControlResult =
+  | { ok: true }
+  | { ok: false; reason: 'no-device' | 'premium-required' };

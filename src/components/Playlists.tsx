@@ -2,6 +2,7 @@ import { useSuspenseQuery } from '@tanstack/react-query';
 import { Link } from '@tanstack/react-router';
 import { IoMusicalNotesSharp } from 'react-icons/io5';
 
+import { EmptyState } from '@/components/EmptyState';
 import { Skeleton } from '@/components/ui/skeleton';
 import { cn } from '@/lib/cn';
 import { formatCount } from '@/lib/format';
@@ -10,6 +11,7 @@ import type { Playlist } from '@/types';
 
 export function UserPlaylists() {
   const { data } = useSuspenseQuery(spotifyQueries.playlists());
+  if (!data.length) return <EmptyState />;
   return data.map((playlist) => (
     <PlaylistCard key={playlist.id} playlist={playlist} />
   ));

@@ -1,23 +1,32 @@
+import { useQueryClient } from '@tanstack/react-query';
 import { Outlet, createFileRoute } from '@tanstack/react-router';
 import { createIsomorphicFn } from '@tanstack/react-start';
+import { useEffect } from 'react';
 
 import Nav from '@/components/Nav';
 import SideNav from '@/components/SideNav';
 import { ensureAuthenticated } from '@/lib/auth';
+import { syncListening } from '@/lib/persistence';
 import { spotifyQueries } from '@/lib/queries';
 
 const authenticateInitialRequest = createIsomorphicFn()
-  .server(() => ensureAuthenticated())
+  .server((path: string) => ensureAuthenticated({ data: path }))
   .client(() => true);
 
 export const Route = createFileRoute('/_spotify')({
-  beforeLoad: () => authenticateInitialRequest(),
+  beforeLoad: ({ location }) => authenticateInitialRequest(location.pathname),
   loader: ({ context }) =>
     context.queryClient.ensureQueryData(spotifyQueries.me()),
   component: SpotifyLayout,
 });
 
 function SpotifyLayout() {
+  const queryClient = useQueryClient();
+  useEffect(() => {
+    void syncListening().then(() =>
+      queryClient.invalidateQueries({ queryKey: ['wrapper'] })
+    );
+  }, [queryClient]);
   return (
     <div className="no-scrollbar flex h-screen overflow-hidden bg-transparent lg:pl-2 lg:pr-6">
       <SideNav />

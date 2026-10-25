@@ -3,7 +3,8 @@ import { Suspense } from 'react';
 
 import { PageHeader } from '@/components/PageHeader';
 import { PageWrapper } from '@/components/PageWrapper';
-import { RecentTracks, TrackListSkeleton } from '@/components/Tracks';
+import { StoredHistory } from '@/components/StoredHistory';
+import { TrackListSkeleton } from '@/components/Tracks';
 import { pageTitle } from '@/lib/head';
 import { spotifyQueries } from '@/lib/queries';
 
@@ -21,7 +22,7 @@ function Recent() {
       <PageHeader title="Recently Played" />
       <div className="px-2 text-white">
         <Suspense fallback={<TrackListSkeleton count={12} />}>
-          <RecentTracks />
+          <StoredHistory />
         </Suspense>
       </div>
     </PageWrapper>

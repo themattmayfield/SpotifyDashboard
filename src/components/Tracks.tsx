@@ -1,10 +1,14 @@
-import { useSuspenseQuery } from '@tanstack/react-query';
+import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import { Link } from '@tanstack/react-router';
 
+import { EmptyState } from '@/components/EmptyState';
 import { Skeleton } from '@/components/ui/skeleton';
 import { formatDuration } from '@/lib/format';
+import { getMovement } from '@/lib/persistence';
 import { spotifyQueries } from '@/lib/queries';
 import type { TTimeRange, Track } from '@/types';
+import { SavePlaylistButton } from './SavePlaylistButton';
+import { TrackPreview } from './TrackPreview';
 
 type ListOptions = { showDuration?: boolean; ranked?: boolean };
 
@@ -14,7 +18,17 @@ export function TopTracks({
   ...options
 }: { range: TTimeRange; limit?: number } & ListOptions) {
   const { data } = useSuspenseQuery(spotifyQueries.topTracks(range));
-  return <TrackList tracks={data.slice(0, limit)} {...options} />;
+  const movement = useQuery({
+    queryKey: ['wrapper', 'movement', 'tracks', range],
+    queryFn: () => getMovement({ data: { kind: 'tracks', range } }),
+  });
+  return (
+    <TrackList
+      tracks={data.slice(0, limit)}
+      movements={movement.data?.movements}
+      {...options}
+    />
+  );
 }
 
 export function RecentTracks(options: ListOptions) {
@@ -22,30 +36,57 @@ export function RecentTracks(options: ListOptions) {
   return <TrackList tracks={data.map(({ track }) => track)} {...options} />;
 }
 
+export function SaveTopTracks({
+  range,
+  name,
+}: { range: TTimeRange; name: string }) {
+  const { data } = useSuspenseQuery(spotifyQueries.topTracks(range));
+  return (
+    <SavePlaylistButton name={name} trackIds={data.map((track) => track.id)} />
+  );
+}
+
 export function TrackList({
   tracks,
   showDuration = true,
   ranked = false,
-}: { tracks: Track[] } & ListOptions) {
+  movements,
+}: {
+  tracks: Track[];
+  movements?: Record<string, { previousRank?: number | null }>;
+} & ListOptions) {
+  if (!tracks.length) return <EmptyState />;
   return (
     <ol className="flex flex-col gap-4">
       {tracks.map((track, index) => (
         // The same track can appear more than once in history and playlists.
         <li
           key={`${track.id}-${index}`}
-          className="flex items-center gap-4 rounded-md transition duration-150 ease-in-out hover:bg-custom-darkgray"
+          className="group flex items-center gap-4 rounded-md transition duration-150 ease-in-out hover:bg-custom-darkgray"
         >
           {ranked && (
             <span className="w-6 shrink-0 text-right text-sm tabular-nums text-custom-muted">
               {index + 1}
             </span>
           )}
+          {ranked &&
+            movements?.[track.id]?.previousRank !== undefined &&
+            movements[track.id].previousRank !== index + 1 && (
+              <span
+                className={`w-10 text-xs ${movements[track.id].previousRank === null || (movements[track.id].previousRank ?? 0) > index + 1 ? 'text-green-400' : 'text-red-400'}`}
+              >
+                {movements[track.id].previousRank === null
+                  ? 'NEW'
+                  : (movements[track.id].previousRank ?? 0) > index + 1
+                    ? `▲${(movements[track.id].previousRank ?? 0) - index - 1}`
+                    : `▼${index + 1 - (movements[track.id].previousRank ?? 0)}`}
+              </span>
+            )}
           <Link className="shrink-0" to="/tracks/$id" params={{ id: track.id }}>
-            <img
-              className="h-20 w-20 bg-custom-darkgray"
-              src={track.thumb ?? undefined}
-              alt=""
-              loading="lazy"
+            <TrackPreview
+              url={track.previewUrl}
+              image={track.thumb}
+              alt={`${track.album.name} artwork`}
             />
           </Link>
           <div className="flex min-w-0 flex-1 flex-col">

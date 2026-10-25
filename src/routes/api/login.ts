@@ -22,12 +22,18 @@ export const Route = createFileRoute('/api/login')({
         if (forwardedOrigin(request) !== canonicalOrigin) {
           return new Response(null, {
             status: 302,
-            headers: { Location: `${canonicalOrigin}/api/login` },
+            headers: {
+              Location: `${canonicalOrigin}/api/login${new URL(request.url).search}`,
+            },
           });
         }
         return new Response(null, {
           status: 302,
-          headers: { Location: createLoginUrl() },
+          headers: {
+            Location: createLoginUrl(
+              new URL(request.url).searchParams.get('return_to')
+            ),
+          },
         });
       },
     },

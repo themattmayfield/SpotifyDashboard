@@ -12,15 +12,21 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as SpotifyRouteImport } from './routes/_spotify'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as SpotifyIndexRouteImport } from './routes/_spotify/index'
+import { Route as SpotifyRecapRouteImport } from './routes/_spotify/recap'
 import { Route as SpotifyRecentTracksRouteImport } from './routes/_spotify/recentTracks'
+import { Route as SpotifyTasteRouteImport } from './routes/_spotify/taste'
 import { Route as ApiCallbackRouteImport } from './routes/api/callback'
 import { Route as ApiLoginRouteImport } from './routes/api/login'
 import { Route as SpotifyArtistsIndexRouteImport } from './routes/_spotify/artists/index'
 import { Route as SpotifyArtistsIdRouteImport } from './routes/_spotify/artists/$id'
+import { Route as SpotifyCompareIndexRouteImport } from './routes/_spotify/compare/index'
+import { Route as SpotifyCompareFriendIdRouteImport } from './routes/_spotify/compare/$friendId'
 import { Route as SpotifyPlaylistsIndexRouteImport } from './routes/_spotify/playlists/index'
 import { Route as SpotifyPlaylistsIdRouteImport } from './routes/_spotify/playlists/$id'
+import { Route as SpotifyRecapMonthRouteImport } from './routes/_spotify/recap.$month'
 import { Route as SpotifyTracksIndexRouteImport } from './routes/_spotify/tracks/index'
 import { Route as SpotifyTracksIdRouteImport } from './routes/_spotify/tracks/$id'
+import { Route as SpotifyCompareInviteTokenRouteImport } from './routes/_spotify/compare/invite/$token'
 
 const SpotifyRoute = SpotifyRouteImport.update({
   id: '/_spotify',
@@ -36,9 +42,19 @@ const SpotifyIndexRoute = SpotifyIndexRouteImport.update({
   path: '/',
   getParentRoute: () => SpotifyRoute,
 } as any)
+const SpotifyRecapRoute = SpotifyRecapRouteImport.update({
+  id: '/recap',
+  path: '/recap',
+  getParentRoute: () => SpotifyRoute,
+} as any)
 const SpotifyRecentTracksRoute = SpotifyRecentTracksRouteImport.update({
   id: '/recentTracks',
   path: '/recentTracks',
+  getParentRoute: () => SpotifyRoute,
+} as any)
+const SpotifyTasteRoute = SpotifyTasteRouteImport.update({
+  id: '/taste',
+  path: '/taste',
   getParentRoute: () => SpotifyRoute,
 } as any)
 const ApiCallbackRoute = ApiCallbackRouteImport.update({
@@ -61,6 +77,16 @@ const SpotifyArtistsIdRoute = SpotifyArtistsIdRouteImport.update({
   path: '/artists/$id',
   getParentRoute: () => SpotifyRoute,
 } as any)
+const SpotifyCompareIndexRoute = SpotifyCompareIndexRouteImport.update({
+  id: '/compare/',
+  path: '/compare/',
+  getParentRoute: () => SpotifyRoute,
+} as any)
+const SpotifyCompareFriendIdRoute = SpotifyCompareFriendIdRouteImport.update({
+  id: '/compare/$friendId',
+  path: '/compare/$friendId',
+  getParentRoute: () => SpotifyRoute,
+} as any)
 const SpotifyPlaylistsIndexRoute = SpotifyPlaylistsIndexRouteImport.update({
   id: '/playlists/',
   path: '/playlists/',
@@ -70,6 +96,11 @@ const SpotifyPlaylistsIdRoute = SpotifyPlaylistsIdRouteImport.update({
   id: '/playlists/$id',
   path: '/playlists/$id',
   getParentRoute: () => SpotifyRoute,
+} as any)
+const SpotifyRecapMonthRoute = SpotifyRecapMonthRouteImport.update({
+  id: '/$month',
+  path: '/$month',
+  getParentRoute: () => SpotifyRecapRoute,
 } as any)
 const SpotifyTracksIndexRoute = SpotifyTracksIndexRouteImport.update({
   id: '/tracks/',
@@ -81,89 +112,131 @@ const SpotifyTracksIdRoute = SpotifyTracksIdRouteImport.update({
   path: '/tracks/$id',
   getParentRoute: () => SpotifyRoute,
 } as any)
+const SpotifyCompareInviteTokenRoute =
+  SpotifyCompareInviteTokenRouteImport.update({
+    id: '/compare/invite/$token',
+    path: '/compare/invite/$token',
+    getParentRoute: () => SpotifyRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof SpotifyIndexRoute
   '/login': typeof LoginRoute
+  '/recap': typeof SpotifyRecapRouteWithChildren
   '/recentTracks': typeof SpotifyRecentTracksRoute
+  '/taste': typeof SpotifyTasteRoute
   '/api/callback': typeof ApiCallbackRoute
   '/api/login': typeof ApiLoginRoute
   '/artists/$id': typeof SpotifyArtistsIdRoute
+  '/compare/$friendId': typeof SpotifyCompareFriendIdRoute
   '/playlists/$id': typeof SpotifyPlaylistsIdRoute
+  '/recap/$month': typeof SpotifyRecapMonthRoute
   '/tracks/$id': typeof SpotifyTracksIdRoute
   '/artists/': typeof SpotifyArtistsIndexRoute
+  '/compare/': typeof SpotifyCompareIndexRoute
   '/playlists/': typeof SpotifyPlaylistsIndexRoute
   '/tracks/': typeof SpotifyTracksIndexRoute
+  '/compare/invite/$token': typeof SpotifyCompareInviteTokenRoute
 }
 export interface FileRoutesByTo {
   '/login': typeof LoginRoute
+  '/recap': typeof SpotifyRecapRouteWithChildren
   '/recentTracks': typeof SpotifyRecentTracksRoute
+  '/taste': typeof SpotifyTasteRoute
   '/api/callback': typeof ApiCallbackRoute
   '/api/login': typeof ApiLoginRoute
   '/': typeof SpotifyIndexRoute
   '/artists/$id': typeof SpotifyArtistsIdRoute
+  '/compare/$friendId': typeof SpotifyCompareFriendIdRoute
   '/playlists/$id': typeof SpotifyPlaylistsIdRoute
+  '/recap/$month': typeof SpotifyRecapMonthRoute
   '/tracks/$id': typeof SpotifyTracksIdRoute
   '/artists': typeof SpotifyArtistsIndexRoute
+  '/compare': typeof SpotifyCompareIndexRoute
   '/playlists': typeof SpotifyPlaylistsIndexRoute
   '/tracks': typeof SpotifyTracksIndexRoute
+  '/compare/invite/$token': typeof SpotifyCompareInviteTokenRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/_spotify': typeof SpotifyRouteWithChildren
   '/login': typeof LoginRoute
+  '/_spotify/recap': typeof SpotifyRecapRouteWithChildren
   '/_spotify/recentTracks': typeof SpotifyRecentTracksRoute
+  '/_spotify/taste': typeof SpotifyTasteRoute
   '/api/callback': typeof ApiCallbackRoute
   '/api/login': typeof ApiLoginRoute
   '/_spotify/': typeof SpotifyIndexRoute
   '/_spotify/artists/$id': typeof SpotifyArtistsIdRoute
+  '/_spotify/compare/$friendId': typeof SpotifyCompareFriendIdRoute
   '/_spotify/playlists/$id': typeof SpotifyPlaylistsIdRoute
+  '/_spotify/recap/$month': typeof SpotifyRecapMonthRoute
   '/_spotify/tracks/$id': typeof SpotifyTracksIdRoute
   '/_spotify/artists/': typeof SpotifyArtistsIndexRoute
+  '/_spotify/compare/': typeof SpotifyCompareIndexRoute
   '/_spotify/playlists/': typeof SpotifyPlaylistsIndexRoute
   '/_spotify/tracks/': typeof SpotifyTracksIndexRoute
+  '/_spotify/compare/invite/$token': typeof SpotifyCompareInviteTokenRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
     | '/login'
+    | '/recap'
     | '/recentTracks'
+    | '/taste'
     | '/api/callback'
     | '/api/login'
     | '/artists/$id'
+    | '/compare/$friendId'
     | '/playlists/$id'
+    | '/recap/$month'
     | '/tracks/$id'
     | '/artists/'
+    | '/compare/'
     | '/playlists/'
     | '/tracks/'
+    | '/compare/invite/$token'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/login'
+    | '/recap'
     | '/recentTracks'
+    | '/taste'
     | '/api/callback'
     | '/api/login'
     | '/'
     | '/artists/$id'
+    | '/compare/$friendId'
     | '/playlists/$id'
+    | '/recap/$month'
     | '/tracks/$id'
     | '/artists'
+    | '/compare'
     | '/playlists'
     | '/tracks'
+    | '/compare/invite/$token'
   id:
     | '__root__'
     | '/_spotify'
     | '/login'
+    | '/_spotify/recap'
     | '/_spotify/recentTracks'
+    | '/_spotify/taste'
     | '/api/callback'
     | '/api/login'
     | '/_spotify/'
     | '/_spotify/artists/$id'
+    | '/_spotify/compare/$friendId'
     | '/_spotify/playlists/$id'
+    | '/_spotify/recap/$month'
     | '/_spotify/tracks/$id'
     | '/_spotify/artists/'
+    | '/_spotify/compare/'
     | '/_spotify/playlists/'
     | '/_spotify/tracks/'
+    | '/_spotify/compare/invite/$token'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -196,11 +269,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SpotifyIndexRouteImport
       parentRoute: typeof SpotifyRoute
     }
+    '/_spotify/recap': {
+      id: '/_spotify/recap'
+      path: '/recap'
+      fullPath: '/recap'
+      preLoaderRoute: typeof SpotifyRecapRouteImport
+      parentRoute: typeof SpotifyRoute
+    }
     '/_spotify/recentTracks': {
       id: '/_spotify/recentTracks'
       path: '/recentTracks'
       fullPath: '/recentTracks'
       preLoaderRoute: typeof SpotifyRecentTracksRouteImport
+      parentRoute: typeof SpotifyRoute
+    }
+    '/_spotify/taste': {
+      id: '/_spotify/taste'
+      path: '/taste'
+      fullPath: '/taste'
+      preLoaderRoute: typeof SpotifyTasteRouteImport
       parentRoute: typeof SpotifyRoute
     }
     '/api/callback': {
@@ -231,6 +318,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SpotifyArtistsIdRouteImport
       parentRoute: typeof SpotifyRoute
     }
+    '/_spotify/compare/': {
+      id: '/_spotify/compare/'
+      path: '/compare'
+      fullPath: '/compare/'
+      preLoaderRoute: typeof SpotifyCompareIndexRouteImport
+      parentRoute: typeof SpotifyRoute
+    }
+    '/_spotify/compare/$friendId': {
+      id: '/_spotify/compare/$friendId'
+      path: '/compare/$friendId'
+      fullPath: '/compare/$friendId'
+      preLoaderRoute: typeof SpotifyCompareFriendIdRouteImport
+      parentRoute: typeof SpotifyRoute
+    }
     '/_spotify/playlists/': {
       id: '/_spotify/playlists/'
       path: '/playlists'
@@ -244,6 +345,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/playlists/$id'
       preLoaderRoute: typeof SpotifyPlaylistsIdRouteImport
       parentRoute: typeof SpotifyRoute
+    }
+    '/_spotify/recap/$month': {
+      id: '/_spotify/recap/$month'
+      path: '/$month'
+      fullPath: '/recap/$month'
+      preLoaderRoute: typeof SpotifyRecapMonthRouteImport
+      parentRoute: typeof SpotifyRecapRoute
     }
     '/_spotify/tracks/': {
       id: '/_spotify/tracks/'
@@ -259,29 +367,58 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SpotifyTracksIdRouteImport
       parentRoute: typeof SpotifyRoute
     }
+    '/_spotify/compare/invite/$token': {
+      id: '/_spotify/compare/invite/$token'
+      path: '/compare/invite/$token'
+      fullPath: '/compare/invite/$token'
+      preLoaderRoute: typeof SpotifyCompareInviteTokenRouteImport
+      parentRoute: typeof SpotifyRoute
+    }
   }
 }
 
+interface SpotifyRecapRouteChildren {
+  SpotifyRecapMonthRoute: typeof SpotifyRecapMonthRoute
+}
+
+const SpotifyRecapRouteChildren: SpotifyRecapRouteChildren = {
+  SpotifyRecapMonthRoute: SpotifyRecapMonthRoute,
+}
+
+const SpotifyRecapRouteWithChildren = SpotifyRecapRoute._addFileChildren(
+  SpotifyRecapRouteChildren,
+)
+
 interface SpotifyRouteChildren {
+  SpotifyRecapRoute: typeof SpotifyRecapRouteWithChildren
   SpotifyRecentTracksRoute: typeof SpotifyRecentTracksRoute
+  SpotifyTasteRoute: typeof SpotifyTasteRoute
   SpotifyIndexRoute: typeof SpotifyIndexRoute
   SpotifyArtistsIdRoute: typeof SpotifyArtistsIdRoute
+  SpotifyCompareFriendIdRoute: typeof SpotifyCompareFriendIdRoute
   SpotifyPlaylistsIdRoute: typeof SpotifyPlaylistsIdRoute
   SpotifyTracksIdRoute: typeof SpotifyTracksIdRoute
   SpotifyArtistsIndexRoute: typeof SpotifyArtistsIndexRoute
+  SpotifyCompareIndexRoute: typeof SpotifyCompareIndexRoute
   SpotifyPlaylistsIndexRoute: typeof SpotifyPlaylistsIndexRoute
   SpotifyTracksIndexRoute: typeof SpotifyTracksIndexRoute
+  SpotifyCompareInviteTokenRoute: typeof SpotifyCompareInviteTokenRoute
 }
 
 const SpotifyRouteChildren: SpotifyRouteChildren = {
+  SpotifyRecapRoute: SpotifyRecapRouteWithChildren,
   SpotifyRecentTracksRoute: SpotifyRecentTracksRoute,
+  SpotifyTasteRoute: SpotifyTasteRoute,
   SpotifyIndexRoute: SpotifyIndexRoute,
   SpotifyArtistsIdRoute: SpotifyArtistsIdRoute,
+  SpotifyCompareFriendIdRoute: SpotifyCompareFriendIdRoute,
   SpotifyPlaylistsIdRoute: SpotifyPlaylistsIdRoute,
   SpotifyTracksIdRoute: SpotifyTracksIdRoute,
   SpotifyArtistsIndexRoute: SpotifyArtistsIndexRoute,
+  SpotifyCompareIndexRoute: SpotifyCompareIndexRoute,
   SpotifyPlaylistsIndexRoute: SpotifyPlaylistsIndexRoute,
   SpotifyTracksIndexRoute: SpotifyTracksIndexRoute,
+  SpotifyCompareInviteTokenRoute: SpotifyCompareInviteTokenRoute,
 }
 
 const SpotifyRouteWithChildren =

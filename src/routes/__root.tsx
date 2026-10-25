@@ -78,9 +78,12 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         { name: 'description', content: 'Spotify Wrapper' },
         { name: 'viewport', content: 'width=device-width, initial-scale=1.0' },
         { name: 'theme-color', content: '#121212' },
+        { name: 'apple-mobile-web-app-capable', content: 'yes' },
       ],
       links: [
         { rel: 'icon', href: '/spotify.ico' },
+        { rel: 'manifest', href: '/manifest.webmanifest' },
+        { rel: 'apple-touch-icon', href: '/icon-192.png' },
         { rel: 'preconnect', href: 'https://i.scdn.co' },
       ],
     }),

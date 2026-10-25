@@ -1,12 +1,10 @@
-import {
-  type Artist,
-  type AudioFeatures,
-  type PlayedTrack,
-  type Playlist,
-  type PlaylistDetail,
-  type Track,
-  type User,
-  audioFeatureKeys,
+import type {
+  Artist,
+  PlayedTrack,
+  Playlist,
+  PlaylistDetail,
+  Track,
+  User,
 } from '@/types';
 
 // Spotify trims fields for Development Mode apps (followers, popularity) and
@@ -56,9 +54,16 @@ export function toTrack(raw: RawTrack): Track {
     album: {
       name: raw.album?.name ?? '',
       url: raw.album?.external_urls?.spotify ?? null,
-      year: raw.album?.release_date?.split('-')[0] ?? null,
+      releaseDate: raw.album?.release_date ?? null,
+      type: raw.album?.album_type ?? null,
+      totalTracks: raw.album?.total_tracks ?? null,
     },
+    popularity: raw.popularity ?? null,
+    explicit: raw.explicit ?? false,
+    trackNumber: raw.track_number ?? null,
+    uri: raw.uri,
     url: raw.external_urls?.spotify ?? null,
+    previewUrl: raw.preview_url ?? null,
   };
 }
 
@@ -101,15 +106,8 @@ export function toPlaylistDetail(raw: RawPlaylist): PlaylistDetail {
 
 export function toUser(raw: SpotifyApi.CurrentUsersProfileResponse): User {
   return {
+    id: raw.id,
     name: raw.display_name ?? raw.id,
     image: pickImage(raw.images, 160),
   };
-}
-
-export function toAudioFeatures(
-  raw: SpotifyApi.AudioFeaturesResponse
-): AudioFeatures {
-  return Object.fromEntries(
-    audioFeatureKeys.map((key) => [key, raw[key] ?? 0])
-  ) as AudioFeatures;
 }

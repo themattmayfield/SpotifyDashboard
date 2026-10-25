@@ -3,6 +3,7 @@ import {
   aggregateRecap,
   artistStreaks,
   biggestClimber,
+  compatibilityScore,
   dayGroups,
   monthBounds,
   rankMovements,
@@ -38,6 +39,18 @@ test('computes movement, streaks and recap', () => {
     minutes: 4,
     distinctArtists: 1,
   });
+});
+
+test('compatibility is bounded and increases with overlap', () => {
+  const item = (id: string) => ({ id, name: id, image: null });
+  const lists = (ids: string[]) => ({
+    medium_term: { artists: ids.map(item), tracks: ids.map(item) },
+  });
+  expect(compatibilityScore(lists(['a', 'b']), lists(['a', 'b']))).toBe(100);
+  expect(compatibilityScore(lists(['a']), lists(['z']))).toBe(0);
+  expect(
+    compatibilityScore(lists(['a', 'b']), lists(['a', 'z']))
+  ).toBeGreaterThan(compatibilityScore(lists(['a', 'b']), lists(['x', 'z'])));
 });
 
 test('groups history using local calendar days', () => {

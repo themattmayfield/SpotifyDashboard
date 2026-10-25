@@ -8,6 +8,13 @@
       "when": 1792940868170,
       "tag": "0000_ambiguous_prowler",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "6",
+      "when": 1792941258591,
+      "tag": "0001_lonely_susan_delgado",
+      "breakpoints": true
     }
   ]
 }

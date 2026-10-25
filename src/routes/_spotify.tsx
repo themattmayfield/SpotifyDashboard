@@ -10,11 +10,11 @@ import { syncListening } from '@/lib/persistence';
 import { spotifyQueries } from '@/lib/queries';
 
 const authenticateInitialRequest = createIsomorphicFn()
-  .server(() => ensureAuthenticated())
+  .server((path: string) => ensureAuthenticated({ data: path }))
   .client(() => true);
 
 export const Route = createFileRoute('/_spotify')({
-  beforeLoad: () => authenticateInitialRequest(),
+  beforeLoad: ({ location }) => authenticateInitialRequest(location.pathname),
   loader: ({ context }) =>
     context.queryClient.ensureQueryData(spotifyQueries.me()),
   component: SpotifyLayout,

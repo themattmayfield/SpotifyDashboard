@@ -1,5 +1,5 @@
 import { createFileRoute } from '@tanstack/react-router';
-import { Suspense } from 'react';
+import { Suspense, lazy } from 'react';
 
 import { ArtistTiles, ArtistTilesSkeleton } from '@/components/ArtistTiles';
 import { NowPlaying } from '@/components/NowPlaying';
@@ -11,6 +11,7 @@ import { SectionHeader } from '@/components/SectionHeader';
 import { Streaks } from '@/components/Streaks';
 import { TopTracks, TrackListSkeleton } from '@/components/Tracks';
 import { spotifyQueries } from '@/lib/queries';
+const ShareCard = lazy(() => import('@/components/ShareCard'));
 
 const rowTileClassName = 'w-[45vw] shrink-0 md:w-[25vw] xl:w-64';
 
@@ -36,7 +37,12 @@ function Home() {
       </aside>
       <div className="flex min-w-0 flex-1 flex-col gap-16">
         <section className="pl-2">
-          <SectionHeader title="Top Artists" to="/artists" />
+          <div className="flex items-center justify-between pr-4">
+            <SectionHeader title="Top Artists" to="/artists" />
+            <Suspense>
+              <ShareCard card={{ variant: 'artists', range: 'long_term' }} />
+            </Suspense>
+          </div>
           <div className="no-scrollbar flex gap-6 overflow-x-auto pl-2 lg:pl-0">
             <Suspense
               fallback={

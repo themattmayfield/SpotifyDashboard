@@ -29,123 +29,124 @@ const range = (value: unknown) => {
 const identity = async () =>
   toUser(await spotifyFetch<SpotifyApi.CurrentUsersProfileResponse>('/v1/me'));
 
-export const syncListening = createServerFn({ method: 'POST' }).handler(
-  async () => {
-    const db = getDb();
-    if (!db) return { enabled: false };
-    try {
-      const me = await identity();
-      const now = new Date();
-      await db
-        .insert(users)
-        .values({
-          id: me.id,
-          displayName: me.name,
-          image: me.image,
-          createdAt: now,
-        })
-        .onConflictDoUpdate({
-          target: users.id,
-          set: { displayName: me.name, image: me.image },
-        });
-      const user = await db.query.users.findFirst({
-        where: eq(users.id, me.id),
+async function syncListeningCore() {
+  const db = getDb();
+  if (!db) return { enabled: false };
+  try {
+    const me = await identity();
+    const now = new Date();
+    await db
+      .insert(users)
+      .values({
+        id: me.id,
+        displayName: me.name,
+        image: me.image,
+        createdAt: now,
+      })
+      .onConflictDoUpdate({
+        target: users.id,
+        set: { displayName: me.name, image: me.image },
       });
-      const snapshotsDue =
-        !user?.lastSnapshotAt ||
-        now.getTime() - user.lastSnapshotAt.getTime() > 72_000_000;
-      const historyDue =
-        !user?.lastHistorySyncAt ||
-        now.getTime() - user.lastHistorySyncAt.getTime() > 600_000;
-      if (snapshotsDue) {
-        const requests = timeRanges.flatMap((r) => [
-          spotifyFetch<SpotifyApi.UsersTopArtistsResponse>(
-            `/v1/me/top/artists?limit=50&time_range=${r}`
-          ).then((x) => ({
-            kind: 'artists' as const,
-            range: r,
-            items: x.items.map(toArtist).map(
-              (a): SnapshotItem => ({
-                id: a.id,
-                name: a.name,
-                image: a.thumb,
-              })
-            ),
-          })),
-          spotifyFetch<SpotifyApi.UsersTopTracksResponse>(
-            `/v1/me/top/tracks?limit=50&time_range=${r}`
-          ).then((x) => ({
-            kind: 'tracks' as const,
-            range: r,
-            items: x.items.map(toTrack).map(
-              (t): SnapshotItem => ({
-                id: t.id,
-                name: t.name,
-                image: t.thumb,
-                subtitle: t.artists.map((a) => a.name).join(', '),
-                durationMs: t.durationMs,
-              })
-            ),
-          })),
-        ]);
-        for (const snapshot of await Promise.all(requests))
-          await db
-            .insert(topSnapshots)
-            .values({
-              userId: me.id,
-              ...snapshot,
-              takenAt: now,
-              day: now.toISOString().slice(0, 10),
+    const user = await db.query.users.findFirst({
+      where: eq(users.id, me.id),
+    });
+    const snapshotsDue =
+      !user?.lastSnapshotAt ||
+      now.getTime() - user.lastSnapshotAt.getTime() > 72_000_000;
+    const historyDue =
+      !user?.lastHistorySyncAt ||
+      now.getTime() - user.lastHistorySyncAt.getTime() > 600_000;
+    if (snapshotsDue) {
+      const requests = timeRanges.flatMap((r) => [
+        spotifyFetch<SpotifyApi.UsersTopArtistsResponse>(
+          `/v1/me/top/artists?limit=50&time_range=${r}`
+        ).then((x) => ({
+          kind: 'artists' as const,
+          range: r,
+          items: x.items.map(toArtist).map(
+            (a): SnapshotItem => ({
+              id: a.id,
+              name: a.name,
+              image: a.thumb,
             })
-            .onConflictDoUpdate({
-              target: [
-                topSnapshots.userId,
-                topSnapshots.kind,
-                topSnapshots.range,
-                topSnapshots.day,
-              ],
-              set: { items: snapshot.items, takenAt: now },
-            });
+          ),
+        })),
+        spotifyFetch<SpotifyApi.UsersTopTracksResponse>(
+          `/v1/me/top/tracks?limit=50&time_range=${r}`
+        ).then((x) => ({
+          kind: 'tracks' as const,
+          range: r,
+          items: x.items.map(toTrack).map(
+            (t): SnapshotItem => ({
+              id: t.id,
+              name: t.name,
+              image: t.thumb,
+              subtitle: t.artists.map((a) => a.name).join(', '),
+              durationMs: t.durationMs,
+            })
+          ),
+        })),
+      ]);
+      for (const snapshot of await Promise.all(requests))
         await db
-          .update(users)
-          .set({ lastSnapshotAt: now })
-          .where(eq(users.id, me.id));
-      }
-      if (historyDue) {
-        const response =
-          await spotifyFetch<SpotifyApi.UsersRecentlyPlayedTracksResponse>(
-            '/v1/me/player/recently-played?limit=50'
-          );
-        const rows = response.items
-          .map(toPlayedTrack)
-          .map(({ playedAt, track }) => ({
+          .insert(topSnapshots)
+          .values({
             userId: me.id,
-            playedAt: new Date(playedAt),
-            trackId: track.id,
-            track: {
-              id: track.id,
-              name: track.name,
-              image: track.thumb,
-              artists: track.artists,
-              durationMs: track.durationMs,
-            } satisfies StoredTrack,
-          }));
-        if (rows.length)
-          await db.insert(plays).values(rows).onConflictDoNothing();
-        await db
-          .update(users)
-          .set({ lastHistorySyncAt: now })
-          .where(eq(users.id, me.id));
-      }
-      return { enabled: true };
-    } catch (error) {
-      console.error(
-        'Listening sync failed',
-        error instanceof Error ? error.message : 'Unknown error'
-      );
-      return { enabled: true };
+            ...snapshot,
+            takenAt: now,
+            day: now.toISOString().slice(0, 10),
+          })
+          .onConflictDoUpdate({
+            target: [
+              topSnapshots.userId,
+              topSnapshots.kind,
+              topSnapshots.range,
+              topSnapshots.day,
+            ],
+            set: { items: snapshot.items, takenAt: now },
+          });
+      await db
+        .update(users)
+        .set({ lastSnapshotAt: now })
+        .where(eq(users.id, me.id));
     }
+    if (historyDue) {
+      const response =
+        await spotifyFetch<SpotifyApi.UsersRecentlyPlayedTracksResponse>(
+          '/v1/me/player/recently-played?limit=50'
+        );
+      const rows = response.items
+        .map(toPlayedTrack)
+        .map(({ playedAt, track }) => ({
+          userId: me.id,
+          playedAt: new Date(playedAt),
+          trackId: track.id,
+          track: {
+            id: track.id,
+            name: track.name,
+            image: track.thumb,
+            artists: track.artists,
+            durationMs: track.durationMs,
+          } satisfies StoredTrack,
+        }));
+      if (rows.length)
+        await db.insert(plays).values(rows).onConflictDoNothing();
+      await db
+        .update(users)
+        .set({ lastHistorySyncAt: now })
+        .where(eq(users.id, me.id));
+    }
+    return { enabled: true };
+  } catch (error) {
+    console.error(
+      'Listening sync failed',
+      error instanceof Error ? error.message : 'Unknown error'
+    );
+    return { enabled: true };
   }
+}
+export const syncListening = createServerFn({ method: 'POST' }).handler(
+  syncListeningCore
 );
 
 export const getMovement = createServerFn({ method: 'GET' })

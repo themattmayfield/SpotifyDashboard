@@ -6,6 +6,7 @@ import {
   setCookie,
 } from '@tanstack/react-start/server';
 import { generateRandomString } from './generateRandomString';
+import { sanitizeReturnTo } from './returnTo';
 
 const cookieOptions = {
   httpOnly: true,
@@ -36,11 +37,23 @@ const authHeader = () =>
   `Basic ${Buffer.from(`${clientId()}:${clientSecret()}`).toString('base64')}`;
 const refreshes = new WeakMap<Request, Promise<string | null>>();
 
-export function createLoginUrl() {
+export function createLoginUrl(returnTo?: unknown) {
   if (!clientId()) throw new Error('Missing SPOTIFY_CLIENT_ID');
   const state = generateRandomString(32);
   setCookie('spotify_oauth_state', state, { ...cookieOptions, maxAge: 600 });
+  if (returnTo !== undefined) setReturnTo(returnTo);
   return `https://accounts.spotify.com/authorize?${new URLSearchParams({ response_type: 'code', client_id: clientId(), scope, redirect_uri: redirectUri(), state })}`;
+}
+export function setReturnTo(value: unknown) {
+  setCookie('spotify_return_to', sanitizeReturnTo(value), {
+    ...cookieOptions,
+    maxAge: 600,
+  });
+}
+export function consumeReturnTo() {
+  const value = sanitizeReturnTo(getCookie('spotify_return_to'));
+  deleteCookie('spotify_return_to', { path: '/' });
+  return value;
 }
 async function requestRefreshedAccessToken(refresh: string) {
   let response: Response;
@@ -134,7 +147,12 @@ export function validOAuthState(state: string | null) {
   return !!state && !!expected && state === expected;
 }
 export function clearAuthCookies() {
-  for (const name of ['access_token', 'refresh_token', 'spotify_oauth_state'])
+  for (const name of [
+    'access_token',
+    'refresh_token',
+    'spotify_oauth_state',
+    'spotify_return_to',
+  ])
     deleteCookie(name, { path: '/' });
 }
 export async function ensureAccessToken() {

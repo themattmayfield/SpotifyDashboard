@@ -6,6 +6,7 @@ import {
   RiHistoryLine,
   RiPlayListFill,
 } from 'react-icons/ri';
+import { RiTeamFill } from 'react-icons/ri';
 import { SiSpotify } from 'react-icons/si';
 
 import SideNavLink from '@/components/SideNavLink';
@@ -17,6 +18,7 @@ const navItems = [
   { path: '/recentTracks', label: 'Recent', Icon: RiHistoryLine },
   { path: '/recap', label: 'Recap', Icon: RiCalendarEventFill },
   { path: '/playlists', label: 'Playlists', Icon: RiPlayListFill },
+  { path: '/compare', label: 'Compare', Icon: RiTeamFill },
 ] as const;
 
 export default function SideNav() {
@@ -40,7 +42,7 @@ const NavLinks = ({ className }: { className: string }) => (
     {navItems.map(({ path, label, Icon }) => (
       <SideNavLink key={path} path={path} label={label}>
         <Icon className="pointer-events-none z-0 h-6 w-6 text-white transition duration-150 ease-in-out group-hover:text-custom-lightgray" />
-        <span className="mt-1 text-[10px] lg:text-xs">{label}</span>
+        <span className="mt-1 text-[9px] lg:text-xs">{label}</span>
       </SideNavLink>
     ))}
   </div>

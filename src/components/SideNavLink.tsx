@@ -12,6 +12,7 @@ export default function SideNavLink({
     | '/tracks'
     | '/recentTracks'
     | '/playlists'
+    | '/compare'
     | '/recap';
   label: string;
   children: ReactNode;

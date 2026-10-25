@@ -5,6 +5,8 @@ import { useClientTimeZone } from '@/components/StoredHistory';
 import { getRecap } from '@/lib/persistence';
 import { useQuery } from '@tanstack/react-query';
 import { Link, createFileRoute } from '@tanstack/react-router';
+import { Suspense, lazy } from 'react';
+const ShareCard = lazy(() => import('@/components/ShareCard'));
 
 const currentMonth = () => new Date().toISOString().slice(0, 7);
 export const Route = createFileRoute('/_spotify/recap')({
@@ -36,6 +38,9 @@ export function Recap({ month }: { month: string }) {
           <EmptyState />
         ) : (
           <>
+            <Suspense>
+              <ShareCard card={{ variant: 'recap', month, timeZone }} />
+            </Suspense>
             <div className="grid grid-cols-3 gap-3">
               <Stat label="Plays" value={recap.totalPlays} />
               <Stat label="Minutes" value={recap.minutes} />

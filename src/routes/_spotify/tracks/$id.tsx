@@ -1,4 +1,4 @@
-import { useSuspenseQuery } from '@tanstack/react-query';
+import { useQueryClient, useSuspenseQuery } from '@tanstack/react-query';
 import { Link, createFileRoute } from '@tanstack/react-router';
 import { Fragment, useState } from 'react';
 
@@ -27,11 +27,16 @@ const headerClassName = 'flex flex-col items-center gap-3 md:flex-row md:gap-8';
 const imageClassName = 'h-48 w-48 md:h-72 md:w-72';
 
 function Page() {
+  const queryClient = useQueryClient();
   const { id } = Route.useParams();
   const { data: track } = useSuspenseQuery(spotifyQueries.track(id));
   const [message, setMessage] = useState<string>();
   const play = async () => {
     const result = await playTrack({ data: id });
+    if (result.ok)
+      await queryClient.invalidateQueries({
+        queryKey: spotifyQueries.playback().queryKey,
+      });
     setMessage(
       result.ok
         ? undefined

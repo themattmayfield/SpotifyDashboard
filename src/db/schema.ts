@@ -31,6 +31,30 @@ export const users = sqliteTable('users', {
   lastHistorySyncAt: integer('last_history_sync_at', { mode: 'timestamp_ms' }),
 });
 
+export const invites = sqliteTable('invites', {
+  token: text('token').primaryKey(),
+  inviterUserId: text('inviter_user_id')
+    .notNull()
+    .references(() => users.id, { onDelete: 'cascade' }),
+  createdAt: integer('created_at', { mode: 'timestamp_ms' }).notNull(),
+  expiresAt: integer('expires_at', { mode: 'timestamp_ms' }).notNull(),
+  revokedAt: integer('revoked_at', { mode: 'timestamp_ms' }),
+});
+
+export const friendships = sqliteTable(
+  'friendships',
+  {
+    userA: text('user_a')
+      .notNull()
+      .references(() => users.id, { onDelete: 'cascade' }),
+    userB: text('user_b')
+      .notNull()
+      .references(() => users.id, { onDelete: 'cascade' }),
+    createdAt: integer('created_at', { mode: 'timestamp_ms' }).notNull(),
+  },
+  (table) => [primaryKey({ columns: [table.userA, table.userB] })]
+);
+
 export const topSnapshots = sqliteTable(
   'top_snapshots',
   {

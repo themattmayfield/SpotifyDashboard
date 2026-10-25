@@ -11,7 +11,7 @@ export const Route = createFileRoute('/api/callback')({
             headers: { Location: '/login' },
           });
         }
-        const { validOAuthState, exchangeCode } = await import(
+        const { validOAuthState, exchangeCode, consumeReturnTo } = await import(
           '@/lib/auth.server'
         );
         const code = url.searchParams.get('code');
@@ -28,7 +28,10 @@ export const Route = createFileRoute('/api/callback')({
             headers: { Location: '/login' },
           });
         }
-        return new Response(null, { status: 302, headers: { Location: '/' } });
+        return new Response(null, {
+          status: 302,
+          headers: { Location: consumeReturnTo() },
+        });
       },
     },
   },

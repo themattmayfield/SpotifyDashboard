@@ -1,6 +1,36 @@
 import type { SnapshotItem, StoredTrack } from '@/db/schema';
 
 export type RankMovement = { previousRank: number | null };
+
+export type ComparisonLists = Record<
+  string,
+  { artists: SnapshotItem[]; tracks: SnapshotItem[] }
+>;
+
+/** Weighted reciprocal-rank overlap; artists count 60%, tracks 40%, ranges equally. */
+export function compatibilityScore(a: ComparisonLists, b: ComparisonLists) {
+  const kinds = [
+    ['artists', 0.6],
+    ['tracks', 0.4],
+  ] as const;
+  const ranges = new Set([...Object.keys(a), ...Object.keys(b)]);
+  if (!ranges.size) return 0;
+  let total = 0;
+  for (const range of ranges) {
+    for (const [kind, weight] of kinds) {
+      const left = a[range]?.[kind] ?? [];
+      const right = b[range]?.[kind] ?? [];
+      const rightRanks = new Map(right.map((x, i) => [x.id, i]));
+      const denominator = left.reduce((sum, _x, i) => sum + 1 / (i + 1), 0);
+      const overlap = left.reduce((sum, x, i) => {
+        const rank = rightRanks.get(x.id);
+        return sum + (rank === undefined ? 0 : 2 / (i + rank + 2));
+      }, 0);
+      total += denominator ? (overlap / denominator) * weight : 0;
+    }
+  }
+  return Math.round((total / ranges.size) * 100);
+}
 export function rankMovements(
   current: SnapshotItem[],
   previous?: SnapshotItem[]

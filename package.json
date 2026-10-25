@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "vite dev --port 3002",
     "build": "vite build",
+    "build:vercel": "if [ \"$VERCEL_ENV\" = production ]; then convex deploy --cmd 'bun run build' --cmd-url-env-var-name CONVEX_URL; else bun run build; fi",
     "sso": "source .env && aws sso login --sso-session=${AWS_SSO_SESSION}",
     "type-check": "tsc --noEmit",
     "lint": "biome check .",

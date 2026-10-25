@@ -1,5 +1,5 @@
-import { createServerFn } from '@tanstack/react-start';
 import { redirect } from '@tanstack/react-router';
+import { createServerFn } from '@tanstack/react-start';
 
 export const ensureAuthenticated = createServerFn({ method: 'GET' }).handler(
   async () => {

@@ -1,4 +1,5 @@
 import { Link } from '@tanstack/react-router';
+
 export default function SideNavLink({
   path,
   children,

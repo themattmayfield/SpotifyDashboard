@@ -1,5 +1,5 @@
-import { Suspense } from 'react';
 import { createFileRoute } from '@tanstack/react-router';
+import { Suspense } from 'react';
 
 import TrackLoading from '@/components/Loading/TrackLoading';
 import PageRangeHeader from '@/components/PageRangeHeader';

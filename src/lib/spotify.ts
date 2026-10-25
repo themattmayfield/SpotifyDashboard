@@ -1,7 +1,8 @@
+import { isRedirect } from '@tanstack/react-router';
 import { createServerFn } from '@tanstack/react-start';
 
 import type { TTimeRange } from '@/types';
-import { spotifyFetch } from './spotify.server';
+import { SpotifyApiError, spotifyFetch } from './spotify.server';
 
 const timeRanges = ['long_term', 'medium_term', 'short_term'] as const;
 const idPattern = /^[A-Za-z0-9]+$/;
@@ -126,9 +127,10 @@ export const getAudioFeatures = createServerFn({ method: 'GET' })
         `/v1/audio-features/${encodeURIComponent(data)}`
       );
     } catch (error) {
-      if (error instanceof Error && error.message === 'Unauthorized')
-        throw error;
-      return null;
+      if (isRedirect(error)) throw error;
+      if (error instanceof SpotifyApiError && [403, 404].includes(error.status))
+        return null;
+      throw error;
     }
   });
 

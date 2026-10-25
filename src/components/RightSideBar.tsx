@@ -1,6 +1,7 @@
 import { spotifyQueries } from '@/lib/queries';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { Link } from '@tanstack/react-router';
+
 export default function RightSideBar() {
   const { data } = useSuspenseQuery(
     spotifyQueries.recentlyPlayed({ limit: '6' })

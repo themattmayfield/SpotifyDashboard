@@ -2,6 +2,7 @@ import { spotifyTokenUrl } from '@/constants';
 import {
   deleteCookie,
   getCookie,
+  getRequest,
   setCookie,
 } from '@tanstack/react-start/server';
 import { generateRandomString } from './generateRandomString';
@@ -33,6 +34,7 @@ const scope = [
 ].join(' ');
 const authHeader = () =>
   `Basic ${Buffer.from(`${clientId()}:${clientSecret()}`).toString('base64')}`;
+const refreshes = new WeakMap<Request, Promise<string | null>>();
 
 export function createLoginUrl() {
   if (!clientId()) throw new Error('Missing SPOTIFY_CLIENT_ID');
@@ -40,23 +42,33 @@ export function createLoginUrl() {
   setCookie('spotify_oauth_state', state, { ...cookieOptions, maxAge: 600 });
   return `https://accounts.spotify.com/authorize?${new URLSearchParams({ response_type: 'code', client_id: clientId(), scope, redirect_uri: redirectUri(), state })}`;
 }
-export async function refreshAccessToken(refresh = getCookie('refresh_token')) {
-  if (!refresh || !clientId() || !clientSecret()) return null;
-  const response = await fetch(spotifyTokenUrl, {
-    method: 'POST',
-    headers: {
-      'content-type': 'application/x-www-form-urlencoded',
-      Authorization: authHeader(),
-    },
-    body: new URLSearchParams({
-      grant_type: 'refresh_token',
-      refresh_token: refresh,
-      client_id: clientId(),
-    }),
-  });
+async function requestRefreshedAccessToken(refresh: string) {
+  let response: Response;
+  try {
+    response = await fetch(spotifyTokenUrl, {
+      method: 'POST',
+      headers: {
+        'content-type': 'application/x-www-form-urlencoded',
+        Authorization: authHeader(),
+      },
+      body: new URLSearchParams({
+        grant_type: 'refresh_token',
+        refresh_token: refresh,
+        client_id: clientId(),
+      }),
+    });
+  } catch (error) {
+    throw new Error('Spotify token refresh failed', { cause: error });
+  }
   if (!response.ok) {
-    clearAuthCookies();
-    return null;
+    const body = (await response.json().catch(() => null)) as {
+      error?: string;
+    } | null;
+    if (response.status === 400 && body?.error === 'invalid_grant') {
+      clearAuthCookies();
+      return null;
+    }
+    throw new Error(`Spotify token refresh failed (${response.status})`);
   }
   const tokens = (await response.json()) as {
     access_token: string;
@@ -72,6 +84,21 @@ export async function refreshAccessToken(refresh = getCookie('refresh_token')) {
     maxAge: 2_147_483_647,
   });
   return tokens.access_token;
+}
+
+export async function refreshAccessToken(refresh = getCookie('refresh_token')) {
+  if (!refresh || !clientId() || !clientSecret()) return null;
+  const request = getRequest();
+  const existing = refreshes.get(request);
+  if (existing) return existing;
+  const pending = requestRefreshedAccessToken(refresh);
+  refreshes.set(request, pending);
+  return pending;
+}
+
+export function getAccessToken() {
+  const refreshed = refreshes.get(getRequest());
+  return refreshed ?? Promise.resolve(getCookie('access_token') ?? null);
 }
 export async function exchangeCode(code: string) {
   const response = await fetch(spotifyTokenUrl, {
@@ -111,12 +138,5 @@ export function clearAuthCookies() {
     deleteCookie(name, { path: '/' });
 }
 export async function ensureAccessToken() {
-  const accessToken = getCookie('access_token');
-  if (!accessToken) return refreshAccessToken();
-  const response = await fetch('https://api.spotify.com/v1/me', {
-    headers: { Authorization: `Bearer ${accessToken}` },
-  });
-  if (response.ok) return accessToken;
-  if (response.status === 401) return refreshAccessToken();
-  return accessToken;
+  return (await getAccessToken()) ?? refreshAccessToken();
 }

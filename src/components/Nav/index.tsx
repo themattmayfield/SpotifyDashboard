@@ -3,6 +3,7 @@ import { useSuspenseQuery } from '@tanstack/react-query';
 import { Link } from '@tanstack/react-router';
 import { SiSpotify } from 'react-icons/si';
 import NavClient from './NavClient';
+
 export default function Nav() {
   const { data } = useSuspenseQuery(spotifyQueries.me());
   return (

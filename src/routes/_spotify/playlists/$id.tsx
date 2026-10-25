@@ -1,5 +1,5 @@
-import { Suspense } from 'react';
 import { createFileRoute } from '@tanstack/react-router';
+import { Suspense } from 'react';
 
 import PlaylistLoading from '@/components/Loading/PlaylistLoading';
 import TrackLoading from '@/components/Loading/TrackLoading';

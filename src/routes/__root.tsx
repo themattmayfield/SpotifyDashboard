@@ -1,15 +1,19 @@
 import type { QueryClient } from '@tanstack/react-query';
 import {
-  createRootRouteWithContext,
   HeadContent,
   Link,
+  Navigate,
   Outlet,
   Scripts,
+  createRootRouteWithContext,
+  isRedirect,
 } from '@tanstack/react-router';
 import type { ReactNode } from 'react';
 import '@/styles/globals.css';
 
 function ErrorPage({ error }: { error?: unknown }) {
+  if (isRedirect(error)) return <Navigate {...error.options} />;
+
   return (
     <div className="flex flex-col items-center justify-center h-screen bg-spotify-dark text-white">
       <h1 className="text-4xl font-bold mb-4">

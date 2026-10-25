@@ -18,3 +18,5 @@ Create `.env.local` with:
 ## Vercel
 
 Set the same environment variables in Vercel and run `bun run build`. Nitro automatically detects the Vercel preset when `VERCEL=1` and writes Build Output API artifacts to `.vercel/output`.
+
+Nitro is pinned to an exact beta version so deploy output does not change unexpectedly between installs.

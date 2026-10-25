@@ -1,9 +1,10 @@
-import { createFileRoute } from '@tanstack/react-router';
-import { useSuspenseQuery } from '@tanstack/react-query';
-import { spotifyQueries } from '@/lib/queries';
 import FollowButton from '@/components/FollowButton';
-import numeral from 'numeral';
 import ArtistLoading from '@/components/Loading/ArtistLoading';
+import { spotifyQueries } from '@/lib/queries';
+import { useSuspenseQuery } from '@tanstack/react-query';
+import { createFileRoute } from '@tanstack/react-router';
+import numeral from 'numeral';
+
 export const Route = createFileRoute('/_spotify/artists/$id')({
   loader: ({ context, params }) =>
     Promise.all([
@@ -16,7 +17,6 @@ export const Route = createFileRoute('/_spotify/artists/$id')({
 function Page() {
   const { id } = Route.useParams();
   const { data: artistData } = useSuspenseQuery(spotifyQueries.artist(id));
-  const { data: following } = useSuspenseQuery(spotifyQueries.following(id));
   return (
     <div className="flex flex-col items-center text-center text-white pt-10 md:pt-24 space-y-4 md:space-y-8 no-scrollbar">
       <div
@@ -24,7 +24,7 @@ function Page() {
         style={{ backgroundImage: `url(${artistData.images[0]?.url})` }}
       />
       <p className="text-4xl md:text-7xl">{artistData.name}</p>
-      <FollowButton isFollowingArtist={!!following} id={id} />
+      <FollowButton id={id} />
       <div className="flex space-x-12 items-center justify-center">
         <div>
           <p className="text-xl md:text-3xl">

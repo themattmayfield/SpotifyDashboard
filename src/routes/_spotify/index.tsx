@@ -1,15 +1,16 @@
-import { Suspense } from 'react';
-import { createFileRoute } from '@tanstack/react-router';
+import Card from '@/components/Card';
 import CardLoading from '@/components/Loading/CardLoading';
 import RightSideBarLoading from '@/components/Loading/RightSideBarLoading';
 import TopArtistsLoading from '@/components/Loading/TopArtistsLoading';
 import TrackLoading from '@/components/Loading/TrackLoading';
-import { spotifyQueries } from '@/lib/queries';
-import Card from '@/components/Card';
 import RightSideBar from '@/components/RightSideBar';
+import Subtitle from '@/components/Subtitle';
 import TopArtists from '@/components/TopArtists';
 import Track from '@/components/Track';
-import Subtitle from '@/components/Subtitle';
+import { spotifyQueries } from '@/lib/queries';
+import { createFileRoute } from '@tanstack/react-router';
+import { Suspense } from 'react';
+
 export const Route = createFileRoute('/_spotify/')({
   loader: ({ context }) => {
     context.queryClient.prefetchQuery(
@@ -33,9 +34,7 @@ function Home() {
       <div className="overflow-x-hidden lg:mr-4 no-scrollbar">
         <div className="lg:hidden mb-16 px-2">
           <Suspense fallback={<RightSideBarLoading />}>
-            <Suspense fallback={<RightSideBarLoading />}>
-              <RightSideBar />
-            </Suspense>
+            <RightSideBar />
           </Suspense>
         </div>
         <div className="pl-2 pr-0 mb-16">

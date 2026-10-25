@@ -1,4 +1,4 @@
-import { createFileRoute, Outlet } from '@tanstack/react-router';
+import { Outlet, createFileRoute } from '@tanstack/react-router';
 import { createIsomorphicFn } from '@tanstack/react-start';
 
 import Nav from '@/components/Nav';
@@ -12,9 +12,8 @@ const authenticateInitialRequest = createIsomorphicFn()
 
 export const Route = createFileRoute('/_spotify')({
   beforeLoad: () => authenticateInitialRequest(),
-  loader: ({ context }) => {
-    context.queryClient.prefetchQuery(spotifyQueries.me());
-  },
+  loader: ({ context }) =>
+    context.queryClient.ensureQueryData(spotifyQueries.me()),
   component: SpotifyLayout,
 });
 

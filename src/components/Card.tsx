@@ -3,6 +3,7 @@ import { spotifyQueries } from '@/lib/queries';
 import type { TTimeRange } from '@/types';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { Link } from '@tanstack/react-router';
+
 export default function Card({
   profile,
   imageClassName,

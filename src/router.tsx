@@ -11,6 +11,8 @@ export function getRouter() {
     routeTree,
     context: { queryClient },
     defaultPreload: 'intent',
+    defaultPendingMs: 100,
+    defaultPendingMinMs: 200,
     scrollRestoration: true,
     trailingSlash: 'never',
   });

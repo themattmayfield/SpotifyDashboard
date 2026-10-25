@@ -1,9 +1,10 @@
-import { Select, SelectContent, SelectItem, SelectTrigger } from './ui/select';
 import type { TTimeRange } from '@/types';
 import { useNavigate } from '@tanstack/react-router';
 import { IoIosInfinite } from 'react-icons/io';
 import { IoTimeOutline } from 'react-icons/io5';
 import { MdOutlineBolt } from 'react-icons/md';
+import { Select, SelectContent, SelectItem, SelectTrigger } from './ui/select';
+
 const data = [
   ['All Time', 'long_term'],
   ['Last 6 Months', 'medium_term'],

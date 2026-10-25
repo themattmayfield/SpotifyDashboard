@@ -1,4 +1,5 @@
-import { BarChart, Bar, Cell, Tooltip, ResponsiveContainer } from 'recharts';
+import { Bar, BarChart, Cell, ResponsiveContainer, Tooltip } from 'recharts';
+
 const properties = [
   'acousticness',
   'danceability',

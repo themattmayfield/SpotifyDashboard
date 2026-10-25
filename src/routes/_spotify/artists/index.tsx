@@ -1,5 +1,5 @@
-import { Suspense } from 'react';
 import { createFileRoute, stripSearchParams } from '@tanstack/react-router';
+import { Suspense } from 'react';
 
 import Card from '@/components/Card';
 import CardLoading from '@/components/Loading/CardLoading';

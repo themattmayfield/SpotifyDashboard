@@ -1,9 +1,10 @@
-import { createFileRoute } from '@tanstack/react-router';
-import { useSuspenseQuery } from '@tanstack/react-query';
-import { spotifyQueries } from '@/lib/queries';
-import { getYear } from '@/lib/time';
 import AudioFeaturesChart from '@/components/AudioFeaturesChart';
 import TrackDetailLoading from '@/components/Loading/TrackDetailLoading';
+import { spotifyQueries } from '@/lib/queries';
+import { getYear } from '@/lib/time';
+import { useSuspenseQuery } from '@tanstack/react-query';
+import { createFileRoute } from '@tanstack/react-router';
+
 export const Route = createFileRoute('/_spotify/tracks/$id')({
   loader: ({ context, params }) =>
     Promise.all([

@@ -1,9 +1,12 @@
-import randomIntFromInterval from '@/lib/randomIntFromInterval';
-
 import { Skeleton } from '../ui/skeleton';
 
+const widths = {
+  title: [94, 163, 121, 188, 76, 145],
+  detail: [42, 87, 63, 96, 54, 75],
+} as const;
+
 const TrackLoading = ({ count }: { count: number }) => {
-  return [...Array(count)].map((index) => {
+  return [...Array(count)].map((_, index) => {
     return (
       <div
         key={index}
@@ -14,19 +17,19 @@ const TrackLoading = ({ count }: { count: number }) => {
           <div className="flex flex-col space-y-1 w-full">
             <Skeleton
               style={{
-                width: `${randomIntFromInterval(50, 200)}px`,
+                width: `${widths.title[index % widths.title.length]}px`,
               }}
               className={'h-6'}
             />
             <Skeleton
               style={{
-                width: `${randomIntFromInterval(30, 100)}px`,
+                width: `${widths.detail[index % widths.detail.length]}px`,
               }}
               className="h-6"
             />
             <Skeleton
               style={{
-                width: `${randomIntFromInterval(30, 100)}px`,
+                width: `${widths.detail[(index + 2) % widths.detail.length]}px`,
               }}
               className="h-6"
             />

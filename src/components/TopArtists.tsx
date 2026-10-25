@@ -1,7 +1,8 @@
-import Subtitle from './Subtitle';
 import { spotifyQueries } from '@/lib/queries';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { Link } from '@tanstack/react-router';
+import Subtitle from './Subtitle';
+
 export default function TopArtists() {
   const { data } = useSuspenseQuery(
     spotifyQueries.topArtists({ limit: '4', timeRange: 'short_term' })

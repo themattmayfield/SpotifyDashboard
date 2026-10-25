@@ -3,6 +3,7 @@ import { useSuspenseQuery } from '@tanstack/react-query';
 import { Link } from '@tanstack/react-router';
 import pluralize from 'pluralize';
 import { IoMusicalNotesSharp } from 'react-icons/io5';
+
 export default function Playlist({
   playlist,
   analytic = false,

@@ -7,9 +7,7 @@ import {
 import { spotifyQueries } from '@/lib/queries';
 import { setFollowing } from '@/lib/spotify';
 
-export default function FollowButton({
-  id,
-}: { isFollowingArtist: boolean; id: string }) {
+export default function FollowButton({ id }: { id: string }) {
   const client = useQueryClient();
   const options = spotifyQueries.following(id);
   const { data: following } = useSuspenseQuery(options);

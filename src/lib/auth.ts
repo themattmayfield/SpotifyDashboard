@@ -7,8 +7,8 @@ import { NextResponse, type NextRequest } from 'next/server';
 
 import { generateRandomString } from './generateRandomString';
 
-const client_id = process.env.NEXT_PUBLIC_CLIENT_ID || '';
-const client_secret = process.env.NEXT_PUBLIC_CLIENT_SECRET || '';
+const client_id = process.env.SPOTIFY_CLIENT_ID || '';
+const client_secret = process.env.SPOTIFY_CLIENT_SECRET || '';
 const NEXT_PUBLIC_WEB_URL = process.env.NEXT_PUBLIC_WEB_URL || '';
 
 const redirect_uri = `${NEXT_PUBLIC_WEB_URL}/api/callback`;

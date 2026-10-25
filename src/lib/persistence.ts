@@ -8,7 +8,9 @@ import {
 import { type TTimeRange, timeRanges } from '@/types';
 import { createServerFn } from '@tanstack/react-start';
 import { and, asc, desc, eq, lt, sql } from 'drizzle-orm';
-import { getDb } from './db.server';
+import { degradeDb, getDb } from './db.server';
+import { deleteUserData } from './deleteData.server';
+import { currentUser } from './identity';
 import {
   aggregateRecap,
   artistStreaks,
@@ -18,7 +20,7 @@ import {
   rankMovements,
   topNewArtist,
 } from './insights';
-import { toArtist, toPlayedTrack, toTrack, toUser } from './normalize';
+import { toArtist, toPlayedTrack, toTrack } from './normalize';
 import { spotifyFetch } from './spotify.server';
 
 const range = (value: unknown) => {
@@ -26,14 +28,13 @@ const range = (value: unknown) => {
     throw new Error('Invalid range');
   return value as TTimeRange;
 };
-const identity = async () =>
-  toUser(await spotifyFetch<SpotifyApi.CurrentUsersProfileResponse>('/v1/me'));
-
-async function syncListeningCore() {
+async function syncListeningCore(
+  providedUser?: Awaited<ReturnType<typeof currentUser>>
+) {
   const db = getDb();
   if (!db) return { enabled: false };
   try {
-    const me = await identity();
+    const me = providedUser ?? (await currentUser());
     const now = new Date();
     await db
       .insert(users)
@@ -145,8 +146,8 @@ async function syncListeningCore() {
     return { enabled: true };
   }
 }
-export const syncListening = createServerFn({ method: 'POST' }).handler(
-  syncListeningCore
+export const syncListening = createServerFn({ method: 'POST' }).handler(() =>
+  syncListeningCore()
 );
 
 export const getMovement = createServerFn({ method: 'GET' })
@@ -155,33 +156,35 @@ export const getMovement = createServerFn({ method: 'GET' })
       throw new Error('Invalid kind');
     return { kind: data.kind, range: range(data.range) };
   })
-  .handler(async ({ data }) => {
-    const db = getDb();
-    if (!db) return null;
-    const me = await identity();
-    const rows = await db
-      .select()
-      .from(topSnapshots)
-      .where(
-        and(
-          eq(topSnapshots.userId, me.id),
-          eq(topSnapshots.kind, data.kind),
-          eq(topSnapshots.range, data.range)
+  .handler(
+    degradeDb(null, async ({ data }) => {
+      const db = getDb();
+      if (!db) return null;
+      const me = await currentUser();
+      const rows = await db
+        .select()
+        .from(topSnapshots)
+        .where(
+          and(
+            eq(topSnapshots.userId, me.id),
+            eq(topSnapshots.kind, data.kind),
+            eq(topSnapshots.range, data.range)
+          )
         )
-      )
-      .orderBy(desc(topSnapshots.takenAt));
-    if (!rows[0]) return null;
-    const cutoff = rows[0].takenAt.getTime() - 6 * 86_400_000;
-    const previous =
-      rows.find((x) => x.takenAt.getTime() <= cutoff) ?? rows.at(-1);
-    if (!previous || previous.id === rows[0].id) return null;
-    return {
-      movements: rankMovements(rows[0].items, previous.items),
-      previousItems: previous.items,
-      currentItems: rows[0].items,
-      comparedTo: previous.day,
-    };
-  });
+        .orderBy(desc(topSnapshots.takenAt));
+      if (!rows[0]) return null;
+      const cutoff = rows[0].takenAt.getTime() - 6 * 86_400_000;
+      const previous =
+        rows.find((x) => x.takenAt.getTime() <= cutoff) ?? rows.at(-1);
+      if (!previous || previous.id === rows[0].id) return null;
+      return {
+        movements: rankMovements(rows[0].items, previous.items),
+        previousItems: previous.items,
+        currentItems: rows[0].items,
+        comparedTo: previous.day,
+      };
+    })
+  );
 
 export const getStoredPlays = createServerFn({ method: 'GET' })
   .validator((data: { cursor?: number }) => {
@@ -192,29 +195,38 @@ export const getStoredPlays = createServerFn({ method: 'GET' })
       throw new Error('Invalid cursor');
     return data;
   })
-  .handler(async ({ data }) => {
-    const db = getDb();
-    if (!db) return { enabled: false, items: [], nextCursor: undefined };
-    const me = await identity();
-    const rows = await db
-      .select()
-      .from(plays)
-      .where(
-        and(
-          eq(plays.userId, me.id),
-          data.cursor ? lt(plays.playedAt, new Date(data.cursor)) : undefined
-        )
-      )
-      .orderBy(desc(plays.playedAt))
-      .limit(51);
-    return {
-      enabled: true,
-      items: rows
-        .slice(0, 50)
-        .map((x) => ({ playedAt: x.playedAt.toISOString(), track: x.track })),
-      nextCursor: rows.length > 50 ? rows[49].playedAt.getTime() : undefined,
-    };
-  });
+  .handler(
+    degradeDb(
+      { enabled: false, items: [], nextCursor: undefined },
+      async ({ data }) => {
+        const db = getDb();
+        if (!db) return { enabled: false, items: [], nextCursor: undefined };
+        const me = await currentUser();
+        const rows = await db
+          .select()
+          .from(plays)
+          .where(
+            and(
+              eq(plays.userId, me.id),
+              data.cursor
+                ? lt(plays.playedAt, new Date(data.cursor))
+                : undefined
+            )
+          )
+          .orderBy(desc(plays.playedAt))
+          .limit(51);
+        return {
+          enabled: true,
+          items: rows.slice(0, 50).map((x) => ({
+            playedAt: x.playedAt.toISOString(),
+            track: x.track,
+          })),
+          nextCursor:
+            rows.length > 50 ? rows[49].playedAt.getTime() : undefined,
+        };
+      }
+    )
+  );
 
 const monthPattern = /^\d{4}-(0[1-9]|1[0-2])$/;
 const timezone = (tz: unknown) => {
@@ -232,77 +244,93 @@ export const getRecap = createServerFn({ method: 'GET' })
       throw new Error('Invalid month');
     return { month: input.month, timeZone: timezone(input.timeZone) };
   })
-  .handler(async ({ data }) => {
-    const db = getDb();
-    if (!db) return { enabled: false, recap: null, months: [] as string[] };
-    const me = await identity();
-    const { start, end } = monthBounds(data.month, data.timeZone);
-    const rows = await db
-      .select()
-      .from(plays)
-      .where(
-        and(
-          eq(plays.userId, me.id),
-          sql`${plays.playedAt} >= ${start}`,
-          sql`${plays.playedAt} < ${end}`
-        )
-      )
-      .orderBy(asc(plays.playedAt));
-    const all = await db.select().from(plays).where(eq(plays.userId, me.id));
-    const snapshots = await db
-      .select()
-      .from(topSnapshots)
-      .where(
-        and(
-          eq(topSnapshots.userId, me.id),
-          eq(topSnapshots.range, 'short_term'),
-          sql`${topSnapshots.takenAt} >= ${start}`,
-          sql`${topSnapshots.takenAt} < ${end}`
-        )
-      )
-      .orderBy(asc(topSnapshots.takenAt));
-    const climbers = (['artists', 'tracks'] as const)
-      .map((kind) => {
-        const selected = snapshots.filter((x) => x.kind === kind);
-        return selected.length > 1
-          ? biggestClimber(
-              selected[0].items,
-              selected.at(-1)?.items ?? [],
-              kind === 'artists' ? 'artist' : 'track'
+  .handler(
+    degradeDb(
+      { enabled: false, recap: null, months: [] as string[] },
+      async ({ data }) => {
+        const db = getDb();
+        if (!db) return { enabled: false, recap: null, months: [] as string[] };
+        const me = await currentUser();
+        const { start, end } = monthBounds(data.month, data.timeZone);
+        const rows = await db
+          .select()
+          .from(plays)
+          .where(
+            and(
+              eq(plays.userId, me.id),
+              sql`${plays.playedAt} >= ${start}`,
+              sql`${plays.playedAt} < ${end}`
             )
+          )
+          .orderBy(asc(plays.playedAt));
+        const all = await db
+          .select({ playedAt: plays.playedAt, track: plays.track })
+          .from(plays)
+          .where(eq(plays.userId, me.id))
+          .limit(10_000);
+        const snapshots = await db
+          .select()
+          .from(topSnapshots)
+          .where(
+            and(
+              eq(topSnapshots.userId, me.id),
+              eq(topSnapshots.range, 'short_term'),
+              sql`${topSnapshots.takenAt} >= ${start}`,
+              sql`${topSnapshots.takenAt} < ${end}`
+            )
+          )
+          .orderBy(asc(topSnapshots.takenAt));
+        const climbers = (['artists', 'tracks'] as const)
+          .map((kind) => {
+            const selected = snapshots.filter((x) => x.kind === kind);
+            return selected.length > 1
+              ? biggestClimber(
+                  selected[0].items,
+                  selected.at(-1)?.items ?? [],
+                  kind === 'artists' ? 'artist' : 'track'
+                )
+              : null;
+          })
+          .filter((x) => x !== null)
+          .sort((a, b) => b.improvement - a.improvement);
+        const recap = rows.length
+          ? {
+              ...aggregateRecap(rows),
+              topNewArtist: topNewArtist(rows, all, start, end),
+              biggestClimber: climbers[0] ?? null,
+            }
           : null;
-      })
-      .filter((x) => x !== null)
-      .sort((a, b) => b.improvement - a.improvement);
-    const recap = rows.length
-      ? {
-          ...aggregateRecap(rows),
-          topNewArtist: topNewArtist(rows, all, start, end),
-          biggestClimber: climbers[0] ?? null,
-        }
-      : null;
-    return {
-      enabled: true,
-      recap,
-      months: [
-        ...new Set(all.map((x) => localMonth(x.playedAt, data.timeZone))),
-      ].sort(),
-    };
-  });
+        return {
+          enabled: true,
+          recap,
+          months: [
+            ...new Set(all.map((x) => localMonth(x.playedAt, data.timeZone))),
+          ].sort(),
+        };
+      }
+    )
+  );
 
 export const getStreaks = createServerFn({ method: 'GET' })
   .validator(timezone)
-  .handler(async ({ data }) => {
-    const db = getDb();
-    if (!db) return [];
-    const me = await identity();
-    const rows = await db
-      .select()
-      .from(plays)
-      .where(eq(plays.userId, me.id))
-      .orderBy(desc(plays.playedAt));
-    return artistStreaks(rows, data).slice(0, 3);
-  });
+  .handler(
+    degradeDb([], async ({ data }) => {
+      const db = getDb();
+      if (!db) return [];
+      const me = await currentUser();
+      const rows = await db
+        .select()
+        .from(plays)
+        .where(
+          and(
+            eq(plays.userId, me.id),
+            sql`${plays.playedAt} >= ${new Date(Date.now() - 60 * 86_400_000)}`
+          )
+        )
+        .orderBy(desc(plays.playedAt));
+      return artistStreaks(rows, data).slice(0, 3);
+    })
+  );
 
 export const getArtistHistory = createServerFn({ method: 'GET' })
   .validator((id: unknown) => {
@@ -310,42 +338,46 @@ export const getArtistHistory = createServerFn({ method: 'GET' })
       throw new Error('Invalid Spotify ID');
     return id;
   })
-  .handler(async ({ data }) => {
-    const db = getDb();
-    if (!db) return { enabled: false as const };
-    const me = await identity();
-    const artistPlays = (
-      await db
-        .select()
-        .from(plays)
-        .where(eq(plays.userId, me.id))
-        .orderBy(asc(plays.playedAt))
-        .limit(10_000)
-    ).filter((play) => play.track.artists.some((artist) => artist.id === data));
-    const snapshots = await db
-      .select({ day: topSnapshots.day, items: topSnapshots.items })
-      .from(topSnapshots)
-      .where(
-        and(eq(topSnapshots.userId, me.id), eq(topSnapshots.kind, 'artists'))
-      )
-      .orderBy(asc(topSnapshots.takenAt));
-    return {
-      enabled: true as const,
-      totalPlays: artistPlays.length,
-      firstPlayed: artistPlays[0]?.playedAt.toISOString() ?? null,
-      lastPlayed: artistPlays.at(-1)?.playedAt.toISOString() ?? null,
-      topSince:
-        snapshots.find((snapshot) =>
-          snapshot.items.some((item) => item.id === data)
-        )?.day ?? null,
-    };
-  });
+  .handler(
+    degradeDb({ enabled: false as const }, async ({ data }) => {
+      const db = getDb();
+      if (!db) return { enabled: false as const };
+      const me = await currentUser();
+      const artistPlays = (
+        await db
+          .select()
+          .from(plays)
+          .where(eq(plays.userId, me.id))
+          .orderBy(asc(plays.playedAt))
+          .limit(10_000)
+      ).filter((play) =>
+        play.track.artists.some((artist) => artist.id === data)
+      );
+      const snapshots = await db
+        .select({ day: topSnapshots.day, items: topSnapshots.items })
+        .from(topSnapshots)
+        .where(
+          and(eq(topSnapshots.userId, me.id), eq(topSnapshots.kind, 'artists'))
+        )
+        .orderBy(asc(topSnapshots.takenAt));
+      return {
+        enabled: true as const,
+        totalPlays: artistPlays.length,
+        firstPlayed: artistPlays[0]?.playedAt.toISOString() ?? null,
+        lastPlayed: artistPlays.at(-1)?.playedAt.toISOString() ?? null,
+        topSince:
+          snapshots.find((snapshot) =>
+            snapshot.items.some((item) => item.id === data)
+          )?.day ?? null,
+      };
+    })
+  );
 
 export const deleteWrapperData = createServerFn({ method: 'POST' }).handler(
   async () => {
     const db = getDb();
     if (!db) return;
-    const me = await identity();
-    await db.delete(users).where(eq(users.id, me.id));
+    const me = await currentUser();
+    await deleteUserData(db, me.id);
   }
 );

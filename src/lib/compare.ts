@@ -1,16 +1,12 @@
 import { friendships, invites, topSnapshots, users } from '@/db/schema';
 import { createServerFn } from '@tanstack/react-start';
 import { and, desc, eq, gt, isNull, or } from 'drizzle-orm';
-import { getDb } from './db.server';
+import { degradeDb, getDb } from './db.server';
+import { currentUser } from './identity';
 import { type ComparisonLists, compatibilityScore } from './insights';
-import { toUser } from './normalize';
-import { syncListening } from './persistence';
-import { spotifyFetch } from './spotify.server';
 
 const idPattern = /^[A-Za-z0-9]+$/;
 const tokenPattern = /^[A-Za-z0-9_-]{43}$/;
-const identity = async () =>
-  toUser(await spotifyFetch<SpotifyApi.CurrentUsersProfileResponse>('/v1/me'));
 const ordered = (a: string, b: string) =>
   a < b ? ([a, b] as const) : ([b, a] as const);
 
@@ -32,10 +28,10 @@ async function latest(userId: string) {
 }
 
 export const getCompareHome = createServerFn({ method: 'GET' }).handler(
-  async () => {
+  degradeDb({ enabled: false, friends: [] }, async () => {
     const db = getDb();
     if (!db) return { enabled: false, friends: [] };
-    const me = await identity();
+    const me = await currentUser();
     const rows = await db
       .select()
       .from(friendships)
@@ -56,14 +52,14 @@ export const getCompareHome = createServerFn({ method: 'GET' }).handler(
       })
     );
     return { enabled: true, friends };
-  }
+  })
 );
 
 export const createInvite = createServerFn({ method: 'POST' }).handler(
   async () => {
     const db = getDb();
     if (!db) throw new Error('Database disabled');
-    const me = await identity();
+    const me = await currentUser();
     const now = new Date();
     const active = await db
       .select()
@@ -96,38 +92,51 @@ const token = (value: unknown) => {
 };
 export const getInvite = createServerFn({ method: 'GET' })
   .validator(token)
-  .handler(async ({ data }) => {
-    const db = getDb();
-    if (!db) return null;
-    const me = await identity();
-    const row = await db.query.invites.findFirst({
-      where: and(
-        eq(invites.token, data),
-        isNull(invites.revokedAt),
-        gt(invites.expiresAt, new Date())
-      ),
-    });
-    if (!row) return null;
-    const inviter = await db.query.users.findFirst({
-      where: eq(users.id, row.inviterUserId),
-    });
-    return {
-      own: row.inviterUserId === me.id,
-      inviter: {
-        id: row.inviterUserId,
-        name: inviter?.displayName ?? 'Spotify listener',
-        image: inviter?.image ?? null,
-      },
-    };
-  });
+  .handler(
+    degradeDb(null, async ({ data }) => {
+      const db = getDb();
+      if (!db) return null;
+      const me = await currentUser();
+      const row = await db.query.invites.findFirst({
+        where: and(
+          eq(invites.token, data),
+          isNull(invites.revokedAt),
+          gt(invites.expiresAt, new Date())
+        ),
+      });
+      if (!row) return null;
+      const inviter = await db.query.users.findFirst({
+        where: eq(users.id, row.inviterUserId),
+      });
+      return {
+        own: row.inviterUserId === me.id,
+        inviter: {
+          id: row.inviterUserId,
+          name: inviter?.displayName ?? 'Spotify listener',
+          image: inviter?.image ?? null,
+        },
+      };
+    })
+  );
 
 export const acceptInvite = createServerFn({ method: 'POST' })
   .validator(token)
   .handler(async ({ data }) => {
     const db = getDb();
     if (!db) throw new Error('Database disabled');
-    await syncListening();
-    const me = await identity();
+    const me = await currentUser();
+    await db
+      .insert(users)
+      .values({
+        id: me.id,
+        displayName: me.name,
+        image: me.image,
+        createdAt: new Date(),
+      })
+      .onConflictDoUpdate({
+        target: users.id,
+        set: { displayName: me.name, image: me.image },
+      });
     const row = await db.query.invites.findFirst({
       where: and(
         eq(invites.token, data),
@@ -155,35 +164,37 @@ const friendId = (value: unknown) => {
 };
 export const getComparison = createServerFn({ method: 'GET' })
   .validator(friendId)
-  .handler(async ({ data }) => {
-    const db = getDb();
-    if (!db) return null;
-    const me = await identity();
-    const [userA, userB] = ordered(me.id, data);
-    const friendship = await db.query.friendships.findFirst({
-      where: and(eq(friendships.userA, userA), eq(friendships.userB, userB)),
-    });
-    if (!friendship) return null;
-    const [mine, theirs, friend] = await Promise.all([
-      latest(me.id),
-      latest(data),
-      db.query.users.findFirst({ where: eq(users.id, data) }),
-    ]);
-    return {
-      me,
-      friend,
-      mine,
-      theirs,
-      score: compatibilityScore(mine, theirs),
-    };
-  });
+  .handler(
+    degradeDb(null, async ({ data }) => {
+      const db = getDb();
+      if (!db) return null;
+      const me = await currentUser();
+      const [userA, userB] = ordered(me.id, data);
+      const friendship = await db.query.friendships.findFirst({
+        where: and(eq(friendships.userA, userA), eq(friendships.userB, userB)),
+      });
+      if (!friendship) return null;
+      const [mine, theirs, friend] = await Promise.all([
+        latest(me.id),
+        latest(data),
+        db.query.users.findFirst({ where: eq(users.id, data) }),
+      ]);
+      return {
+        me,
+        friend,
+        mine,
+        theirs,
+        score: compatibilityScore(mine, theirs),
+      };
+    })
+  );
 
 export const removeFriend = createServerFn({ method: 'POST' })
   .validator(friendId)
   .handler(async ({ data }) => {
     const db = getDb();
     if (!db) return;
-    const me = await identity();
+    const me = await currentUser();
     const [userA, userB] = ordered(me.id, data);
     await db
       .delete(friendships)

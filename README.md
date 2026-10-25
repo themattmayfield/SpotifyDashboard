@@ -27,3 +27,12 @@ Nitro is pinned to an exact beta version so deploy output does not change unexpe
 ## Listening data (Turso/libSQL)
 
 Set `TURSO_DATABASE_URL` and `TURSO_AUTH_TOKEN`, then run `bun run db:migrate`. In development, the URL defaults to `file:local.db`. In production, persistence-backed features are disabled when `TURSO_DATABASE_URL` is absent; Spotify-only pages continue to work.
+
+## Production setup
+
+1. Create a Turso database.
+2. Set `TURSO_DATABASE_URL` and `TURSO_AUTH_TOKEN` in Vercel.
+3. Run `bun run db:migrate` against that database **before** deploying or enabling persistence. Run it again for every new migration.
+4. Existing users must log in again to grant the `playlist-modify-private` Spotify scope.
+
+Spotify Development Mode has an authorized-user cap. Friends using comparison features must first be added to the app's user allowlist in the Spotify developer dashboard.

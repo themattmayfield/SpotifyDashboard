@@ -2,13 +2,13 @@ import { createServerFn } from '@tanstack/react-start';
 
 import { type TTimeRange, timeRanges } from '@/types';
 import type { Album, Playback, PlaybackControlResult } from '@/types';
+import { currentUser } from './identity';
 import {
   toArtist,
   toPlayedTrack,
   toPlaylist,
   toPlaylistDetail,
   toTrack,
-  toUser,
 } from './normalize';
 import {
   SpotifyApiError,
@@ -33,9 +33,7 @@ function validateRange(range: unknown) {
   return range as TTimeRange;
 }
 
-export const getMe = createServerFn({ method: 'GET' }).handler(async () =>
-  toUser(await spotifyFetch<SpotifyApi.CurrentUsersProfileResponse>('/v1/me'))
-);
+export const getMe = createServerFn({ method: 'GET' }).handler(currentUser);
 
 export const getTopArtists = createServerFn({ method: 'GET' })
   .validator(validateRange)

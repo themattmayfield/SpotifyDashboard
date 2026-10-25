@@ -16,3 +16,20 @@ export function getDb() {
   );
   return instance;
 }
+
+export function degradeDb<TArgs, TResult>(
+  fallback: TResult,
+  handler: (args: TArgs) => Promise<TResult>
+) {
+  return async (args: TArgs) => {
+    try {
+      return await handler(args);
+    } catch (error) {
+      console.error(
+        'Database operation failed',
+        error instanceof Error ? error.message : 'Unknown error'
+      );
+      return fallback;
+    }
+  };
+}

@@ -3,19 +3,28 @@ import { PageHeader } from '@/components/PageHeader';
 import { PageWrapper } from '@/components/PageWrapper';
 import { SavePlaylistButton } from '@/components/SavePlaylistButton';
 import { useClientTimeZone } from '@/components/StoredHistory';
+import { localMonth } from '@/lib/insights';
 import { getRecap } from '@/lib/persistence';
 import { useQuery } from '@tanstack/react-query';
 import { Link, createFileRoute } from '@tanstack/react-router';
 import { Suspense, lazy } from 'react';
 const ShareCard = lazy(() => import('@/components/ShareCard'));
 
-const currentMonth = () => new Date().toISOString().slice(0, 7);
 export const Route = createFileRoute('/_spotify/recap')({
-  component: () => <Recap month={currentMonth()} />,
+  component: CurrentRecap,
 });
 
-export function Recap({ month }: { month: string }) {
+function CurrentRecap() {
   const timeZone = useClientTimeZone();
+  return <Recap month={localMonth(new Date(), timeZone)} timeZone={timeZone} />;
+}
+
+export function Recap({
+  month,
+  timeZone: suppliedTimeZone,
+}: { month: string; timeZone?: string }) {
+  const clientTimeZone = useClientTimeZone();
+  const timeZone = suppliedTimeZone ?? clientTimeZone;
   const { data, isPending } = useQuery({
     queryKey: ['wrapper', 'recap', month, timeZone],
     queryFn: () => getRecap({ data: { month, timeZone } }),

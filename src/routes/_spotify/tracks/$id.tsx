@@ -1,62 +1,101 @@
-import AudioFeaturesChart from '@/components/AudioFeaturesChart';
-import TrackDetailLoading from '@/components/Loading/TrackDetailLoading';
-import { spotifyQueries } from '@/lib/queries';
-import { getYear } from '@/lib/time';
 import { useSuspenseQuery } from '@tanstack/react-query';
-import { createFileRoute } from '@tanstack/react-router';
+import { Link, createFileRoute } from '@tanstack/react-router';
+import { Fragment, Suspense } from 'react';
+
+import { AudioFeatures } from '@/components/AudioFeatures';
+import { OpenInSpotify } from '@/components/OpenInSpotify';
+import { Skeleton } from '@/components/ui/skeleton';
+import { formatDuration } from '@/lib/format';
+import { pageTitle } from '@/lib/head';
+import { cachedTrack, spotifyQueries } from '@/lib/queries';
 
 export const Route = createFileRoute('/_spotify/tracks/$id')({
-  loader: ({ context, params }) =>
-    Promise.all([
-      context.queryClient.ensureQueryData(spotifyQueries.track(params.id)),
-      context.queryClient.ensureQueryData(
-        spotifyQueries.audioFeatures(params.id)
-      ),
-    ]),
+  loader: ({ context: { queryClient }, params }) => {
+    queryClient.prefetchQuery(spotifyQueries.audioFeatures(params.id));
+    return queryClient.ensureQueryData({
+      ...spotifyQueries.track(params.id),
+      ...cachedTrack(queryClient, params.id),
+    });
+  },
+  head: ({ loaderData }) => pageTitle(loaderData?.name ?? 'Track'),
   component: Page,
-  pendingComponent: TrackDetailLoading,
+  pendingComponent: TrackSkeleton,
 });
+
+const containerClassName =
+  'mx-auto flex w-full max-w-7xl flex-col items-center gap-10 px-2 pt-10 md:px-4 md:pt-12';
+const headerClassName = 'flex flex-col items-center gap-3 md:flex-row md:gap-8';
+const imageClassName = 'h-48 w-48 md:h-72 md:w-72';
+
 function Page() {
   const { id } = Route.useParams();
-  const { data: t } = useSuspenseQuery(spotifyQueries.track(id));
-  const { data: features } = useSuspenseQuery(spotifyQueries.audioFeatures(id));
+  const { data: track } = useSuspenseQuery(spotifyQueries.track(id));
   return (
-    <div className="no-scrollbar overflow-x-hidden max-w-7xl px-2 md:px-4 pt-10 md:pt-12 pb-24 flex flex-col items-center mb-[150px]">
-      <div className="max-auto flex flex-col items-center md:flex-row text-[#565656] md:space-x-8">
+    <div className={containerClassName}>
+      <div className={headerClassName}>
         <img
-          className="w-48 h-48 md:w-72 md:h-72"
-          src={t.album.images[0]?.url}
-          alt="Album Artwork"
+          className={`${imageClassName} bg-custom-darkgray`}
+          src={track.image ?? undefined}
+          alt={`${track.album.name} artwork`}
         />
-        <div className="flex flex-col space-y-1 md:space-y-3 text-center md:text-left">
-          <p className="text-white text-3xl md:text-5xl mt-3 md:mt-0">
-            {t.name}
-          </p>
-          <div className="md:text-2xl">
-            {t.artists.map(({ name, id }, i) => (
-              <span key={id}>
-                {name}
-                {i === t.artists.length - 1 ? '' : ','}&nbsp;
-              </span>
+        <div className="flex flex-col items-center gap-1 text-center text-custom-muted md:items-start md:gap-3 md:text-left">
+          <h1 className="text-3xl text-white md:text-5xl">{track.name}</h1>
+          <p className="md:text-2xl">
+            {track.artists.map((artist, index) => (
+              <Fragment key={artist.id}>
+                {index > 0 && ', '}
+                <Link
+                  to="/artists/$id"
+                  params={{ id: artist.id }}
+                  className="hover:text-white hover:underline"
+                >
+                  {artist.name}
+                </Link>
+              </Fragment>
             ))}
-          </div>
-          <div className="md:text-lg">
-            <a
-              href={t.album.external_urls.spotify}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              {t.album.name}
-            </a>{' '}
-            &middot; {getYear(t.album.release_date)}
-          </div>
+          </p>
+          <p className="md:text-lg">
+            {track.album.url ? (
+              <a
+                href={track.album.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hover:text-white hover:underline"
+              >
+                {track.album.name}
+              </a>
+            ) : (
+              track.album.name
+            )}
+            {track.album.year && <> &middot; {track.album.year}</>} &middot;{' '}
+            {formatDuration(track.durationMs)}
+          </p>
+          <OpenInSpotify url={track.url} />
         </div>
       </div>
-      {features && (
-        <div className="w-400 h-[800px] mt-6">
-          <AudioFeaturesChart features={features} />
+      <Suspense fallback={null}>
+        <TrackAudioFeatures id={id} />
+      </Suspense>
+    </div>
+  );
+}
+
+function TrackAudioFeatures({ id }: { id: string }) {
+  const { data } = useSuspenseQuery(spotifyQueries.audioFeatures(id));
+  return data && <AudioFeatures features={data} />;
+}
+
+function TrackSkeleton() {
+  return (
+    <div className={containerClassName}>
+      <div className={headerClassName}>
+        <Skeleton className={`${imageClassName} rounded-none`} />
+        <div className="flex flex-col items-center gap-2 md:items-start md:gap-3">
+          <Skeleton className="h-9 w-48 md:h-12 md:w-80" />
+          <Skeleton className="h-6 w-32 md:h-8" />
+          <Skeleton className="h-6 w-40 md:h-7" />
         </div>
-      )}
+      </div>
     </div>
   );
 }

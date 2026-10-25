@@ -1,10 +1,24 @@
-import { isRedirect } from '@tanstack/react-router';
 import { createServerFn } from '@tanstack/react-start';
 
-import type { TTimeRange } from '@/types';
-import { SpotifyApiError, spotifyFetch } from './spotify.server';
+import { type TTimeRange, timeRanges } from '@/types';
+import {
+  toArtist,
+  toAudioFeatures,
+  toPlayedTrack,
+  toPlaylist,
+  toPlaylistDetail,
+  toTrack,
+  toUser,
+} from './normalize';
+import {
+  SpotifyApiError,
+  spotifyFetch,
+  spotifyFetchOrNull,
+} from './spotify.server';
 
-const timeRanges = ['long_term', 'medium_term', 'short_term'] as const;
+// Lists are always fetched at Spotify's max page size so the home page
+// previews and the "See All" pages share one cache entry per time range.
+const pageSize = 50;
 const idPattern = /^[A-Za-z0-9]+$/;
 
 function validateId(id: unknown) {
@@ -13,125 +27,65 @@ function validateId(id: unknown) {
   return id;
 }
 
-function validateListInput(data: { limit: unknown; timeRange?: unknown }) {
-  const limit = Number(data.limit);
-  if (!Number.isInteger(limit) || limit < 1 || limit > 50)
-    throw new Error('Invalid limit');
-  if (
-    data.timeRange !== undefined &&
-    !timeRanges.includes(data.timeRange as TTimeRange)
-  )
+function validateRange(range: unknown) {
+  if (!timeRanges.includes(range as TTimeRange))
     throw new Error('Invalid time range');
-  return {
-    limit: String(limit),
-    timeRange: data.timeRange as TTimeRange | undefined,
-  };
+  return range as TTimeRange;
 }
 
-export const getMe = createServerFn({ method: 'GET' }).handler(() =>
-  spotifyFetch<SpotifyApi.CurrentUsersProfileResponse>('/v1/me')
+export const getMe = createServerFn({ method: 'GET' }).handler(async () =>
+  toUser(await spotifyFetch<SpotifyApi.CurrentUsersProfileResponse>('/v1/me'))
 );
 
 export const getTopArtists = createServerFn({ method: 'GET' })
-  .validator((data: { limit: string; timeRange: TTimeRange }) => {
-    const valid = validateListInput(data);
-    if (!valid.timeRange) throw new Error('Missing time range');
-    return { limit: valid.limit, timeRange: valid.timeRange };
-  })
-  .handler(
-    async ({ data }) =>
-      (
-        await spotifyFetch<SpotifyApi.UsersTopArtistsResponse>(
-          `/v1/me/top/artists?limit=${data.limit}&time_range=${data.timeRange}`
-        )
-      ).items
-  );
+  .validator(validateRange)
+  .handler(async ({ data }) => {
+    const response = await spotifyFetch<SpotifyApi.UsersTopArtistsResponse>(
+      `/v1/me/top/artists?limit=${pageSize}&time_range=${data}`
+    );
+    return response.items.map(toArtist);
+  });
 
 export const getTopTracks = createServerFn({ method: 'GET' })
-  .validator((data: { limit: string; timeRange: TTimeRange }) => {
-    const valid = validateListInput(data);
-    if (!valid.timeRange) throw new Error('Missing time range');
-    return { limit: valid.limit, timeRange: valid.timeRange };
-  })
-  .handler(
-    async ({ data }) =>
-      (
-        await spotifyFetch<SpotifyApi.UsersTopTracksResponse>(
-          `/v1/me/top/tracks?limit=${data.limit}&time_range=${data.timeRange}`
-        )
-      ).items
-  );
+  .validator(validateRange)
+  .handler(async ({ data }) => {
+    const response = await spotifyFetch<SpotifyApi.UsersTopTracksResponse>(
+      `/v1/me/top/tracks?limit=${pageSize}&time_range=${data}`
+    );
+    return response.items.map(toTrack);
+  });
 
-export const getRecentlyPlayed = createServerFn({ method: 'GET' })
-  .validator(
-    (data: { limit: string }) => validateListInput(data) as { limit: string }
-  )
-  .handler(
-    async ({ data }) =>
-      (
-        await spotifyFetch<SpotifyApi.UsersRecentlyPlayedTracksResponse>(
-          `/v1/me/player/recently-played?limit=${data.limit}`
-        )
-      ).items
-  );
+export const getRecentlyPlayed = createServerFn({ method: 'GET' }).handler(
+  async () => {
+    const response =
+      await spotifyFetch<SpotifyApi.UsersRecentlyPlayedTracksResponse>(
+        `/v1/me/player/recently-played?limit=${pageSize}`
+      );
+    return response.items.map(toPlayedTrack);
+  }
+);
 
 export const getArtist = createServerFn({ method: 'GET' })
   .validator(validateId)
-  .handler(({ data }) =>
-    spotifyFetch<SpotifyApi.SingleArtistResponse>(
-      `/v1/artists/${encodeURIComponent(data)}`
+  .handler(async ({ data }) =>
+    toArtist(
+      await spotifyFetch<SpotifyApi.SingleArtistResponse>(`/v1/artists/${data}`)
     )
   );
 
+/** Resolves to null when neither the library nor the legacy follow API is available. */
 export const getIsFollowingArtist = createServerFn({ method: 'GET' })
   .validator(validateId)
-  .handler(
-    async ({ data }) =>
-      (
-        await spotifyFetch<boolean[]>(
-          `/v1/me/following/contains?type=artist&ids=${encodeURIComponent(data)}`
-        )
-      )[0]
-  );
-
-export const getPlaylists = createServerFn({ method: 'GET' }).handler(
-  async () =>
-    (
-      await spotifyFetch<SpotifyApi.ListOfCurrentUsersPlaylistsResponse>(
-        '/v1/me/playlists'
-      )
-    ).items
-);
-
-export const getPlaylist = createServerFn({ method: 'GET' })
-  .validator(validateId)
-  .handler(({ data }) =>
-    spotifyFetch<SpotifyApi.SinglePlaylistResponse>(
-      `/v1/playlists/${encodeURIComponent(data)}`
-    )
-  );
-
-export const getTrack = createServerFn({ method: 'GET' })
-  .validator(validateId)
-  .handler(({ data }) =>
-    spotifyFetch<SpotifyApi.SingleTrackResponse>(
-      `/v1/tracks/${encodeURIComponent(data)}`
-    )
-  );
-
-export const getAudioFeatures = createServerFn({ method: 'GET' })
-  .validator(validateId)
   .handler(async ({ data }) => {
-    try {
-      return await spotifyFetch<SpotifyApi.AudioFeaturesResponse>(
-        `/v1/audio-features/${encodeURIComponent(data)}`
-      );
-    } catch (error) {
-      if (isRedirect(error)) throw error;
-      if (error instanceof SpotifyApiError && [403, 404].includes(error.status))
-        return null;
-      throw error;
-    }
+    const uri = encodeURIComponent(`spotify:artist:${data}`);
+    const result =
+      (await spotifyFetchOrNull<boolean[]>(
+        `/v1/me/library/contains?uris=${uri}`
+      )) ??
+      (await spotifyFetchOrNull<boolean[]>(
+        `/v1/me/following/contains?type=artist&ids=${data}`
+      ));
+    return result?.[0] ?? null;
   });
 
 export const setFollowing = createServerFn({ method: 'POST' })
@@ -140,9 +94,53 @@ export const setFollowing = createServerFn({ method: 'POST' })
     follow: Boolean(data.follow),
   }))
   .handler(async ({ data }) => {
-    await spotifyFetch<void>('/v1/me/following?type=artist', {
-      method: data.follow ? 'PUT' : 'DELETE',
-      body: JSON.stringify([data.id]),
-      headers: { 'content-type': 'application/json' },
-    });
+    const method = data.follow ? 'PUT' : 'DELETE';
+    const uri = encodeURIComponent(`spotify:artist:${data.id}`);
+    try {
+      await spotifyFetch<void>(`/v1/me/library?uris=${uri}`, { method });
+    } catch (error) {
+      if (!(error instanceof SpotifyApiError) || error.status >= 500)
+        throw error;
+      await spotifyFetch<void>(`/v1/me/following?type=artist&ids=${data.id}`, {
+        method,
+      });
+    }
+  });
+
+export const getPlaylists = createServerFn({ method: 'GET' }).handler(
+  async () => {
+    const response =
+      await spotifyFetch<SpotifyApi.ListOfCurrentUsersPlaylistsResponse>(
+        `/v1/me/playlists?limit=${pageSize}`
+      );
+    return response.items.map(toPlaylist);
+  }
+);
+
+export const getPlaylist = createServerFn({ method: 'GET' })
+  .validator(validateId)
+  .handler(async ({ data }) =>
+    toPlaylistDetail(
+      await spotifyFetch<Parameters<typeof toPlaylistDetail>[0]>(
+        `/v1/playlists/${data}`
+      )
+    )
+  );
+
+export const getTrack = createServerFn({ method: 'GET' })
+  .validator(validateId)
+  .handler(async ({ data }) =>
+    toTrack(
+      await spotifyFetch<SpotifyApi.SingleTrackResponse>(`/v1/tracks/${data}`)
+    )
+  );
+
+/** Resolves to null for apps that no longer have access to audio features. */
+export const getAudioFeatures = createServerFn({ method: 'GET' })
+  .validator(validateId)
+  .handler(async ({ data }) => {
+    const features = await spotifyFetchOrNull<SpotifyApi.AudioFeaturesResponse>(
+      `/v1/audio-features/${data}`
+    );
+    return features ? toAudioFeatures(features) : null;
   });

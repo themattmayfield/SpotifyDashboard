@@ -1,27 +1,27 @@
 import { createFileRoute } from '@tanstack/react-router';
 import { Suspense } from 'react';
 
-import TrackLoading from '@/components/Loading/TrackLoading';
-import PageRangeHeader from '@/components/PageRangeHeader';
+import { PageHeader } from '@/components/PageHeader';
 import { PageWrapper } from '@/components/PageWrapper';
-import Track from '@/components/Track';
+import { RecentTracks, TrackListSkeleton } from '@/components/Tracks';
+import { pageTitle } from '@/lib/head';
 import { spotifyQueries } from '@/lib/queries';
 
 export const Route = createFileRoute('/_spotify/recentTracks')({
   loader: ({ context }) => {
-    context.queryClient.prefetchQuery(
-      spotifyQueries.recentlyPlayed({ limit: '50' })
-    );
+    context.queryClient.prefetchQuery(spotifyQueries.recentlyPlayed());
   },
+  head: () => pageTitle('Recently Played'),
   component: Recent,
 });
+
 function Recent() {
   return (
     <PageWrapper>
-      <PageRangeHeader title="Recently Played" />
-      <div className="flex flex-col gap-4 no-scrollbar text-white mb-[150px] px-2">
-        <Suspense fallback={<TrackLoading count={12} />}>
-          <Track withTrackDuration type="recent" limit="50" />
+      <PageHeader title="Recently Played" />
+      <div className="px-2 text-white">
+        <Suspense fallback={<TrackListSkeleton count={12} />}>
+          <RecentTracks />
         </Suspense>
       </div>
     </PageWrapper>

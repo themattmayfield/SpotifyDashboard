@@ -19,12 +19,15 @@ export const Route = createFileRoute('/_spotify')({
 
 function SpotifyLayout() {
   return (
-    <div className="flex h-screen bg-transparent lg:pr-6 lg:pl-2 no-scrollbar overflow-hidden">
+    <div className="no-scrollbar flex h-screen overflow-hidden bg-transparent lg:pl-2 lg:pr-6">
       <SideNav />
-      <div className="flex flex-col min-h-screen overflow-x-hidden flex-grow no-scrollbar">
+      <main
+        id="main"
+        className="no-scrollbar flex min-h-screen min-w-0 flex-grow flex-col overflow-y-auto overflow-x-hidden pb-[120px] lg:pb-16"
+      >
         <Nav />
         <Outlet />
-      </div>
+      </main>
     </div>
   );
 }

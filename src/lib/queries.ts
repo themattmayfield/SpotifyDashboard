@@ -1,6 +1,12 @@
-import { queryOptions } from '@tanstack/react-query';
+import { type QueryClient, queryOptions } from '@tanstack/react-query';
 
-import type { TTimeRange } from '@/types';
+import type {
+  Artist,
+  PlayedTrack,
+  PlaylistDetail,
+  TTimeRange,
+  Track,
+} from '@/types';
 import {
   getArtist,
   getAudioFeatures,
@@ -14,68 +20,101 @@ import {
   getTrack,
 } from './spotify';
 
-const fiveMinutes = 5 * 60_000;
-
 export const spotifyQueries = {
-  all: ['spotify'] as const,
   me: () =>
+    queryOptions({ queryKey: ['spotify', 'me'], queryFn: () => getMe() }),
+  topArtists: (range: TTimeRange) =>
     queryOptions({
-      queryKey: ['spotify', 'me'] as const,
-      queryFn: () => getMe(),
-      staleTime: fiveMinutes,
+      queryKey: ['spotify', 'topArtists', range],
+      queryFn: () => getTopArtists({ data: range }),
     }),
-  topArtists: (input: { limit: string; timeRange: TTimeRange }) =>
+  topTracks: (range: TTimeRange) =>
     queryOptions({
-      queryKey: ['spotify', 'topArtists', input] as const,
-      queryFn: () => getTopArtists({ data: input }),
-      staleTime: fiveMinutes,
+      queryKey: ['spotify', 'topTracks', range],
+      queryFn: () => getTopTracks({ data: range }),
     }),
-  topTracks: (input: { limit: string; timeRange: TTimeRange }) =>
+  recentlyPlayed: () =>
     queryOptions({
-      queryKey: ['spotify', 'topTracks', input] as const,
-      queryFn: () => getTopTracks({ data: input }),
-      staleTime: fiveMinutes,
-    }),
-  recentlyPlayed: (input: { limit: string }) =>
-    queryOptions({
-      queryKey: ['spotify', 'recentlyPlayed', input] as const,
-      queryFn: () => getRecentlyPlayed({ data: input }),
+      queryKey: ['spotify', 'recentlyPlayed'],
+      queryFn: () => getRecentlyPlayed(),
       staleTime: 30_000,
     }),
   artist: (id: string) =>
     queryOptions({
-      queryKey: ['spotify', 'artist', id] as const,
+      queryKey: ['spotify', 'artist', id],
       queryFn: () => getArtist({ data: id }),
-      staleTime: fiveMinutes,
     }),
   following: (id: string) =>
     queryOptions({
-      queryKey: ['spotify', 'following', id] as const,
+      queryKey: ['spotify', 'following', id],
       queryFn: () => getIsFollowingArtist({ data: id }),
       staleTime: 30_000,
     }),
   playlists: () =>
     queryOptions({
-      queryKey: ['spotify', 'playlists'] as const,
+      queryKey: ['spotify', 'playlists'],
       queryFn: () => getPlaylists(),
-      staleTime: fiveMinutes,
     }),
   playlist: (id: string) =>
     queryOptions({
-      queryKey: ['spotify', 'playlist', id] as const,
+      queryKey: ['spotify', 'playlist', id],
       queryFn: () => getPlaylist({ data: id }),
-      staleTime: fiveMinutes,
     }),
   track: (id: string) =>
     queryOptions({
-      queryKey: ['spotify', 'track', id] as const,
+      queryKey: ['spotify', 'track', id],
       queryFn: () => getTrack({ data: id }),
-      staleTime: fiveMinutes,
     }),
   audioFeatures: (id: string) =>
     queryOptions({
-      queryKey: ['spotify', 'audioFeatures', id] as const,
+      queryKey: ['spotify', 'audioFeatures', id],
       queryFn: () => getAudioFeatures({ data: id }),
-      staleTime: fiveMinutes,
     }),
 };
+
+type Source<T> = { key: string; find: (data: never) => T | undefined };
+
+/**
+ * Detail pages reuse objects already loaded by list queries so opening an
+ * artist or track from a list renders without a second request.
+ */
+function fromCachedLists<T>(client: QueryClient, sources: Source<T>[]) {
+  for (const { key, find } of sources) {
+    for (const query of client.getQueryCache().findAll({
+      queryKey: ['spotify', key],
+    })) {
+      const hit =
+        query.state.data !== undefined && find(query.state.data as never);
+      if (hit)
+        return {
+          initialData: hit,
+          initialDataUpdatedAt: query.state.dataUpdatedAt,
+        };
+    }
+  }
+  return {};
+}
+
+export function cachedArtist(client: QueryClient, id: string) {
+  return fromCachedLists<Artist>(client, [
+    {
+      key: 'topArtists',
+      find: (data: Artist[]) => data.find((a) => a.id === id),
+    },
+  ]);
+}
+
+export function cachedTrack(client: QueryClient, id: string) {
+  const byId = (track: Track) => track.id === id;
+  return fromCachedLists<Track>(client, [
+    { key: 'topTracks', find: (data: Track[]) => data.find(byId) },
+    {
+      key: 'recentlyPlayed',
+      find: (data: PlayedTrack[]) => data.find((p) => byId(p.track))?.track,
+    },
+    {
+      key: 'playlist',
+      find: (data: PlaylistDetail) => data.tracks?.find(byId),
+    },
+  ]);
+}

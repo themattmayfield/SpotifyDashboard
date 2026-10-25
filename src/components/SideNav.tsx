@@ -1,61 +1,41 @@
-import SideNavLink from '@/components/SideNavLink';
 import { AiFillHome } from 'react-icons/ai';
 import { BsMusicNoteBeamed } from 'react-icons/bs';
 import { GiMicrophone } from 'react-icons/gi';
 import { RiHistoryLine, RiPlayListFill } from 'react-icons/ri';
 import { SiSpotify } from 'react-icons/si';
 
+import SideNavLink from '@/components/SideNavLink';
+
+const navItems = [
+  { path: '/', label: 'Home', Icon: AiFillHome },
+  { path: '/artists', label: 'Top artists', Icon: GiMicrophone },
+  { path: '/tracks', label: 'Top tracks', Icon: BsMusicNoteBeamed },
+  { path: '/recentTracks', label: 'Recently played', Icon: RiHistoryLine },
+  { path: '/playlists', label: 'Playlists', Icon: RiPlayListFill },
+] as const;
+
 export default function SideNav() {
   return (
     <>
-      {/* Desktop */}
-      <div className="rounded-xl py-4 w-32 h-screen sticky top-0 hidden lg:flex flex-col space-y-6 items-center pt-12 shrink-0">
+      <nav className="sticky top-0 hidden h-screen w-32 shrink-0 flex-col items-center space-y-6 rounded-xl py-4 pt-12 lg:flex">
         <div className="mb-12">
-          <SiSpotify className="w-14 h-14 text-[#1DB954]" />
+          <SiSpotify className="h-14 w-14 text-spotify-green" />
         </div>
-        <NavLinks classes="w-full flex flex-col items-center" />
-      </div>
-
-      {/* Mobile */}
-      <NavLinks classes="w-full flex lg:hidden bg-spotify-black text-white top-auto fixed bottom-0 right-0 h-[70px] z-50" />
+        <NavLinks className="flex w-full flex-col items-center" />
+      </nav>
+      <nav className="fixed bottom-0 right-0 z-50 h-[70px] w-full bg-spotify-black text-white lg:hidden">
+        <NavLinks className="flex h-full w-full" />
+      </nav>
     </>
   );
 }
 
-const NavLinks = ({ classes }: { classes: string }) => (
-  <div className={classes}>
-    {navItems.map(({ path, Icon, id }) => (
-      <SideNavLink key={id} path={path}>
-        <Icon className="group-hover:text-[#686868] pointer-events-none z-0 transition duration-150 ease-in-out w-6 h-6 text-white" />
+const NavLinks = ({ className }: { className: string }) => (
+  <div className={className}>
+    {navItems.map(({ path, label, Icon }) => (
+      <SideNavLink key={path} path={path} label={label}>
+        <Icon className="pointer-events-none z-0 h-6 w-6 text-white transition duration-150 ease-in-out group-hover:text-custom-lightgray" />
       </SideNavLink>
     ))}
   </div>
 );
-
-const navItems = [
-  {
-    id: 0,
-    path: '/',
-    Icon: AiFillHome,
-  },
-  {
-    id: 1,
-    path: '/artists',
-    Icon: GiMicrophone,
-  },
-  {
-    id: 2,
-    path: '/tracks',
-    Icon: BsMusicNoteBeamed,
-  },
-  {
-    id: 3,
-    path: '/recentTracks',
-    Icon: RiHistoryLine,
-  },
-  {
-    id: 4,
-    path: '/playlists',
-    Icon: RiPlayListFill,
-  },
-];

@@ -1,24 +1,26 @@
 import { createFileRoute } from '@tanstack/react-router';
 import { Suspense } from 'react';
 
-import PlaylistLoading from '@/components/Loading/PlaylistLoading';
-import PageRangeHeader from '@/components/PageRangeHeader';
+import { PageHeader } from '@/components/PageHeader';
 import { PageWrapper } from '@/components/PageWrapper';
-import { UserPlaylists } from '@/components/Playlist';
+import { PlaylistsSkeleton, UserPlaylists } from '@/components/Playlists';
+import { pageTitle } from '@/lib/head';
 import { spotifyQueries } from '@/lib/queries';
 
 export const Route = createFileRoute('/_spotify/playlists/')({
   loader: ({ context }) => {
     context.queryClient.prefetchQuery(spotifyQueries.playlists());
   },
+  head: () => pageTitle('Playlists'),
   component: Playlists,
 });
+
 function Playlists() {
   return (
     <PageWrapper>
-      <PageRangeHeader title="Playlists" />
-      <div className="px-2 grid grid-cols-2 place-items-center lg:grid-cols-3 2xl:grid-cols-5 gap-2 md:gap-6 no-scrollbar mb-[150px]">
-        <Suspense fallback={<PlaylistLoading count={50} />}>
+      <PageHeader title="Playlists" />
+      <div className="grid grid-cols-2 gap-4 px-2 md:gap-6 lg:grid-cols-3 2xl:grid-cols-5">
+        <Suspense fallback={<PlaylistsSkeleton count={10} />}>
           <UserPlaylists />
         </Suspense>
       </div>

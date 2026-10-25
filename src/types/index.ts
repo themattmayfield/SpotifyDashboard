@@ -1,1 +1,53 @@
-export type TTimeRange = 'short_term' | 'medium_term' | 'long_term';
+export const timeRanges = ['long_term', 'medium_term', 'short_term'] as const;
+export type TTimeRange = (typeof timeRanges)[number];
+
+export type ArtistRef = { id: string; name: string };
+
+export type Artist = {
+  id: string;
+  name: string;
+  image: string | null;
+  thumb: string | null;
+  genres: string[];
+  followers: number | null;
+  popularity: number | null;
+  url: string | null;
+};
+
+export type Track = {
+  id: string;
+  name: string;
+  durationMs: number;
+  image: string | null;
+  thumb: string | null;
+  artists: ArtistRef[];
+  album: { name: string; url: string | null; year: string | null };
+  url: string | null;
+};
+
+export type PlayedTrack = { playedAt: string; track: Track };
+
+export type Playlist = {
+  id: string;
+  name: string;
+  image: string | null;
+  owner: string | null;
+  trackCount: number | null;
+  url: string | null;
+};
+
+/** `tracks` is null when Spotify withholds playlist contents. */
+export type PlaylistDetail = Playlist & { tracks: Track[] | null };
+
+export type User = { name: string; image: string | null };
+
+export const audioFeatureKeys = [
+  'acousticness',
+  'danceability',
+  'energy',
+  'instrumentalness',
+  'liveness',
+  'speechiness',
+  'valence',
+] as const;
+export type AudioFeatures = Record<(typeof audioFeatureKeys)[number], number>;

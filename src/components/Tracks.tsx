@@ -1,0 +1,118 @@
+import { useSuspenseQuery } from '@tanstack/react-query';
+import { Link } from '@tanstack/react-router';
+
+import { Skeleton } from '@/components/ui/skeleton';
+import { formatDuration } from '@/lib/format';
+import { spotifyQueries } from '@/lib/queries';
+import type { TTimeRange, Track } from '@/types';
+
+type ListOptions = { showDuration?: boolean; ranked?: boolean };
+
+export function TopTracks({
+  range,
+  limit,
+  ...options
+}: { range: TTimeRange; limit?: number } & ListOptions) {
+  const { data } = useSuspenseQuery(spotifyQueries.topTracks(range));
+  return <TrackList tracks={data.slice(0, limit)} {...options} />;
+}
+
+export function RecentTracks(options: ListOptions) {
+  const { data } = useSuspenseQuery(spotifyQueries.recentlyPlayed());
+  return <TrackList tracks={data.map(({ track }) => track)} {...options} />;
+}
+
+export function TrackList({
+  tracks,
+  showDuration = true,
+  ranked = false,
+}: { tracks: Track[] } & ListOptions) {
+  return (
+    <ol className="flex flex-col gap-4">
+      {tracks.map((track, index) => (
+        // The same track can appear more than once in history and playlists.
+        <li
+          key={`${track.id}-${index}`}
+          className="flex items-center gap-4 rounded-md transition duration-150 ease-in-out hover:bg-custom-darkgray"
+        >
+          {ranked && (
+            <span className="w-6 shrink-0 text-right text-sm tabular-nums text-custom-muted">
+              {index + 1}
+            </span>
+          )}
+          <Link className="shrink-0" to="/tracks/$id" params={{ id: track.id }}>
+            <img
+              className="h-20 w-20 bg-custom-darkgray"
+              src={track.thumb ?? undefined}
+              alt=""
+              loading="lazy"
+            />
+          </Link>
+          <div className="flex min-w-0 flex-1 flex-col">
+            <Link
+              to="/tracks/$id"
+              params={{ id: track.id }}
+              className="truncate hover:underline"
+            >
+              {track.name}
+            </Link>
+            <div className="flex min-w-0 flex-col text-custom-muted md:flex-row">
+              {track.artists[0] && (
+                <Link
+                  to="/artists/$id"
+                  params={{ id: track.artists[0].id }}
+                  className="shrink-0 truncate hover:underline"
+                >
+                  {track.artists[0].name}
+                </Link>
+              )}
+              <span className="hidden md:block">&nbsp;&middot;&nbsp;</span>
+              <span className="truncate">{track.album.name}</span>
+            </div>
+            {showDuration && (
+              <span className="text-custom-muted md:hidden">
+                {formatDuration(track.durationMs)}
+              </span>
+            )}
+          </div>
+          {showDuration && (
+            <span className="hidden shrink-0 pr-2 tabular-nums text-custom-muted md:block">
+              {formatDuration(track.durationMs)}
+            </span>
+          )}
+        </li>
+      ))}
+    </ol>
+  );
+}
+
+const widths = {
+  title: [94, 163, 121, 188, 76, 145],
+  detail: [42, 87, 63, 96, 54, 75],
+} as const;
+
+export function TrackListSkeleton({
+  count,
+  ranked = false,
+}: { count: number; ranked?: boolean }) {
+  return (
+    <div className="flex flex-col gap-4">
+      {Array.from({ length: count }, (_, index) => (
+        <div key={index} className="flex items-center gap-4">
+          {ranked && <span className="w-6 shrink-0" />}
+          <Skeleton className="h-20 w-20 shrink-0 rounded-none" />
+          <div className="flex flex-col gap-2">
+            <Skeleton
+              className="h-5"
+              style={{ width: widths.title[index % widths.title.length] }}
+            />
+            <Skeleton
+              className="h-4"
+              style={{ width: widths.detail[index % widths.detail.length] }}
+            />
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}

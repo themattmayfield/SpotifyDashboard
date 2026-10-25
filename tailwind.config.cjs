@@ -1,12 +1,7 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   darkMode: ['class'],
-  content: [
-    './pages/**/*.{ts,tsx}',
-    './components/**/*.{ts,tsx}',
-    './app/**/*.{ts,tsx}',
-    './src/**/*.{ts,tsx}',
-  ],
+  content: ['./src/**/*.{ts,tsx}'],
   theme: {
     container: {
       center: true,
@@ -23,6 +18,8 @@ module.exports = {
         'custom-darkgray2': '#0E0E0E',
         'spotify-black': '#121212',
         'custom-gray': '#383838',
+        'custom-lightgray': '#686868',
+        'custom-muted': '#565656',
       },
       keyframes: {
         'accordion-down': {

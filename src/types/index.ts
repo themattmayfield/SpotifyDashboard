@@ -46,6 +46,20 @@ export type Album = {
 };
 
 export type PlayedTrack = { playedAt: string; track: Track };
+export type SnapshotItem = {
+  id: string;
+  name: string;
+  image: string | null;
+  subtitle?: string;
+  durationMs?: number;
+};
+export type StoredTrack = {
+  id: string;
+  name: string;
+  image: string | null;
+  artists: ArtistRef[];
+  durationMs: number;
+};
 
 export type Playlist = {
   id: string;

@@ -1,4 +1,4 @@
-import type { SnapshotItem, StoredTrack } from '@/db/schema';
+import type { SnapshotItem, StoredTrack } from '@/types';
 import type { Artist, TTimeRange, Track } from '@/types';
 
 export function tasteBreakdown(

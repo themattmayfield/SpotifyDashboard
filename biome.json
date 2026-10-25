@@ -10,7 +10,8 @@
       ".output",
       ".vercel",
       ".tanstack",
-      "src/routeTree.gen.ts"
+      "src/routeTree.gen.ts",
+      "convex/_generated"
     ]
   },
   "organizeImports": {

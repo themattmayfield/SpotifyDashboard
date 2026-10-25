@@ -44,4 +44,3 @@ next-env.d.ts
 .output/
 .tanstack/
 .playwright-mcp/
-local.db*

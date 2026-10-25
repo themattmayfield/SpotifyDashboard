@@ -24,15 +24,11 @@ Set the same environment variables in Vercel and run `bun run build`. Nitro auto
 Nitro is pinned to an exact beta version so deploy output does not change unexpectedly between installs.
 # Wrapper
 
-## Listening data (Turso/libSQL)
-
-Set `TURSO_DATABASE_URL` and `TURSO_AUTH_TOKEN`, then run `bun run db:migrate`. In development, the URL defaults to `file:local.db`. In production, persistence-backed features are disabled when `TURSO_DATABASE_URL` is absent; Spotify-only pages continue to work.
-
 ## Production setup
 
-1. Create a Turso database.
-2. Set `TURSO_DATABASE_URL` and `TURSO_AUTH_TOKEN` in Vercel.
-3. Run `bun run db:migrate` against that database **before** deploying or enabling persistence. Run it again for every new migration.
+1. Create a Convex project and production deployment.
+2. Generate a random `CONVEX_SERVER_SECRET`, set it on the production deployment with `npx convex env set CONVEX_SERVER_SECRET <value>`, and set the same value plus `CONVEX_DEPLOY_KEY` in Vercel.
+3. Set the Vercel build command to `npx convex deploy --cmd 'bun run build'`. Convex deploy injects `CONVEX_URL` into the build; `--cmd-url-env-var-name CONVEX_URL` may be supplied explicitly.
 4. Existing users must log in again to grant the `playlist-modify-private` Spotify scope.
 
 Spotify Development Mode has an authorized-user cap. Friends using comparison features must first be added to the app's user allowlist in the Spotify developer dashboard.

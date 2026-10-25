@@ -5,6 +5,15 @@ import { getYear } from '@/lib/time';
 import AudioFeaturesChart from '@/components/AudioFeaturesChart';
 import { Skeleton } from '@/components/ui/skeleton';
 export const Route = createFileRoute('/_spotify/tracks/$id')({
+  loader: ({ context, params }) =>
+    Promise.all([
+      context.queryClient.ensureQueryData(
+        spotifyQuery('track', { id: params.id })
+      ),
+      context.queryClient.ensureQueryData(
+        spotifyQuery('audio', { id: params.id })
+      ),
+    ]),
   component: Page,
   pendingComponent: () => (
     <div className="max-w-7xl mx-auto px-2 md:px-4 pt-10 md:pt-12 pb-24 flex flex-col items-center">

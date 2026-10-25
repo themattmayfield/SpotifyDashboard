@@ -1,7 +1,14 @@
+import { spotifyQuery } from '@/lib/queries';
 import { createFileRoute } from '@tanstack/react-router';
 import { SinglePlaylist } from '@/components/Playlist';
 import Track from '@/components/Track';
 export const Route = createFileRoute('/_spotify/playlists/$id')({
+  loader: ({ context, params }) =>
+    Promise.all([
+      context.queryClient.ensureQueryData(
+        spotifyQuery('playlist', { id: params.id })
+      ),
+    ]),
   component: Page,
 });
 function Page() {

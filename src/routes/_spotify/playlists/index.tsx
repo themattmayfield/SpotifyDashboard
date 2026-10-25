@@ -1,8 +1,11 @@
+import { spotifyQuery } from '@/lib/queries';
 import { createFileRoute } from '@tanstack/react-router';
 import PageRangeHeader from '@/components/PageRangeHeader';
 import { PageWrapper } from '@/components/PageWrapper';
 import { UserPlaylists } from '@/components/Playlist';
 export const Route = createFileRoute('/_spotify/playlists/')({
+  loader: ({ context }) =>
+    context.queryClient.ensureQueryData(spotifyQuery('playlists')),
   component: () => (
     <PageWrapper>
       <PageRangeHeader title="Playlists" />

@@ -5,6 +5,15 @@ import FollowButton from '@/components/FollowButton';
 import numeral from 'numeral';
 import { Skeleton } from '@/components/ui/skeleton';
 export const Route = createFileRoute('/_spotify/artists/$id')({
+  loader: ({ context, params }) =>
+    Promise.all([
+      context.queryClient.ensureQueryData(
+        spotifyQuery('artist', { id: params.id })
+      ),
+      context.queryClient.ensureQueryData(
+        spotifyQuery('following', { id: params.id })
+      ),
+    ]),
   component: Page,
   pendingComponent: Loading,
 });

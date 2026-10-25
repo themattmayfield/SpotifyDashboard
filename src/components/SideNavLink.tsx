@@ -6,7 +6,13 @@ export default function SideNavLink({
   label,
   children,
 }: {
-  path: '/' | '/artists' | '/tracks' | '/recentTracks' | '/playlists';
+  path:
+    | '/'
+    | '/artists'
+    | '/tracks'
+    | '/recentTracks'
+    | '/playlists'
+    | '/recap';
   label: string;
   children: ReactNode;
 }) {

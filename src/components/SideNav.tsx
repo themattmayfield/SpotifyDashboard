@@ -1,7 +1,11 @@
 import { AiFillHome } from 'react-icons/ai';
 import { BsMusicNoteBeamed } from 'react-icons/bs';
 import { GiMicrophone } from 'react-icons/gi';
-import { RiHistoryLine, RiPlayListFill } from 'react-icons/ri';
+import {
+  RiCalendarEventFill,
+  RiHistoryLine,
+  RiPlayListFill,
+} from 'react-icons/ri';
 import { SiSpotify } from 'react-icons/si';
 
 import SideNavLink from '@/components/SideNavLink';
@@ -11,6 +15,7 @@ const navItems = [
   { path: '/artists', label: 'Artists', Icon: GiMicrophone },
   { path: '/tracks', label: 'Tracks', Icon: BsMusicNoteBeamed },
   { path: '/recentTracks', label: 'Recent', Icon: RiHistoryLine },
+  { path: '/recap', label: 'Recap', Icon: RiCalendarEventFill },
   { path: '/playlists', label: 'Playlists', Icon: RiPlayListFill },
 ] as const;
 

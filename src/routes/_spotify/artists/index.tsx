@@ -2,6 +2,7 @@ import { createFileRoute } from '@tanstack/react-router';
 import { Suspense } from 'react';
 
 import { ArtistTiles, ArtistTilesSkeleton } from '@/components/ArtistTiles';
+import { DroppedOff } from '@/components/DroppedOff';
 import { PageHeader } from '@/components/PageHeader';
 import { PageWrapper } from '@/components/PageWrapper';
 import { pageTitle } from '@/lib/head';
@@ -27,6 +28,7 @@ function Artists() {
           <ArtistTiles range={range} />
         </Suspense>
       </div>
+      <DroppedOff kind="artists" range={range} />
     </PageWrapper>
   );
 }

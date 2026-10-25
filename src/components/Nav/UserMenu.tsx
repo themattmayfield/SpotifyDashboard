@@ -8,6 +8,7 @@ import {
   PopoverTrigger,
 } from '@/components/ui/popover';
 import { logout } from '@/lib/auth';
+import { deleteWrapperData } from '@/lib/persistence';
 import type { User } from '@/types';
 
 export default function UserMenu({ user }: { user: User }) {
@@ -65,6 +66,18 @@ export default function UserMenu({ user }: { user: User }) {
                 Logout
               </button>
             </form>
+            <button
+              className="text-left text-sm text-red-600 hover:text-red-400"
+              type="button"
+              onClick={async () => {
+                if (confirm('Delete all data Wrapper has stored for you?')) {
+                  await deleteWrapperData();
+                  setIsOpen(false);
+                }
+              }}
+            >
+              Delete my Wrapper data
+            </button>
           </div>
         </PopoverContent>
       </Popover>

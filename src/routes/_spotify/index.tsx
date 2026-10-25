@@ -8,6 +8,7 @@ import {
   RecentlyPlayedSkeleton,
 } from '@/components/RecentlyPlayed';
 import { SectionHeader } from '@/components/SectionHeader';
+import { Streaks } from '@/components/Streaks';
 import { TopTracks, TrackListSkeleton } from '@/components/Tracks';
 import { spotifyQueries } from '@/lib/queries';
 
@@ -28,6 +29,7 @@ function Home() {
     <div className="flex flex-col gap-16 lg:flex-row lg:gap-4">
       <aside className="flex flex-col gap-4 px-2 lg:order-last lg:w-72 lg:px-0">
         <NowPlaying />
+        <Streaks />
         <Suspense fallback={<RecentlyPlayedSkeleton />}>
           <RecentlyPlayed />
         </Suspense>

@@ -1,9 +1,10 @@
-import { useSuspenseQuery } from '@tanstack/react-query';
+import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import { Link } from '@tanstack/react-router';
 
 import { EmptyState } from '@/components/EmptyState';
 import { Skeleton } from '@/components/ui/skeleton';
 import { formatDuration } from '@/lib/format';
+import { getMovement } from '@/lib/persistence';
 import { spotifyQueries } from '@/lib/queries';
 import type { TTimeRange, Track } from '@/types';
 
@@ -15,7 +16,17 @@ export function TopTracks({
   ...options
 }: { range: TTimeRange; limit?: number } & ListOptions) {
   const { data } = useSuspenseQuery(spotifyQueries.topTracks(range));
-  return <TrackList tracks={data.slice(0, limit)} {...options} />;
+  const movement = useQuery({
+    queryKey: ['wrapper', 'movement', 'tracks', range],
+    queryFn: () => getMovement({ data: { kind: 'tracks', range } }),
+  });
+  return (
+    <TrackList
+      tracks={data.slice(0, limit)}
+      movements={movement.data?.movements}
+      {...options}
+    />
+  );
 }
 
 export function RecentTracks(options: ListOptions) {
@@ -27,7 +38,11 @@ export function TrackList({
   tracks,
   showDuration = true,
   ranked = false,
-}: { tracks: Track[] } & ListOptions) {
+  movements,
+}: {
+  tracks: Track[];
+  movements?: Record<string, { previousRank?: number | null }>;
+} & ListOptions) {
   if (!tracks.length) return <EmptyState />;
   return (
     <ol className="flex flex-col gap-4">
@@ -42,6 +57,19 @@ export function TrackList({
               {index + 1}
             </span>
           )}
+          {ranked &&
+            movements?.[track.id]?.previousRank !== undefined &&
+            movements[track.id].previousRank !== index + 1 && (
+              <span
+                className={`w-10 text-xs ${movements[track.id].previousRank === null || (movements[track.id].previousRank ?? 0) > index + 1 ? 'text-green-400' : 'text-red-400'}`}
+              >
+                {movements[track.id].previousRank === null
+                  ? 'NEW'
+                  : (movements[track.id].previousRank ?? 0) > index + 1
+                    ? `▲${(movements[track.id].previousRank ?? 0) - index - 1}`
+                    : `▼${index + 1 - (movements[track.id].previousRank ?? 0)}`}
+              </span>
+            )}
           <Link className="shrink-0" to="/tracks/$id" params={{ id: track.id }}>
             <img
               className="h-20 w-20 bg-custom-darkgray"

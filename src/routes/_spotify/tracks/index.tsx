@@ -1,6 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router';
 import { Suspense } from 'react';
 
+import { DroppedOff } from '@/components/DroppedOff';
 import { PageHeader } from '@/components/PageHeader';
 import { PageWrapper } from '@/components/PageWrapper';
 import { TopTracks, TrackListSkeleton } from '@/components/Tracks';
@@ -30,6 +31,7 @@ function Tracks() {
           <TopTracks range={range} ranked />
         </Suspense>
       </div>
+      <DroppedOff kind="tracks" range={range} />
     </PageWrapper>
   );
 }

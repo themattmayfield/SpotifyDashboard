@@ -105,6 +105,7 @@ export function toPlaylistDetail(raw: RawPlaylist): PlaylistDetail {
 
 export function toUser(raw: SpotifyApi.CurrentUsersProfileResponse): User {
   return {
+    id: raw.id,
     name: raw.display_name ?? raw.id,
     image: pickImage(raw.images, 160),
   };

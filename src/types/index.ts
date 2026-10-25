@@ -49,7 +49,7 @@ export type Playlist = {
 /** `tracks` is null when Spotify withholds playlist contents. */
 export type PlaylistDetail = Playlist & { tracks: Track[] | null };
 
-export type User = { name: string; image: string | null };
+export type User = { id: string; name: string; image: string | null };
 
 export type Playback = {
   isPlaying: boolean;

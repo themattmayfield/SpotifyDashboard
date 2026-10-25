@@ -22,3 +22,8 @@ Set the same environment variables in Vercel and run `bun run build`. Nitro auto
 `vercel.json` pins the framework preset to TanStack Start, so the project's dashboard preset doesn't matter.
 
 Nitro is pinned to an exact beta version so deploy output does not change unexpectedly between installs.
+# Wrapper
+
+## Listening data (Turso/libSQL)
+
+Set `TURSO_DATABASE_URL` and `TURSO_AUTH_TOKEN`, then run `bun run db:migrate`. In development, the URL defaults to `file:local.db`. In production, persistence-backed features are disabled when `TURSO_DATABASE_URL` is absent; Spotify-only pages continue to work.

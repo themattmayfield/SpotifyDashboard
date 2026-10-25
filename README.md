@@ -19,4 +19,6 @@ Create `.env.local` with:
 
 Set the same environment variables in Vercel and run `bun run build`. Nitro automatically detects the Vercel preset when `VERCEL=1` and writes Build Output API artifacts to `.vercel/output`.
 
+`vercel.json` pins the framework preset to TanStack Start, so the project's dashboard preset doesn't matter.
+
 Nitro is pinned to an exact beta version so deploy output does not change unexpectedly between installs.

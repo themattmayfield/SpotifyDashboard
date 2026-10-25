@@ -1,16 +1,16 @@
 import Subtitle from './Subtitle';
-import { spotifyQuery } from '@/lib/queries';
+import { spotifyQueries } from '@/lib/queries';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { Link } from '@tanstack/react-router';
 export default function TopArtists() {
   const { data } = useSuspenseQuery(
-    spotifyQuery('topArtists', { limit: '4', timeRange: 'short_term' })
+    spotifyQueries.topArtists({ limit: '4', timeRange: 'short_term' })
   );
   return (
     <div className="flexs flex-cols max-w-minzz lg:mx-auto">
       <Subtitle link="/artists" subtitle="Recent Artist" />
       <div className="grid grid-cols-2 gap-3 w-full">
-        {(data as SpotifyApi.ArtistObjectFull[]).map((card) => (
+        {data.map((card) => (
           <Link key={card.id} to="/artists/$id" params={{ id: card.id }}>
             <div
               style={{

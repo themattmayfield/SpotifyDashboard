@@ -1,5 +1,5 @@
 import { cn } from '@/lib/cn';
-import { spotifyQuery } from '@/lib/queries';
+import { spotifyQueries } from '@/lib/queries';
 import type { TTimeRange } from '@/types';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { Link } from '@tanstack/react-router';
@@ -15,10 +15,9 @@ export default function Card({
   timeRange: TTimeRange;
 }) {
   const { data } = useSuspenseQuery(
-    spotifyQuery('topArtists', { limit, timeRange })
+    spotifyQueries.topArtists({ limit, timeRange })
   );
-  const artists = data as SpotifyApi.ArtistObjectFull[];
-  return artists.map((artist) => (
+  return data.map((artist) => (
     <div key={artist.id}>
       <Link to="/artists/$id" params={{ id: artist.id }}>
         <div

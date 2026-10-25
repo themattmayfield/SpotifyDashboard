@@ -26,7 +26,6 @@ const Nav = ({ user }: { user: SpotifyApi.CurrentUsersProfileResponse }) => {
             className="rounded-full h-10 lg:h-16 bg-custom-darkgray flex justify-between items-center space-x-2 lg:space-x-3 focus:outline-none"
           >
             <AiFillCaretDown className="h-4 w-4 ml-4 text-[#686868]" />
-            {/* {user && ( */}
             {user?.images?.[0]?.url ? (
               <img
                 className="h-10 w-10 lg:h-16 lg:w-16 rounded-full"
@@ -38,7 +37,6 @@ const Nav = ({ user }: { user: SpotifyApi.CurrentUsersProfileResponse }) => {
                 <RiUser6Fill className="text-[#686868] h-full w-full" />
               </div>
             )}
-            {/* )} */}
           </button>
         </PopoverTrigger>
         <PopoverContent

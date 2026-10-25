@@ -1,17 +1,16 @@
-import { spotifyQuery } from '@/lib/queries';
+import { spotifyQueries } from '@/lib/queries';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { Link } from '@tanstack/react-router';
 export default function RightSideBar() {
   const { data } = useSuspenseQuery(
-    spotifyQuery('recent', { limit: '6' }, 30_000)
+    spotifyQueries.recentlyPlayed({ limit: '6' })
   );
-  const items = data as SpotifyApi.PlayHistoryObject[];
   return (
     <div className="rounded-3xl bg-custom-darkgray py-4 w-full lg:w-72 text-white px-4">
       <p className="text-xl mb-6 ">Recently Played</p>
       <div>
         <div className="grid grid-cols-2 lg:flex flex-col gap-x-2 lg:gap-x-0 gap-y-2 lg:space-y-6">
-          {items.map((item, index) => (
+          {data.map((item, index) => (
             <div key={`${item.played_at}-${index}`} className="flex">
               <div className="mr-4">
                 <Link

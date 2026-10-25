@@ -1,4 +1,4 @@
-import { spotifyQuery } from '@/lib/queries';
+import { spotifyQueries } from '@/lib/queries';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { Link } from '@tanstack/react-router';
 import pluralize from 'pluralize';
@@ -44,20 +44,13 @@ export default function Playlist({
   );
 }
 export function UserPlaylists() {
-  const { data } = useSuspenseQuery(spotifyQuery('playlists'));
-  return (data as SpotifyApi.PlaylistObjectSimplified[]).map((p) => (
-    <Playlist key={p.id} playlist={p} />
-  ));
+  const { data } = useSuspenseQuery(spotifyQueries.playlists());
+  return data.map((p) => <Playlist key={p.id} playlist={p} />);
 }
 export function SinglePlaylist({
   id,
   analytic,
 }: { id: string; analytic?: boolean }) {
-  const { data } = useSuspenseQuery(spotifyQuery('playlist', { id }));
-  return (
-    <Playlist
-      analytic={analytic}
-      playlist={data as SpotifyApi.SinglePlaylistResponse}
-    />
-  );
+  const { data } = useSuspenseQuery(spotifyQueries.playlist(id));
+  return <Playlist analytic={analytic} playlist={data} />;
 }

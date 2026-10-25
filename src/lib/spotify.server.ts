@@ -1,5 +1,7 @@
-import { spotifyBaseUrl } from '@/constants';
+import { redirect } from '@tanstack/react-router';
 import { getCookie } from '@tanstack/react-start/server';
+
+import { spotifyBaseUrl } from '@/constants';
 import { refreshAccessToken } from './auth.server';
 
 export async function spotifyFetch<T>(
@@ -7,7 +9,7 @@ export async function spotifyFetch<T>(
   init: RequestInit = {}
 ): Promise<T> {
   let token = getCookie('access_token') ?? (await refreshAccessToken());
-  if (!token) throw new Error('Unauthorized');
+  if (!token) throw redirect({ to: '/login' });
   const request = () =>
     fetch(`${spotifyBaseUrl}${path}`, {
       ...init,
@@ -16,7 +18,7 @@ export async function spotifyFetch<T>(
   let response = await request();
   if (response.status === 401) {
     token = await refreshAccessToken();
-    if (!token) throw new Error('Unauthorized');
+    if (!token) throw redirect({ to: '/login' });
     response = await request();
   }
   if (!response.ok)

@@ -1,20 +1,31 @@
+import {
+  useMutation,
+  useQueryClient,
+  useSuspenseQuery,
+} from '@tanstack/react-query';
+
+import { spotifyQueries } from '@/lib/queries';
 import { setFollowing } from '@/lib/spotify';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+
 export default function FollowButton({
-  isFollowingArtist,
   id,
 }: { isFollowingArtist: boolean; id: string }) {
   const client = useQueryClient();
-  const key = ['spotify', 'following', { id }];
+  const options = spotifyQueries.following(id);
+  const { data: following } = useSuspenseQuery(options);
   const mutation = useMutation({
     mutationFn: (follow: boolean) => setFollowing({ data: { id, follow } }),
     onMutate: async (follow) => {
-      await client.cancelQueries({ queryKey: key });
-      client.setQueryData(key, follow);
+      await client.cancelQueries({ queryKey: options.queryKey });
+      const previous = client.getQueryData(options.queryKey);
+      client.setQueryData(options.queryKey, follow);
+      return { previous };
     },
-    onSettled: () => client.invalidateQueries({ queryKey: key }),
+    onError: (_error, _follow, context) =>
+      client.setQueryData(options.queryKey, context?.previous),
+    onSettled: () => client.invalidateQueries({ queryKey: options.queryKey }),
   });
-  const following = mutation.isPending ? !isFollowingArtist : isFollowingArtist;
+
   return (
     <button
       type="button"

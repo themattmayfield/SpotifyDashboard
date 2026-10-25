@@ -1,33 +1,57 @@
-import { spotifyQuery } from '@/lib/queries';
-import { millisToMinutesAndSeconds } from '@/lib/time';
-import type { TTimeRange } from '@/types';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { Link } from '@tanstack/react-router';
+
+import { spotifyQueries } from '@/lib/queries';
+import { millisToMinutesAndSeconds } from '@/lib/time';
+import type { TTimeRange } from '@/types';
+
 type Props = { withTrackDuration: boolean } & (
   | { type: 'playlist'; playlistId: string }
   | { type: 'topTracks'; limit: string; timeRange: TTimeRange }
   | { type: 'recent'; limit: string }
 );
+
 export default function Track(props: Props) {
-  const query =
-    props.type === 'playlist'
-      ? spotifyQuery('playlist', { id: props.playlistId })
-      : props.type === 'topTracks'
-        ? spotifyQuery('topTracks', {
-            limit: props.limit,
-            timeRange: props.timeRange,
-          })
-        : spotifyQuery('recent', { limit: props.limit }, 30_000);
-  const { data } = useSuspenseQuery(query);
-  const tracks = (
-    props.type === 'playlist'
-      ? (data as SpotifyApi.SinglePlaylistResponse).tracks.items.map(
-          (x) => x.track
-        )
-      : props.type === 'topTracks'
-        ? data
-        : (data as SpotifyApi.PlayHistoryObject[]).map((x) => x.track)
-  ) as SpotifyApi.TrackObjectFull[];
+  if (props.type === 'playlist') return <PlaylistTracks {...props} />;
+  if (props.type === 'topTracks') return <TopTracks {...props} />;
+  return <RecentTracks {...props} />;
+}
+
+function PlaylistTracks(props: Extract<Props, { type: 'playlist' }>) {
+  const { data } = useSuspenseQuery(spotifyQueries.playlist(props.playlistId));
+  return (
+    <TrackList
+      tracks={data.tracks.items.flatMap(({ track }) => (track ? [track] : []))}
+      withTrackDuration={props.withTrackDuration}
+    />
+  );
+}
+
+function TopTracks(props: Extract<Props, { type: 'topTracks' }>) {
+  const { data } = useSuspenseQuery(
+    spotifyQueries.topTracks({ limit: props.limit, timeRange: props.timeRange })
+  );
+  return (
+    <TrackList tracks={data} withTrackDuration={props.withTrackDuration} />
+  );
+}
+
+function RecentTracks(props: Extract<Props, { type: 'recent' }>) {
+  const { data } = useSuspenseQuery(
+    spotifyQueries.recentlyPlayed({ limit: props.limit })
+  );
+  return (
+    <TrackList
+      tracks={data.map(({ track }) => track)}
+      withTrackDuration={props.withTrackDuration}
+    />
+  );
+}
+
+function TrackList({
+  tracks,
+  withTrackDuration,
+}: { tracks: SpotifyApi.TrackObjectFull[]; withTrackDuration: boolean }) {
   return tracks.map((track) => (
     <div
       key={track.id}
@@ -56,14 +80,14 @@ export default function Track(props: Props) {
             <span className="hidden md:block">&nbsp;&middot;&nbsp;&nbsp;</span>
             <p className="whitespace-nowrap">{track.album.name}</p>
           </div>
-          {props.withTrackDuration && (
+          {withTrackDuration && (
             <p className="md:hidden text-[#565656]">
               {millisToMinutesAndSeconds(track.duration_ms)}
             </p>
           )}
         </div>
       </div>
-      {props.withTrackDuration && (
+      {withTrackDuration && (
         <div className="hidden md:block text-[#565656]">
           {millisToMinutesAndSeconds(track.duration_ms)}
         </div>

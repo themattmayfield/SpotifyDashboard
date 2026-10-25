@@ -111,5 +111,12 @@ export function clearAuthCookies() {
     deleteCookie(name, { path: '/' });
 }
 export async function ensureAccessToken() {
-  return getCookie('access_token') ?? refreshAccessToken();
+  const accessToken = getCookie('access_token');
+  if (!accessToken) return refreshAccessToken();
+  const response = await fetch('https://api.spotify.com/v1/me', {
+    headers: { Authorization: `Bearer ${accessToken}` },
+  });
+  if (response.ok) return accessToken;
+  if (response.status === 401) return refreshAccessToken();
+  return accessToken;
 }

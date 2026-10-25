@@ -304,6 +304,43 @@ export const getStreaks = createServerFn({ method: 'GET' })
     return artistStreaks(rows, data).slice(0, 3);
   });
 
+export const getArtistHistory = createServerFn({ method: 'GET' })
+  .validator((id: unknown) => {
+    if (typeof id !== 'string' || !/^[A-Za-z0-9]+$/.test(id))
+      throw new Error('Invalid Spotify ID');
+    return id;
+  })
+  .handler(async ({ data }) => {
+    const db = getDb();
+    if (!db) return { enabled: false as const };
+    const me = await identity();
+    const artistPlays = (
+      await db
+        .select()
+        .from(plays)
+        .where(eq(plays.userId, me.id))
+        .orderBy(asc(plays.playedAt))
+        .limit(10_000)
+    ).filter((play) => play.track.artists.some((artist) => artist.id === data));
+    const snapshots = await db
+      .select({ day: topSnapshots.day, items: topSnapshots.items })
+      .from(topSnapshots)
+      .where(
+        and(eq(topSnapshots.userId, me.id), eq(topSnapshots.kind, 'artists'))
+      )
+      .orderBy(asc(topSnapshots.takenAt));
+    return {
+      enabled: true as const,
+      totalPlays: artistPlays.length,
+      firstPlayed: artistPlays[0]?.playedAt.toISOString() ?? null,
+      lastPlayed: artistPlays.at(-1)?.playedAt.toISOString() ?? null,
+      topSince:
+        snapshots.find((snapshot) =>
+          snapshot.items.some((item) => item.id === data)
+        )?.day ?? null,
+    };
+  });
+
 export const deleteWrapperData = createServerFn({ method: 'POST' }).handler(
   async () => {
     const db = getDb();

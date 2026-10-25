@@ -49,6 +49,7 @@ export function StoredHistory() {
                   trackNumber: null,
                   uri: `spotify:track:${track.id}`,
                   url: null,
+                  previewUrl: null,
                 }) satisfies Track
             )}
           />

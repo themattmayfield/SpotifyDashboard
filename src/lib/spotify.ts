@@ -1,7 +1,7 @@
 import { createServerFn } from '@tanstack/react-start';
 
 import { type TTimeRange, timeRanges } from '@/types';
-import type { Playback, PlaybackControlResult } from '@/types';
+import type { Album, Playback, PlaybackControlResult } from '@/types';
 import {
   toArtist,
   toPlayedTrack,
@@ -21,7 +21,7 @@ import {
 const pageSize = 50;
 const idPattern = /^[A-Za-z0-9]+$/;
 
-function validateId(id: unknown) {
+export function validateId(id: unknown) {
   if (typeof id !== 'string' || !idPattern.test(id))
     throw new Error('Invalid Spotify ID');
   return id;
@@ -72,6 +72,29 @@ export const getArtist = createServerFn({ method: 'GET' })
       await spotifyFetch<SpotifyApi.SingleArtistResponse>(`/v1/artists/${data}`)
     )
   );
+
+type RawAlbum = SpotifyApi.AlbumObjectSimplified;
+export const getArtistAlbums = createServerFn({ method: 'GET' })
+  .validator(validateId)
+  .handler(async ({ data }): Promise<Album[]> => {
+    try {
+      const response = await spotifyFetch<{ items: RawAlbum[] }>(
+        `/v1/artists/${data}/albums?include_groups=album,single&limit=20`
+      );
+      return response.items.map((album) => ({
+        id: album.id,
+        name: album.name,
+        image: album.images?.[0]?.url ?? null,
+        releaseDate: album.release_date ?? null,
+        type: album.album_type ?? null,
+        url: album.external_urls?.spotify ?? null,
+      }));
+    } catch (error) {
+      if (error instanceof SpotifyApiError && [403, 404].includes(error.status))
+        return [];
+      throw error;
+    }
+  });
 
 /** Resolves to null when neither the library nor the legacy follow API is available. */
 export const getIsFollowingArtist = createServerFn({ method: 'GET' })
@@ -194,4 +217,79 @@ export const playTrack = createServerFn({ method: 'POST' })
     playbackControl('/v1/me/player/play', 'PUT', {
       uris: [`spotify:track:${data}`],
     })
+  );
+
+export const createPlaylistFromTracks = createServerFn({ method: 'POST' })
+  .validator(
+    (value: {
+      name: string;
+      description?: string;
+      trackIds: string[];
+      public?: false;
+    }) => {
+      if (
+        !value ||
+        typeof value.name !== 'string' ||
+        !value.name.trim() ||
+        value.name.length > 100
+      )
+        throw new Error('Invalid playlist name');
+      if (
+        !Array.isArray(value.trackIds) ||
+        value.trackIds.length < 1 ||
+        value.trackIds.length > 100
+      )
+        throw new Error('A playlist requires 1–100 tracks');
+      return {
+        name: value.name.trim(),
+        description:
+          typeof value.description === 'string'
+            ? value.description.slice(0, 300)
+            : undefined,
+        trackIds: value.trackIds.map(validateId),
+        public: false as const,
+      };
+    }
+  )
+  .handler(
+    async ({
+      data,
+    }): Promise<
+      { ok: true; url: string } | { ok: false; reason: 'reauth' }
+    > => {
+      try {
+        const playlist = await spotifyFetch<{
+          id: string;
+          external_urls?: { spotify?: string };
+        }>('/v1/me/playlists', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            name: data.name,
+            description: data.description,
+            public: false,
+          }),
+        });
+        await spotifyFetch(`/v1/playlists/${validateId(playlist.id)}/items`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            uris: data.trackIds.map((id) => `spotify:track:${id}`),
+          }),
+        });
+        return {
+          ok: true,
+          url:
+            playlist.external_urls?.spotify ??
+            `https://open.spotify.com/playlist/${playlist.id}`,
+        };
+      } catch (error) {
+        if (
+          error instanceof SpotifyApiError &&
+          (error.status === 401 || error.status === 403)
+        )
+          return { ok: false, reason: 'reauth' };
+        throw error;
+      }
+    }
   );

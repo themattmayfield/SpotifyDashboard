@@ -1,6 +1,7 @@
 import { EmptyState } from '@/components/EmptyState';
 import { PageHeader } from '@/components/PageHeader';
 import { PageWrapper } from '@/components/PageWrapper';
+import { SavePlaylistButton } from '@/components/SavePlaylistButton';
 import { useClientTimeZone } from '@/components/StoredHistory';
 import { getRecap } from '@/lib/persistence';
 import { useQuery } from '@tanstack/react-query';
@@ -41,6 +42,10 @@ export function Recap({ month }: { month: string }) {
             <Suspense>
               <ShareCard card={{ variant: 'recap', month, timeZone }} />
             </Suspense>
+            <SavePlaylistButton
+              name={`Wrapper · ${month} Recap`}
+              trackIds={recap.playlistTrackIds}
+            />
             <div className="grid grid-cols-3 gap-3">
               <Stat label="Plays" value={recap.totalPlays} />
               <Stat label="Minutes" value={recap.minutes} />

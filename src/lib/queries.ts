@@ -9,6 +9,7 @@ import type {
 } from '@/types';
 import {
   getArtist,
+  getArtistAlbums,
   getCurrentPlayback,
   getIsFollowingArtist,
   getMe,
@@ -43,6 +44,11 @@ export const spotifyQueries = {
     queryOptions({
       queryKey: ['spotify', 'artist', id],
       queryFn: () => getArtist({ data: id }),
+    }),
+  artistAlbums: (id: string) =>
+    queryOptions({
+      queryKey: ['spotify', 'artistAlbums', id],
+      queryFn: () => getArtistAlbums({ data: id }),
     }),
   following: (id: string) =>
     queryOptions({

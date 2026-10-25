@@ -63,6 +63,7 @@ export function toTrack(raw: RawTrack): Track {
     trackNumber: raw.track_number ?? null,
     uri: raw.uri,
     url: raw.external_urls?.spotify ?? null,
+    previewUrl: raw.preview_url ?? null,
   };
 }
 

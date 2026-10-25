@@ -2,6 +2,7 @@ import { expect, test } from 'bun:test';
 import {
   aggregateRecap,
   artistStreaks,
+  artistTopTracks,
   biggestClimber,
   compatibilityScore,
   dayGroups,
@@ -38,7 +39,60 @@ test('computes movement, streaks and recap', () => {
     totalPlays: 2,
     minutes: 4,
     distinctArtists: 1,
+    playlistTrackIds: ['t'],
   });
+});
+
+test('merges an artist’s tracks across ranges using best rank', () => {
+  const fullTrack = (id: string, artistId: string) => ({
+    id,
+    name: id,
+    image: null,
+    thumb: null,
+    durationMs: 1,
+    artists: [{ id: artistId, name: artistId }],
+    album: {
+      name: '',
+      url: null,
+      releaseDate: null,
+      type: null,
+      totalTracks: null,
+    },
+    popularity: null,
+    explicit: false,
+    trackNumber: null,
+    uri: id,
+    url: null,
+    previewUrl: null,
+  });
+  const a = fullTrack('a', 'artist');
+  const b = fullTrack('b', 'artist');
+  const result = artistTopTracks('artist', [
+    { range: 'short_term', tracks: [b, a] },
+    { range: 'long_term', tracks: [a] },
+  ]);
+  expect(result.map((entry) => [entry.track.id, entry.bestRank])).toEqual([
+    ['b', 1],
+    ['a', 1],
+  ]);
+  expect(result.find((entry) => entry.track.id === 'a')?.ranges).toEqual([
+    'short_term',
+    'long_term',
+  ]);
+});
+
+test('recap playlist ids are play-ranked and capped at 50', () => {
+  const plays = Array.from({ length: 55 }, (_, index) => ({
+    playedAt: new Date(),
+    track: { ...track, id: `track-${index}`, name: `Track ${index}` },
+  }));
+  plays.push({
+    playedAt: new Date(),
+    track: { ...track, id: 'track-54', name: 'Track 54' },
+  });
+  const ids = aggregateRecap(plays).playlistTrackIds;
+  expect(ids).toHaveLength(50);
+  expect(ids[0]).toBe('track-54');
 });
 
 test('compatibility is bounded and increases with overlap', () => {

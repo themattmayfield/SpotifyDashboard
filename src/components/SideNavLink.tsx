@@ -1,5 +1,5 @@
-import { Link } from '@tanstack/react-router';
-import type { ReactNode } from 'react';
+import { Link, useRouterState } from '@tanstack/react-router';
+import { type ReactNode, useEffect, useRef } from 'react';
 
 export default function SideNavLink({
   path,
@@ -13,12 +13,27 @@ export default function SideNavLink({
     | '/recentTracks'
     | '/playlists'
     | '/compare'
+    | '/taste'
     | '/recap';
   label: string;
   children: ReactNode;
 }) {
+  const ref = useRef<HTMLAnchorElement>(null);
+  const pathname = useRouterState({
+    select: (state) => state.location.pathname,
+  });
+  const active = path === '/' ? pathname === '/' : pathname.startsWith(path);
+  useEffect(() => {
+    if (active && window.innerWidth < 1024)
+      ref.current?.scrollIntoView({
+        behavior: 'smooth',
+        inline: 'center',
+        block: 'nearest',
+      });
+  }, [active]);
   return (
     <Link
+      ref={ref}
       to={path}
       aria-label={label}
       title={label}

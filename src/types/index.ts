@@ -33,6 +33,16 @@ export type Track = {
   trackNumber: number | null;
   uri: string;
   url: string | null;
+  previewUrl: string | null;
+};
+
+export type Album = {
+  id: string;
+  name: string;
+  image: string | null;
+  releaseDate: string | null;
+  type: string | null;
+  url: string | null;
 };
 
 export type PlayedTrack = { playedAt: string; track: Track };

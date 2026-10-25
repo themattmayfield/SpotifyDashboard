@@ -7,6 +7,8 @@ import { formatDuration } from '@/lib/format';
 import { getMovement } from '@/lib/persistence';
 import { spotifyQueries } from '@/lib/queries';
 import type { TTimeRange, Track } from '@/types';
+import { SavePlaylistButton } from './SavePlaylistButton';
+import { TrackPreview } from './TrackPreview';
 
 type ListOptions = { showDuration?: boolean; ranked?: boolean };
 
@@ -34,6 +36,16 @@ export function RecentTracks(options: ListOptions) {
   return <TrackList tracks={data.map(({ track }) => track)} {...options} />;
 }
 
+export function SaveTopTracks({
+  range,
+  name,
+}: { range: TTimeRange; name: string }) {
+  const { data } = useSuspenseQuery(spotifyQueries.topTracks(range));
+  return (
+    <SavePlaylistButton name={name} trackIds={data.map((track) => track.id)} />
+  );
+}
+
 export function TrackList({
   tracks,
   showDuration = true,
@@ -50,7 +62,7 @@ export function TrackList({
         // The same track can appear more than once in history and playlists.
         <li
           key={`${track.id}-${index}`}
-          className="flex items-center gap-4 rounded-md transition duration-150 ease-in-out hover:bg-custom-darkgray"
+          className="group flex items-center gap-4 rounded-md transition duration-150 ease-in-out hover:bg-custom-darkgray"
         >
           {ranked && (
             <span className="w-6 shrink-0 text-right text-sm tabular-nums text-custom-muted">
@@ -71,11 +83,10 @@ export function TrackList({
               </span>
             )}
           <Link className="shrink-0" to="/tracks/$id" params={{ id: track.id }}>
-            <img
-              className="h-20 w-20 bg-custom-darkgray"
-              src={track.thumb ?? undefined}
-              alt=""
-              loading="lazy"
+            <TrackPreview
+              url={track.previewUrl}
+              image={track.thumb}
+              alt={`${track.album.name} artwork`}
             />
           </Link>
           <div className="flex min-w-0 flex-1 flex-col">

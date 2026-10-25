@@ -1,5 +1,5 @@
 import { AiFillHome } from 'react-icons/ai';
-import { BsMusicNoteBeamed } from 'react-icons/bs';
+import { BsMusicNoteBeamed, BsPieChartFill } from 'react-icons/bs';
 import { GiMicrophone } from 'react-icons/gi';
 import {
   RiCalendarEventFill,
@@ -19,6 +19,7 @@ const navItems = [
   { path: '/recap', label: 'Recap', Icon: RiCalendarEventFill },
   { path: '/playlists', label: 'Playlists', Icon: RiPlayListFill },
   { path: '/compare', label: 'Compare', Icon: RiTeamFill },
+  { path: '/taste', label: 'Taste', Icon: BsPieChartFill },
 ] as const;
 
 export default function SideNav() {
@@ -30,8 +31,11 @@ export default function SideNav() {
         </div>
         <NavLinks className="flex w-full flex-col items-center" />
       </nav>
-      <nav className="fixed bottom-0 right-0 z-50 h-[70px] w-full bg-spotify-black text-white lg:hidden">
-        <NavLinks className="flex h-full w-full" />
+      <nav
+        className="fixed bottom-0 right-0 z-50 h-[70px] w-full overflow-x-auto border-x-8 border-spotify-black bg-spotify-black text-white shadow-[inset_18px_0_18px_-18px_#fff,inset_-18px_0_18px_-18px_#fff] lg:hidden"
+        aria-label="Main navigation"
+      >
+        <NavLinks className="flex h-full min-w-[560px]" />
       </nav>
     </>
   );

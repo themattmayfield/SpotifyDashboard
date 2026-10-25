@@ -1,4 +1,5 @@
 import { useClientTimeZone } from '@/components/StoredHistory';
+import { tasteBreakdown } from '@/lib/insights';
 import { getRecap } from '@/lib/persistence';
 import { spotifyQueries } from '@/lib/queries';
 import {
@@ -18,6 +19,7 @@ const labels = {
 export type Card =
   | { variant: 'artists'; range: TTimeRange }
   | { variant: 'tracks'; range: TTimeRange }
+  | { variant: 'taste'; range: TTimeRange }
   | { variant: 'recap'; month: string; timeZone?: string };
 
 export default function ShareCard({ card }: { card: Card }) {
@@ -25,8 +27,36 @@ export default function ShareCard({ card }: { card: Card }) {
     <ArtistCard range={card.range} />
   ) : card.variant === 'tracks' ? (
     <TrackCard range={card.range} />
+  ) : card.variant === 'taste' ? (
+    <TasteCard range={card.range} />
   ) : (
     <RecapCard month={card.month} requestedTimeZone={card.timeZone} />
+  );
+}
+
+function TasteCard({ range }: { range: TTimeRange }) {
+  const { data: me } = useSuspenseQuery(spotifyQueries.me());
+  const { data: artists } = useSuspenseQuery(spotifyQueries.topArtists(range));
+  const { data: tracks } = useSuspenseQuery(spotifyQueries.topTracks(range));
+  const taste = tasteBreakdown(artists, tracks);
+  const decades = [...taste.decades].sort((a, b) => b.count - a.count);
+  return (
+    <CardModal
+      data={{
+        title: `My Taste — ${labels[range]}`,
+        user: me.name,
+        items: [
+          ...taste.genres.slice(0, 3).map((genre) => ({
+            name: genre.name,
+            subtitle: 'Top genre',
+          })),
+          ...decades.slice(0, 2).map(({ decade, count }) => ({
+            name: `${decade}s`,
+            subtitle: `${count} top tracks`,
+          })),
+        ],
+      }}
+    />
   );
 }
 

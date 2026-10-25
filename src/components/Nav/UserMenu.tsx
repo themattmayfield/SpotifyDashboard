@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { AiFillCaretDown } from 'react-icons/ai';
 import { RiUser6Fill } from 'react-icons/ri';
 
@@ -13,6 +13,11 @@ import type { User } from '@/types';
 
 export default function UserMenu({ user }: { user: User }) {
   const [isOpen, setIsOpen] = useState(false);
+  const [previews, setPreviews] = useState(true);
+  useEffect(
+    () => setPreviews(localStorage.getItem('hover-previews') !== 'off'),
+    []
+  );
   return (
     <>
       {isOpen && (
@@ -50,6 +55,20 @@ export default function UserMenu({ user }: { user: User }) {
             <p className="text-gray-500">
               Hope you enjoy exploring your Spotify favorites
             </p>
+            <label className="flex items-center gap-2 text-sm text-white">
+              <input
+                type="checkbox"
+                checked={previews}
+                onChange={(event) => {
+                  setPreviews(event.target.checked);
+                  localStorage.setItem(
+                    'hover-previews',
+                    event.target.checked ? 'on' : 'off'
+                  );
+                }}
+              />{' '}
+              Hover previews
+            </label>
             <a
               href="https://ko-fi.com/P5P21JZUH"
               target="_blank"

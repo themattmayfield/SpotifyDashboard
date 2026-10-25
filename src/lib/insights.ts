@@ -1,4 +1,86 @@
 import type { SnapshotItem, StoredTrack } from '@/db/schema';
+import type { Artist, TTimeRange, Track } from '@/types';
+
+export function tasteBreakdown(
+  artists: Artist[],
+  tracks: Track[],
+  now = new Date()
+) {
+  const genreWeights = new Map<string, number>();
+  artists.forEach((artist, rank) =>
+    artist.genres.forEach((genre) =>
+      genreWeights.set(genre, (genreWeights.get(genre) ?? 0) + 1 / (rank + 1))
+    )
+  );
+  const genres = [...genreWeights]
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 8)
+    .map(([name, weight]) => ({ name, weight }));
+  const decades = new Map<number, number>();
+  const years = tracks
+    .map((track) => Number(track.album.releaseDate?.slice(0, 4)))
+    .filter(
+      (year) =>
+        Number.isInteger(year) && year > 1800 && year <= now.getFullYear()
+    );
+  years.forEach((year) => {
+    const decade = Math.floor(year / 10) * 10;
+    decades.set(decade, (decades.get(decade) ?? 0) + 1);
+  });
+  const cutoff = new Date(now.getFullYear() - 2, now.getMonth(), now.getDate());
+  const fresh = tracks.filter((track) => {
+    const date = track.album.releaseDate
+      ? new Date(track.album.releaseDate)
+      : null;
+    return date && !Number.isNaN(date.valueOf()) && date >= cutoff;
+  }).length;
+  return {
+    genres,
+    decades: [...decades]
+      .sort((a, b) => a[0] - b[0])
+      .map(([decade, count]) => ({ decade, count })),
+    freshPercent: tracks.length ? Math.round((fresh / tracks.length) * 100) : 0,
+    averageYear: years.length
+      ? Math.round(years.reduce((sum, year) => sum + year, 0) / years.length)
+      : null,
+    uniqueArtists: new Set(
+      tracks.flatMap((track) => track.artists.map((artist) => artist.id))
+    ).size,
+    explicitPercent: tracks.length
+      ? Math.round(
+          (tracks.filter((track) => track.explicit).length / tracks.length) *
+            100
+        )
+      : 0,
+    averageDurationMs: tracks.length
+      ? Math.round(
+          tracks.reduce((sum, track) => sum + track.durationMs, 0) /
+            tracks.length
+        )
+      : 0,
+  };
+}
+
+export function artistTopTracks(
+  artistId: string,
+  lists: { range: TTimeRange; tracks: Track[] }[]
+) {
+  const found = new Map<
+    string,
+    { track: Track; bestRank: number; ranges: TTimeRange[] }
+  >();
+  for (const { range, tracks } of lists)
+    tracks.forEach((track, index) => {
+      if (!track.artists.some((artist) => artist.id === artistId)) return;
+      const prior = found.get(track.id);
+      if (prior) {
+        prior.bestRank = Math.min(prior.bestRank, index + 1);
+        prior.ranges.push(range);
+      } else
+        found.set(track.id, { track, bestRank: index + 1, ranges: [range] });
+    });
+  return [...found.values()].sort((a, b) => a.bestRank - b.bestRank);
+}
 
 export type RankMovement = { previousRank: number | null };
 
@@ -109,14 +191,16 @@ export function aggregateRecap(
       artists.set(a.id, x);
     }
   }
-  const desc = <T extends { count: number }>(xs: T[]) =>
-    xs.sort((a, b) => b.count - a.count).slice(0, 5);
+  const sorted = <T extends { count: number }>(xs: T[]) =>
+    xs.sort((a, b) => b.count - a.count);
+  const rankedTracks = sorted([...tracks.values()]);
   return {
     totalPlays: plays.length,
     minutes: Math.round(durationMs / 60_000),
     distinctArtists: artists.size,
-    topTracks: desc([...tracks.values()]),
-    topArtists: desc([...artists.values()]),
+    topTracks: rankedTracks.slice(0, 5),
+    playlistTrackIds: rankedTracks.slice(0, 50).map((entry) => entry.item.id),
+    topArtists: sorted([...artists.values()]).slice(0, 5),
   };
 }
 

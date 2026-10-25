@@ -1,4 +1,5 @@
-import { createFileRoute } from '@tanstack/react-router';
+import { useSuspenseQuery } from '@tanstack/react-query';
+import { Link, createFileRoute } from '@tanstack/react-router';
 import { Suspense, lazy } from 'react';
 
 import { ArtistTiles, ArtistTilesSkeleton } from '@/components/ArtistTiles';
@@ -10,6 +11,7 @@ import {
 import { SectionHeader } from '@/components/SectionHeader';
 import { Streaks } from '@/components/Streaks';
 import { TopTracks, TrackListSkeleton } from '@/components/Tracks';
+import { tasteBreakdown } from '@/lib/insights';
 import { spotifyQueries } from '@/lib/queries';
 const ShareCard = lazy(() => import('@/components/ShareCard'));
 
@@ -31,6 +33,9 @@ function Home() {
       <aside className="flex flex-col gap-4 px-2 lg:order-last lg:w-72 lg:px-0">
         <NowPlaying />
         <Streaks />
+        <Suspense>
+          <TasteTeaser />
+        </Suspense>
         <Suspense fallback={<RecentlyPlayedSkeleton />}>
           <RecentlyPlayed />
         </Suspense>
@@ -90,5 +95,32 @@ function Home() {
         </div>
       </div>
     </div>
+  );
+}
+
+function TasteTeaser() {
+  const artists = useSuspenseQuery(
+    spotifyQueries.topArtists('short_term')
+  ).data;
+  const tracks = useSuspenseQuery(spotifyQueries.topTracks('short_term')).data;
+  const taste = tasteBreakdown(artists, tracks);
+  const dominant = [...taste.decades].sort((a, b) => b.count - a.count)[0];
+  if (!taste.genres[0] && !dominant) return null;
+  return (
+    <Link
+      to="/taste"
+      search={{ range: 'short_term' }}
+      className="rounded-2xl bg-custom-darkgray p-5 text-white hover:bg-custom-gray"
+    >
+      <span className="text-sm text-custom-muted">Your taste lately</span>
+      <strong className="mt-1 block text-xl capitalize">
+        {[taste.genres[0]?.name, dominant && `${dominant.decade}s`]
+          .filter(Boolean)
+          .join(' · ')}
+      </strong>
+      <span className="mt-2 block text-sm text-spotify-green">
+        Explore your taste →
+      </span>
+    </Link>
   );
 }

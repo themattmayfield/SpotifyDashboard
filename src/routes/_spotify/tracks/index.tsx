@@ -4,7 +4,11 @@ import { Suspense, lazy } from 'react';
 import { DroppedOff } from '@/components/DroppedOff';
 import { PageHeader } from '@/components/PageHeader';
 import { PageWrapper } from '@/components/PageWrapper';
-import { TopTracks, TrackListSkeleton } from '@/components/Tracks';
+import {
+  SaveTopTracks,
+  TopTracks,
+  TrackListSkeleton,
+} from '@/components/Tracks';
 import { pageTitle } from '@/lib/head';
 import { spotifyQueries } from '@/lib/queries';
 import { rangeSearch } from '@/lib/rangeSearch';
@@ -27,6 +31,14 @@ function Tracks() {
       <div className="mb-4">
         <Suspense>
           <ShareCard card={{ variant: 'tracks', range }} />
+        </Suspense>
+      </div>
+      <div className="mb-6 px-2">
+        <Suspense>
+          <SaveTopTracks
+            range={range}
+            name={`Wrapper · Top Tracks · ${range.replace('_', ' ')} · ${new Intl.DateTimeFormat('en-US', { month: 'short', year: 'numeric' }).format(new Date())}`}
+          />
         </Suspense>
       </div>
       <div className="px-2 text-white">

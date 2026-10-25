@@ -1,17 +1,20 @@
 # Spotify | Wrapper
 
-This is a Spotify wrapper for viewing some cool Spotify analytics. Give this repo a thumbs up if you enjoyed :)
+A Spotify analytics dashboard built with TanStack Start, TanStack Router, TanStack Query, React, Vite, Tailwind CSS, and Nitro.
 
-## Live preview
+## Development
 
-[Click me!](https://www.spotifydash.co/)
+Install dependencies with `bun install`, then run `bun run dev`. The app is served at `http://127.0.0.1:3002`.
 
-![Example login screen](https://themattmayfield.com/spotifydash.png)
+Create `.env.local` with:
 
-## 🥞 Stack
+- `SPOTIFY_CLIENT_ID`
+- `SPOTIFY_CLIENT_SECRET`
+- `SPOTIFY_REDIRECT_URI=http://127.0.0.1:3002/api/callback` (recommended), or `WEB_URL=http://127.0.0.1:3002`
+- `SESSION_SECRET`
 
-- **Framework:** [Next.js v12](https://nextjs.org)
-- **Auth:** [NextAuth.js](https://next-auth.js.org/)
-- **Hosting:** [Vercel](https://vercel.com/)
-- **State Management:** [Recoil](https://recoiljs.org/)
-- **Styling:** [TailwindCSS](https://tailwindcss.com)
+`NEXT_PUBLIC_WEB_URL` remains a backward-compatible fallback, but should be replaced because the redirect base is server-only.
+
+## Vercel
+
+Set the same environment variables in Vercel and run `bun run build`. Nitro automatically detects the Vercel preset when `VERCEL=1` and writes Build Output API artifacts to `.vercel/output`.

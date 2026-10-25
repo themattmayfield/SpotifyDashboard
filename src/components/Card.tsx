@@ -1,9 +1,9 @@
 import { cn } from '@/lib/cn';
-import { getTopArtists } from '@/lib/spotify';
+import { spotifyQuery } from '@/lib/queries';
 import type { TTimeRange } from '@/types';
-import Link from 'next/link';
-
-export default async function Card({
+import { useSuspenseQuery } from '@tanstack/react-query';
+import { Link } from '@tanstack/react-router';
+export default function Card({
   profile,
   imageClassName,
   limit,
@@ -14,14 +14,15 @@ export default async function Card({
   limit: string;
   timeRange: TTimeRange;
 }) {
-  const topArtists = await getTopArtists({ limit, timeRange });
-  return topArtists.map((artist) => (
+  const { data } = useSuspenseQuery(
+    spotifyQuery('topArtists', { limit, timeRange })
+  );
+  const artists = data as SpotifyApi.ArtistObjectFull[];
+  return artists.map((artist) => (
     <div key={artist.id}>
-      <Link href={`/artists/${artist.id}`}>
+      <Link to="/artists/$id" params={{ id: artist.id }}>
         <div
-          style={{
-            backgroundImage: `url(${artist.images[1].url})`,
-          }}
+          style={{ backgroundImage: `url(${artist.images[1]?.url})` }}
           className={cn(
             'cursor-pointer rounded-3xl h-[60vw]  md:h-[40vw]  lg:h-[40vw]  xl:h-96  overflow-hidden bg-custom-darkgray bg-cover bg-center flex items-center justify-center',
             !profile &&

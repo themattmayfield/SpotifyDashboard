@@ -1,111 +1,81 @@
 import type { TTimeRange } from '@/types';
+import { createServerFn } from '@tanstack/react-start';
 
-import fetchWrapper from './fetchWrapper';
-
-export const getRecentlyPlayed = async ({
-  limit,
-}: {
-  limit: string;
-}): Promise<SpotifyApi.PlayHistoryObject[]> => {
-  const res = await fetchWrapper(
-    `/v1/me/player/recently-played?limit=${limit}`
-  );
-  const data = res.data;
-  return data.items;
+type Args = {
+  kind: string;
+  id?: string;
+  limit?: string;
+  timeRange?: TTimeRange;
+  follow?: boolean;
 };
-export const getTopTracks = async ({
-  limit,
-  timeRange,
-}: {
-  limit: string;
-  timeRange: TTimeRange;
-}): Promise<SpotifyApi.TrackObjectFull[]> => {
-  const res = await fetchWrapper(
-    `/v1/me/top/tracks?limit=${limit}&time_range=${timeRange}`
-  );
-  const data = res.data;
-  return data.items;
-};
-export const getTopArtists = async ({
-  limit,
-  timeRange,
-}: {
-  limit: string;
-  timeRange: TTimeRange;
-}): Promise<SpotifyApi.ArtistObjectFull[]> => {
-  const res = await fetchWrapper(
-    `/v1/me/top/artists?limit=${limit}&time_range=${timeRange}`
-  );
-  const data = res.data;
-  return data.items;
-};
-export const getArtist = async (
-  id: string
-): Promise<SpotifyApi.SingleArtistResponse> => {
-  const res = await fetchWrapper(`/v1/artists/${id}`);
-  const data = res.data;
-  return data;
-};
-export const getIsFollowingArtists = async ({
-  type,
-  id,
-}: {
-  type: 'artist' | 'user';
-  id: string;
-}): Promise<SpotifyApi.UserFollowsUsersOrArtistsResponse> => {
-  const res = await fetchWrapper(
-    `/v1/me/following/contains?type=${type}&ids=${id}`
-  );
-  const data = res.data;
-
-  return data.at(0);
-};
-export const followArtist = async (ids: string[]) => {
-  await fetchWrapper('/v1/me/following?type=artist', {
-    method: 'PUT',
-    body: JSON.stringify(ids),
+export const spotifyData = createServerFn({ method: 'GET' })
+  .validator((data: Args) => data)
+  .handler(async ({ data }) => {
+    const { spotifyFetch } = await import('./spotify.server');
+    switch (data.kind) {
+      case 'recent':
+        return (
+          await spotifyFetch<SpotifyApi.UsersRecentlyPlayedTracksResponse>(
+            `/v1/me/player/recently-played?limit=${data.limit}`
+          )
+        ).items;
+      case 'topTracks':
+        return (
+          await spotifyFetch<SpotifyApi.UsersTopTracksResponse>(
+            `/v1/me/top/tracks?limit=${data.limit}&time_range=${data.timeRange}`
+          )
+        ).items;
+      case 'topArtists':
+        return (
+          await spotifyFetch<SpotifyApi.UsersTopArtistsResponse>(
+            `/v1/me/top/artists?limit=${data.limit}&time_range=${data.timeRange}`
+          )
+        ).items;
+      case 'artist':
+        return spotifyFetch<SpotifyApi.SingleArtistResponse>(
+          `/v1/artists/${data.id}`
+        );
+      case 'following':
+        return (
+          await spotifyFetch<boolean[]>(
+            `/v1/me/following/contains?type=artist&ids=${data.id}`
+          )
+        )[0];
+      case 'me':
+        return spotifyFetch<SpotifyApi.CurrentUsersProfileResponse>('/v1/me');
+      case 'playlists':
+        return (
+          await spotifyFetch<SpotifyApi.ListOfCurrentUsersPlaylistsResponse>(
+            '/v1/me/playlists'
+          )
+        ).items;
+      case 'playlist':
+        return spotifyFetch<SpotifyApi.SinglePlaylistResponse>(
+          `/v1/playlists/${data.id}`
+        );
+      case 'track':
+        return spotifyFetch<SpotifyApi.SingleTrackResponse>(
+          `/v1/tracks/${data.id}`
+        );
+      case 'audio':
+        try {
+          return await spotifyFetch<SpotifyApi.AudioFeaturesResponse>(
+            `/v1/audio-features/${data.id}`
+          );
+        } catch {
+          return null;
+        }
+      default:
+        throw new Error('Unknown Spotify query');
+    }
   });
-};
-export const unfollowArtists = async (ids: string[]) => {
-  await fetchWrapper('/v1/me/following?type=artist', {
-    method: 'DELETE',
-    body: JSON.stringify(ids),
+export const setFollowing = createServerFn({ method: 'POST' })
+  .validator((data: { id: string; follow: boolean }) => data)
+  .handler(async ({ data }) => {
+    const { spotifyFetch } = await import('./spotify.server');
+    await spotifyFetch<void>('/v1/me/following?type=artist', {
+      method: data.follow ? 'PUT' : 'DELETE',
+      body: JSON.stringify([data.id]),
+      headers: { 'content-type': 'application/json' },
+    });
   });
-};
-export const getMe =
-  async (): Promise<SpotifyApi.CurrentUsersProfileResponse> => {
-    const res = await fetchWrapper('/v1/me');
-    const data = res.data;
-    return data;
-  };
-export const getUserPlaylists = async (): Promise<
-  SpotifyApi.ListOfCurrentUsersPlaylistsResponse['items']
-> => {
-  const res = await fetchWrapper('/v1/me/playlists');
-  const data = res.data;
-  return data.items;
-};
-export const getPlaylist = async (
-  id: string
-): Promise<SpotifyApi.SinglePlaylistResponse> => {
-  const res = await fetchWrapper(`/v1/playlists/${id}`);
-  const data = res.data;
-
-  return data;
-};
-export const getTrack = async (
-  id: string
-): Promise<SpotifyApi.SingleTrackResponse> => {
-  const res = await fetchWrapper(`/v1/tracks/${id}`);
-  const data = res.data;
-
-  return data;
-};
-export const getAudioFeaturesForTrack = async (
-  id: string
-): Promise<SpotifyApi.SingleTrackResponse> => {
-  const res = await fetchWrapper(`/v1/audio-features/${id}`);
-  const data = res.data;
-
-  return data;
-};

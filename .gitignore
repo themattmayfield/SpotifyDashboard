@@ -39,3 +39,8 @@ next-env.d.ts
 .sst
 
 .open-next
+
+# TanStack Start / Nitro
+.output/
+.tanstack/
+.playwright-mcp/

@@ -1,7 +1,7 @@
-// import Link from 'next/link';
 import { Skeleton } from '@/components/ui/skeleton';
 import { cn } from '@/lib/cn';
-import randomIntFromInterval from '@/lib/randomIntFromInterval';
+
+const titleWidths = [46, 83, 127, 168, 104, 195] as const;
 
 export default function RightSideBarLoading() {
   return (
@@ -10,15 +10,15 @@ export default function RightSideBarLoading() {
         <p className="text-xl mb-6 ">Recently Played</p>
         <div className="">
           <div className="grid grid-cols-2 lg:flex flex-col gap-x-2 lg:gap-x-0 gap-y-2 lg:space-y-6">
-            {[...Array(6)].map((num) => (
-              <div key={num} className="flex">
+            {[...Array(6)].map((_, index) => (
+              <div key={index} className="flex">
                 <div className="mr-4">
                   <Skeleton className="rounded-full bg-custom-gray w-8 h-8 sm:w-12 sm:h-12 lg:w-16 lg:h-16" />
                 </div>
                 <div className={cn('overflow-hidden flex flex-col space-y-1')}>
                   <Skeleton
                     style={{
-                      width: `${randomIntFromInterval(30, 200)}px`,
+                      width: `${titleWidths[index]}px`,
                     }}
                     className="h-6 bg-custom-gray"
                   />

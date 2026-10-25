@@ -10,10 +10,10 @@ export const ensureAuthenticated = createServerFn({ method: 'GET' }).handler(
 );
 export const login = createServerFn({ method: 'POST' }).handler(async () => {
   const { createLoginUrl } = await import('./auth.server');
-  throw redirect({ href: createLoginUrl() });
+  throw redirect({ href: createLoginUrl(), statusCode: 303 });
 });
 export const logout = createServerFn({ method: 'POST' }).handler(async () => {
   const { clearAuthCookies } = await import('./auth.server');
   clearAuthCookies();
-  throw redirect({ to: '/login' });
+  throw redirect({ to: '/login', statusCode: 303 });
 });

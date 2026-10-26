@@ -57,72 +57,82 @@ export function TrackList({
 } & ListOptions) {
   if (!tracks.length) return <EmptyState />;
   return (
-    <ol className="flex flex-col gap-4">
-      {tracks.map((track, index) => (
-        // The same track can appear more than once in history and playlists.
-        <li
-          key={`${track.id}-${index}`}
-          className="group flex items-center gap-4 rounded-md transition duration-150 ease-in-out hover:bg-custom-darkgray"
-        >
-          {ranked && (
-            <span className="w-6 shrink-0 text-right text-sm tabular-nums text-custom-muted">
-              {index + 1}
-            </span>
-          )}
-          {ranked &&
-            movements?.[track.id]?.previousRank !== undefined &&
-            movements[track.id].previousRank !== index + 1 && (
-              <span
-                className={`w-10 text-xs ${movements[track.id].previousRank === null || (movements[track.id].previousRank ?? 0) > index + 1 ? 'text-green-400' : 'text-red-400'}`}
-              >
-                {movements[track.id].previousRank === null
-                  ? 'NEW'
-                  : (movements[track.id].previousRank ?? 0) > index + 1
-                    ? `▲${(movements[track.id].previousRank ?? 0) - index - 1}`
-                    : `▼${index + 1 - (movements[track.id].previousRank ?? 0)}`}
+    <ol className="flex flex-col">
+      {tracks.map((track, index) => {
+        const previousRank = movements?.[track.id]?.previousRank;
+        return (
+          // The same track can appear more than once in history and playlists.
+          <li
+            key={`${track.id}-${index}`}
+            className="group flex items-center gap-3 rounded-xl px-2 py-2 transition duration-150 ease-out hover:bg-fill md:gap-4 md:px-3"
+          >
+            {ranked && (
+              <span className="w-6 shrink-0 text-right text-[15px] font-medium tabular-nums text-label-tertiary">
+                {index + 1}
               </span>
             )}
-          <Link className="shrink-0" to="/tracks/$id" params={{ id: track.id }}>
-            <TrackPreview
-              url={track.previewUrl}
-              image={track.thumb}
-              alt={`${track.album.name} artwork`}
-            />
-          </Link>
-          <div className="flex min-w-0 flex-1 flex-col">
+            {ranked &&
+              previousRank !== undefined &&
+              previousRank !== index + 1 && (
+                <span
+                  className={`w-8 shrink-0 text-[11px] font-semibold tabular-nums ${previousRank === null || previousRank > index + 1 ? 'text-system-green' : 'text-system-red'}`}
+                >
+                  {previousRank === null
+                    ? 'NEW'
+                    : previousRank > index + 1
+                      ? `▲${previousRank - index - 1}`
+                      : `▼${index + 1 - previousRank}`}
+                </span>
+              )}
             <Link
+              className="shrink-0"
               to="/tracks/$id"
               params={{ id: track.id }}
-              className="truncate hover:underline"
             >
-              {track.name}
+              <TrackPreview
+                url={track.previewUrl}
+                image={track.thumb}
+                alt={`${track.album.name} artwork`}
+              />
             </Link>
-            <div className="flex min-w-0 flex-col text-custom-muted md:flex-row">
-              {track.artists[0] && (
-                <Link
-                  to="/artists/$id"
-                  params={{ id: track.artists[0].id }}
-                  className="shrink-0 truncate hover:underline"
-                >
-                  {track.artists[0].name}
-                </Link>
-              )}
-              <span className="hidden md:block">&nbsp;&middot;&nbsp;</span>
-              <span className="truncate">{track.album.name}</span>
+            <div className="flex min-w-0 flex-1 flex-col">
+              <Link
+                to="/tracks/$id"
+                params={{ id: track.id }}
+                className="truncate text-[15px] font-medium hover:underline"
+              >
+                {track.name}
+              </Link>
+              <div className="flex min-w-0 flex-col text-[13px] text-label-secondary md:flex-row">
+                {track.artists[0] && (
+                  <Link
+                    to="/artists/$id"
+                    params={{ id: track.artists[0].id }}
+                    className="shrink-0 truncate hover:text-label hover:underline"
+                  >
+                    {track.artists[0].name}
+                  </Link>
+                )}
+                {track.album.name && (
+                  <>
+                    <span className="hidden md:block">
+                      &nbsp;&middot;&nbsp;
+                    </span>
+                    <span className="hidden truncate md:block">
+                      {track.album.name}
+                    </span>
+                  </>
+                )}
+              </div>
             </div>
             {showDuration && (
-              <span className="text-custom-muted md:hidden">
+              <span className="shrink-0 pr-1 text-[13px] tabular-nums text-label-tertiary">
                 {formatDuration(track.durationMs)}
               </span>
             )}
-          </div>
-          {showDuration && (
-            <span className="hidden shrink-0 pr-2 tabular-nums text-custom-muted md:block">
-              {formatDuration(track.durationMs)}
-            </span>
-          )}
-        </li>
-      ))}
+          </li>
+        );
+      })}
     </ol>
   );
 }
@@ -137,18 +147,21 @@ export function TrackListSkeleton({
   ranked = false,
 }: { count: number; ranked?: boolean }) {
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col">
       {Array.from({ length: count }, (_, index) => (
-        <div key={index} className="flex items-center gap-4">
+        <div
+          key={index}
+          className="flex items-center gap-3 px-2 py-2 md:gap-4 md:px-3"
+        >
           {ranked && <span className="w-6 shrink-0" />}
-          <Skeleton className="h-20 w-20 shrink-0 rounded-none" />
+          <Skeleton className="h-12 w-12 shrink-0 rounded-lg md:h-14 md:w-14" />
           <div className="flex flex-col gap-2">
             <Skeleton
-              className="h-5"
+              className="h-4 rounded-md"
               style={{ width: widths.title[index % widths.title.length] }}
             />
             <Skeleton
-              className="h-4"
+              className="h-3 rounded-md"
               style={{ width: widths.detail[index % widths.detail.length] }}
             />
           </div>

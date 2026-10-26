@@ -20,7 +20,7 @@ function Recent() {
   return (
     <PageWrapper>
       <PageHeader title="Recently Played" />
-      <div className="px-2 text-white">
+      <div>
         <Suspense fallback={<TrackListSkeleton count={12} />}>
           <StoredHistory />
         </Suspense>

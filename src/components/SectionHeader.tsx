@@ -1,26 +1,18 @@
-import { Link } from '@tanstack/react-router';
-
-import type { TTimeRange } from '@/types';
+import type { ReactNode } from 'react';
 
 export function SectionHeader({
   title,
-  to,
-  range,
+  children,
 }: {
-  title: string;
-  to: '/artists' | '/tracks';
-  range?: TTimeRange;
+  title: ReactNode;
+  children?: ReactNode;
 }) {
   return (
-    <div className="mb-5 flex w-full items-center justify-between px-2">
-      <h2 className="text-white lg:text-2xl">{title}</h2>
-      <Link
-        to={to}
-        search={{ range: range ?? 'long_term' }}
-        className="flex h-9 items-center whitespace-nowrap rounded-full border border-custom-gray px-4 text-xs text-white transition duration-150 ease-in-out hover:bg-custom-gray focus:outline-none"
-      >
-        See All
-      </Link>
+    <div className="mb-4 flex min-h-[36px] w-full items-center justify-between gap-4">
+      <h2 className="section-title min-w-0 truncate">{title}</h2>
+      {children && (
+        <div className="flex shrink-0 items-center gap-1">{children}</div>
+      )}
     </div>
   );
 }

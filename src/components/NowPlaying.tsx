@@ -1,8 +1,16 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Link } from '@tanstack/react-router';
 import { useEffect, useState } from 'react';
-import { FaPause, FaPlay, FaStepBackward, FaStepForward } from 'react-icons/fa';
+import {
+  IoMusicalNotes,
+  IoPause,
+  IoPlay,
+  IoPlaySkipBack,
+  IoPlaySkipForward,
+} from 'react-icons/io5';
 
+import { cn } from '@/lib/cn';
+import { formatDuration } from '@/lib/format';
 import { spotifyQueries } from '@/lib/queries';
 import { setPlayback, skipPlayback } from '@/lib/spotify';
 import type { PlaybackControlResult } from '@/types';
@@ -45,91 +53,142 @@ export function NowPlaying() {
     },
   });
 
-  if (!data)
-    return (
-      <p className="rounded-2xl bg-custom-darkgray p-4 text-sm text-custom-muted">
-        Nothing playing
-      </p>
-    );
-  const artist = data.track.artists[0];
+  const track = data?.track;
+  const artist = track?.artists[0];
+  const percent = track
+    ? Math.min(100, (progress / track.durationMs) * 100)
+    : 0;
+
   return (
     <section
-      className="rounded-2xl bg-custom-darkgray p-4 text-white"
       aria-label="Now playing"
+      className={cn(
+        'glass fixed inset-x-2 bottom-[calc(68px+env(safe-area-inset-bottom))] z-40 flex items-center gap-3 overflow-hidden rounded-2xl p-2 pr-2 shadow-[0_12px_40px_rgba(0,0,0,0.5)] ring-1 ring-inset ring-white/10',
+        'lg:static lg:z-auto lg:grid lg:h-[84px] lg:shrink-0 lg:grid-cols-[minmax(0,1fr)_minmax(0,560px)_minmax(0,1fr)] lg:gap-8 lg:overflow-visible lg:rounded-none lg:border-t lg:border-separator lg:bg-sidebar lg:px-6 lg:py-0 lg:shadow-none lg:ring-0 lg:backdrop-blur-none',
+        !track && 'hidden lg:grid'
+      )}
     >
-      <div className="flex min-w-0 items-center gap-3">
-        <Link
-          to="/tracks/$id"
-          params={{ id: data.track.id }}
-          className="shrink-0"
-        >
-          <img
-            src={data.track.thumb ?? undefined}
-            alt=""
-            className="h-14 w-14 bg-custom-gray"
-          />
-        </Link>
-        <div className="min-w-0 flex-1">
-          <Link
-            to="/tracks/$id"
-            params={{ id: data.track.id }}
-            className="block truncate hover:underline"
-          >
-            {data.track.name}
+      <div className="flex min-w-0 flex-1 items-center gap-3">
+        {track ? (
+          <Link to="/tracks/$id" params={{ id: track.id }} className="shrink-0">
+            <img
+              src={track.thumb ?? undefined}
+              alt=""
+              className="h-11 w-11 rounded-lg bg-fill-strong object-cover shadow-md lg:h-14 lg:w-14"
+            />
           </Link>
-          {artist && (
-            <Link
-              to="/artists/$id"
-              params={{ id: artist.id }}
-              className="block truncate text-xs text-custom-muted hover:underline"
-            >
-              {artist.name}
-            </Link>
+        ) : (
+          <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-lg bg-fill-strong">
+            <IoMusicalNotes className="h-5 w-5 text-label-tertiary" />
+          </span>
+        )}
+        <div className="min-w-0">
+          {track ? (
+            <>
+              <Link
+                to="/tracks/$id"
+                params={{ id: track.id }}
+                className="block truncate text-[14px] font-medium hover:underline"
+              >
+                {track.name}
+              </Link>
+              {message ? (
+                <p className="truncate text-[12px] text-label-secondary lg:hidden">
+                  {message}
+                </p>
+              ) : null}
+              {artist && (
+                <Link
+                  to="/artists/$id"
+                  params={{ id: artist.id }}
+                  className={cn(
+                    'block truncate text-[13px] text-label-secondary hover:underline',
+                    message && 'hidden lg:block'
+                  )}
+                >
+                  {artist.name}
+                </Link>
+              )}
+            </>
+          ) : (
+            <p className="text-[14px] text-label-secondary">Not playing</p>
           )}
         </div>
       </div>
-      <div className="mt-3 h-1 overflow-hidden rounded bg-custom-gray">
-        <div
-          className="h-full bg-spotify-green"
-          style={{
-            width: `${Math.min(100, (progress / data.track.durationMs) * 100)}%`,
-          }}
+
+      {track && data && (
+        <div className="flex shrink-0 flex-col items-center gap-1.5">
+          <div className="flex items-center gap-1 lg:gap-5">
+            <button
+              type="button"
+              aria-label="Previous"
+              onClick={() => control.mutate('previous')}
+              className="btn-icon hidden text-label lg:inline-flex"
+            >
+              <IoPlaySkipBack className="h-[18px] w-[18px]" />
+            </button>
+            <button
+              type="button"
+              aria-label={data.isPlaying ? 'Pause' : 'Play'}
+              onClick={() => control.mutate(data.isPlaying ? 'pause' : 'play')}
+              className="flex h-10 w-10 items-center justify-center rounded-full text-label transition active:scale-95 lg:h-9 lg:w-9 lg:bg-white lg:text-black lg:hover:scale-105"
+            >
+              {data.isPlaying ? (
+                <IoPause className="h-6 w-6 lg:h-[18px] lg:w-[18px]" />
+              ) : (
+                <IoPlay className="h-6 w-6 translate-x-[1px] lg:h-[18px] lg:w-[18px]" />
+              )}
+            </button>
+            <button
+              type="button"
+              aria-label="Next"
+              onClick={() => control.mutate('next')}
+              className="btn-icon text-label"
+            >
+              <IoPlaySkipForward className="h-5 w-5 lg:h-[18px] lg:w-[18px]" />
+            </button>
+          </div>
+          <div className="hidden w-full items-center gap-3 lg:flex">
+            <span className="w-10 text-right text-[11px] tabular-nums text-label-tertiary">
+              {formatDuration(progress)}
+            </span>
+            <ProgressBar percent={percent} className="flex-1" />
+            <span className="w-10 text-[11px] tabular-nums text-label-tertiary">
+              {formatDuration(track.durationMs)}
+            </span>
+          </div>
+        </div>
+      )}
+
+      <p className="hidden truncate text-right text-[12px] text-label-tertiary lg:block">
+        {message}
+      </p>
+
+      {track && (
+        <ProgressBar
+          percent={percent}
+          className="absolute inset-x-4 bottom-0 lg:hidden"
         />
-      </div>
-      <div className="mt-3 flex items-center justify-center gap-6">
-        <Control label="Previous" onClick={() => control.mutate('previous')}>
-          <FaStepBackward />
-        </Control>
-        <Control
-          label={data.isPlaying ? 'Pause' : 'Play'}
-          onClick={() => control.mutate(data.isPlaying ? 'pause' : 'play')}
-        >
-          {data.isPlaying ? <FaPause /> : <FaPlay />}
-        </Control>
-        <Control label="Next" onClick={() => control.mutate('next')}>
-          <FaStepForward />
-        </Control>
-      </div>
-      {message && (
-        <p className="mt-2 text-center text-xs text-custom-muted">{message}</p>
       )}
     </section>
   );
 }
 
-function Control({
-  label,
-  onClick,
-  children,
-}: { label: string; onClick: () => void; children: React.ReactNode }) {
+function ProgressBar({
+  percent,
+  className,
+}: { percent: number; className?: string }) {
   return (
-    <button
-      type="button"
-      aria-label={label}
-      onClick={onClick}
-      className="rounded-full p-2 hover:bg-custom-gray"
+    <div
+      className={cn(
+        'h-[3px] overflow-hidden rounded-full bg-white/[0.15]',
+        className
+      )}
     >
-      {children}
-    </button>
+      <div
+        className="h-full rounded-full bg-white/90 transition-[width] duration-1000 ease-linear"
+        style={{ width: `${percent}%` }}
+      />
+    </div>
   );
 }

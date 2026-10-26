@@ -1,4 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
+import { IoPlay, IoStop } from 'react-icons/io5';
+
+import { cn } from '@/lib/cn';
 
 let audio: HTMLAudioElement | undefined;
 let stopCurrent: (() => void) | undefined;
@@ -44,14 +47,14 @@ export function TrackPreview({
   }, []);
   return (
     <div
-      className="relative"
+      className="relative h-12 w-12 overflow-hidden rounded-lg shadow-md md:h-14 md:w-14"
       onMouseEnter={() => {
         timer.current = setTimeout(play, 300);
       }}
       onMouseLeave={stop}
     >
       <img
-        className="h-20 w-20 bg-custom-darkgray"
+        className="h-full w-full bg-fill-strong object-cover"
         src={image ?? undefined}
         alt={alt}
         loading="lazy"
@@ -64,13 +67,21 @@ export function TrackPreview({
             event.preventDefault();
             playing ? stop() : play();
           }}
-          className="absolute bottom-1 right-1 rounded-full bg-black/75 px-2 py-1 text-xs text-white md:opacity-0 md:group-hover:opacity-100"
+          className={cn(
+            'absolute bottom-0.5 right-0.5 flex h-5 w-5 items-center justify-center rounded-full bg-black/70 text-white transition duration-200',
+            'md:inset-0 md:h-auto md:w-auto md:rounded-none md:bg-black/[0.45] md:opacity-0 md:group-hover:opacity-100 md:focus-visible:opacity-100',
+            playing && 'md:opacity-100'
+          )}
         >
-          {playing ? '■' : '▶'}
+          {playing ? (
+            <IoStop className="h-2.5 w-2.5 md:h-4 md:w-4" />
+          ) : (
+            <IoPlay className="h-2.5 w-2.5 translate-x-[0.5px] md:h-5 md:w-5" />
+          )}
         </button>
       )}
       {playing && (
-        <span className="absolute bottom-0 left-0 h-1 w-full animate-pulse bg-spotify-green motion-reduce:animate-none" />
+        <span className="absolute bottom-0 left-0 h-[3px] w-full animate-pulse bg-white motion-reduce:animate-none" />
       )}
     </div>
   );

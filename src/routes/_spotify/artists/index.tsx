@@ -23,13 +23,12 @@ function Artists() {
   const { range } = Route.useSearch();
   return (
     <PageWrapper>
-      <PageHeader title="Artists" activeRange={range} />
-      <div className="mb-4">
+      <PageHeader title="Top Artists" activeRange={range}>
         <Suspense>
           <ShareCard card={{ variant: 'artists', range }} />
         </Suspense>
-      </div>
-      <div className="grid grid-cols-2 gap-3 md:grid-cols-3 md:gap-6 xl:grid-cols-4 2xl:grid-cols-5">
+      </PageHeader>
+      <div className="grid grid-cols-2 gap-4 md:grid-cols-3 md:gap-5 xl:grid-cols-4 2xl:grid-cols-6">
         <Suspense key={range} fallback={<ArtistTilesSkeleton count={20} />}>
           <ArtistTiles range={range} />
         </Suspense>

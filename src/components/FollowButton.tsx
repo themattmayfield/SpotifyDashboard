@@ -3,13 +3,14 @@ import {
   useQueryClient,
   useSuspenseQuery,
 } from '@tanstack/react-query';
+import { IoCheckmark } from 'react-icons/io5';
 
 import { Skeleton } from '@/components/ui/skeleton';
 import { cn } from '@/lib/cn';
 import { spotifyQueries } from '@/lib/queries';
 import { setFollowing } from '@/lib/spotify';
 
-const buttonClassName = 'h-[34px] w-[100px] rounded';
+const buttonClassName = 'h-10 w-[120px] rounded-full';
 
 export function FollowButton({ id }: { id: string }) {
   const client = useQueryClient();
@@ -38,11 +39,12 @@ export function FollowButton({ id }: { id: string }) {
       disabled={mutation.isPending}
       onClick={() => mutation.mutate(!following)}
       className={cn(
+        following ? 'btn-secondary' : 'btn-primary',
         buttonClassName,
-        'border bg-transparent text-white transition duration-300 ease-in-out hover:bg-custom-darkgray focus:outline-none disabled:cursor-wait',
-        following ? 'border-spotify-green' : 'border-custom-gray'
+        'px-0 disabled:cursor-wait'
       )}
     >
+      {following && <IoCheckmark className="h-4 w-4" />}
       {following ? 'Following' : 'Follow'}
     </button>
   );

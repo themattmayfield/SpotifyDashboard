@@ -23,36 +23,44 @@ export function StoredHistory() {
     initialPageParam: undefined as number | undefined,
     getNextPageParam: (page) => page.nextCursor,
   });
-  if (query.isPending) return <p>Loading history…</p>;
+  if (query.isPending)
+    return <p className="text-[14px] text-label-tertiary">Loading history…</p>;
   const items = query.data?.pages.flatMap((page) => page.items) ?? [];
-  if (!query.data?.pages[0]?.enabled || !items.length) return <RecentTracks />;
+  if (!query.data?.pages[0]?.enabled || !items.length)
+    return (
+      <div className="card p-2">
+        <RecentTracks />
+      </div>
+    );
   return (
-    <div className="space-y-8">
+    <div className="space-y-10">
       {dayGroups(items, timeZone).map((group) => (
         <section key={group.day}>
-          <h2 className="mb-4 text-xl font-semibold">{group.label}</h2>
-          <TrackList
-            tracks={group.items.map(
-              ({ track }) =>
-                ({
-                  ...track,
-                  thumb: track.image,
-                  album: {
-                    name: '',
+          <h2 className="section-title mb-3">{group.label}</h2>
+          <div className="card p-2">
+            <TrackList
+              tracks={group.items.map(
+                ({ track }) =>
+                  ({
+                    ...track,
+                    thumb: track.image,
+                    album: {
+                      name: '',
+                      url: null,
+                      releaseDate: null,
+                      type: null,
+                      totalTracks: null,
+                    },
+                    popularity: null,
+                    explicit: false,
+                    trackNumber: null,
+                    uri: `spotify:track:${track.id}`,
                     url: null,
-                    releaseDate: null,
-                    type: null,
-                    totalTracks: null,
-                  },
-                  popularity: null,
-                  explicit: false,
-                  trackNumber: null,
-                  uri: `spotify:track:${track.id}`,
-                  url: null,
-                  previewUrl: null,
-                }) satisfies Track
-            )}
-          />
+                    previewUrl: null,
+                  }) satisfies Track
+              )}
+            />
+          </div>
         </section>
       ))}
       {query.hasNextPage && (
@@ -60,7 +68,7 @@ export function StoredHistory() {
           type="button"
           disabled={query.isFetchingNextPage}
           onClick={() => query.fetchNextPage()}
-          className="rounded-full bg-white px-5 py-2 text-black disabled:opacity-50"
+          className="btn-secondary"
         >
           {query.isFetchingNextPage ? 'Loading…' : 'Load more'}
         </button>

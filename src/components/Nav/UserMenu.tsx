@@ -1,6 +1,6 @@
-import { useEffect, useState } from 'react';
-import { AiFillCaretDown } from 'react-icons/ai';
-import { RiUser6Fill } from 'react-icons/ri';
+import { useSuspenseQuery } from '@tanstack/react-query';
+import { type ReactNode, useEffect, useState } from 'react';
+import { IoChevronDown, IoPersonCircle } from 'react-icons/io5';
 
 import {
   Popover,
@@ -8,98 +8,157 @@ import {
   PopoverTrigger,
 } from '@/components/ui/popover';
 import { logout } from '@/lib/auth';
+import { cn } from '@/lib/cn';
 import { deleteWrapperData } from '@/lib/persistence';
-import type { User } from '@/types';
+import { spotifyQueries } from '@/lib/queries';
 
-export default function UserMenu({ user }: { user: User }) {
+const rowClassName =
+  'flex h-10 w-full items-center justify-between rounded-xl px-3 text-left text-[14px] transition hover:bg-fill-strong';
+
+export default function UserMenu({ variant }: { variant: 'avatar' | 'row' }) {
+  const { data: user } = useSuspenseQuery(spotifyQueries.me());
   const [isOpen, setIsOpen] = useState(false);
   const [previews, setPreviews] = useState(true);
   useEffect(
     () => setPreviews(localStorage.getItem('hover-previews') !== 'off'),
     []
   );
+  const togglePreviews = () => {
+    setPreviews(!previews);
+    localStorage.setItem('hover-previews', previews ? 'off' : 'on');
+  };
   return (
-    <>
-      {isOpen && (
-        <div className="absolute inset-0 h-screen w-screen min-w-max bg-spotify-black/80" />
-      )}
-      <Popover open={isOpen} onOpenChange={setIsOpen}>
-        <PopoverTrigger asChild>
+    <Popover open={isOpen} onOpenChange={setIsOpen}>
+      <PopoverTrigger asChild>
+        {variant === 'avatar' ? (
           <button
             type="button"
             aria-label="Account menu"
-            className="flex h-10 items-center justify-between space-x-2 rounded-full bg-custom-darkgray focus:outline-none lg:h-16 lg:space-x-3"
+            className="flex rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60"
           >
-            <AiFillCaretDown className="ml-4 h-4 w-4 text-custom-lightgray" />
-            {user.image ? (
-              <img
-                className="h-10 w-10 rounded-full lg:h-16 lg:w-16"
-                src={user.image}
-                alt={user.name}
-              />
-            ) : (
-              <div className="h-10 w-10 rounded-full bg-custom-darkgray py-2 pr-4 lg:h-16 lg:w-16 lg:py-4 lg:pr-5">
-                <RiUser6Fill className="h-full w-full text-custom-lightgray" />
-              </div>
-            )}
+            <Avatar image={user.image} name={user.name} className="h-8 w-8" />
           </button>
-        </PopoverTrigger>
-        <PopoverContent
-          className="max-w-sm border-0 bg-custom-darkgray ring-4 ring-black ring-opacity-5"
-          align="end"
-        >
-          <div className="flex flex-col space-y-2 text-left text-gray-400">
-            <h3 className="text-lg font-semibold text-white">
+        ) : (
+          <button
+            type="button"
+            aria-label="Account menu"
+            className="flex w-full items-center gap-3 rounded-xl p-2 text-left transition hover:bg-fill focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60"
+          >
+            <Avatar image={user.image} name={user.name} className="h-8 w-8" />
+            <span className="min-w-0 flex-1">
+              <span className="block truncate text-[13px] font-medium">
+                {user.name}
+              </span>
+              <span className="block text-[11px] text-label-tertiary">
+                Account
+              </span>
+            </span>
+            <IoChevronDown className="h-4 w-4 text-label-tertiary" />
+          </button>
+        )}
+      </PopoverTrigger>
+      <PopoverContent
+        align={variant === 'avatar' ? 'end' : 'start'}
+        side={variant === 'avatar' ? 'bottom' : 'top'}
+      >
+        <div className="flex items-center gap-3 px-3 pb-3 pt-2.5">
+          <Avatar image={user.image} name={user.name} className="h-10 w-10" />
+          <div className="min-w-0">
+            <p className="truncate text-[15px] font-semibold">
               Hello {user.name} 👋🏿
-            </h3>
-            <p className="text-gray-500">
-              Hope you enjoy exploring your Spotify favorites
             </p>
-            <label className="flex items-center gap-2 text-sm text-white">
-              <input
-                type="checkbox"
-                checked={previews}
-                onChange={(event) => {
-                  setPreviews(event.target.checked);
-                  localStorage.setItem(
-                    'hover-previews',
-                    event.target.checked ? 'on' : 'off'
-                  );
-                }}
-              />{' '}
-              Hover previews
-            </label>
-            <a
-              href="https://ko-fi.com/P5P21JZUH"
-              target="_blank"
-              className="animate-bounce cursor-pointer text-sm text-gray-400 hover:underline"
-              rel="noreferrer"
-            >
-              Support me by buy me a ☕
-            </a>
-            <form action={logout.url} method="post">
-              <button
-                className="cursor-pointer text-sm text-red-600 hover:text-red-400"
-                type="submit"
-              >
-                Logout
-              </button>
-            </form>
-            <button
-              className="text-left text-sm text-red-600 hover:text-red-400"
-              type="button"
-              onClick={async () => {
-                if (confirm('Delete all data Wrapper has stored for you?')) {
-                  await deleteWrapperData();
-                  setIsOpen(false);
-                }
-              }}
-            >
-              Delete my Wrapper data
-            </button>
+            <p className="text-[12px] text-label-secondary">
+              Hope you enjoy exploring your favorites
+            </p>
           </div>
-        </PopoverContent>
-      </Popover>
-    </>
+        </div>
+        <Separator />
+        <button
+          type="button"
+          role="switch"
+          aria-checked={previews}
+          onClick={togglePreviews}
+          className={rowClassName}
+        >
+          Hover previews
+          <span
+            className={cn(
+              'relative h-[22px] w-[38px] rounded-full transition-colors duration-200',
+              previews ? 'bg-system-green' : 'bg-white/20'
+            )}
+          >
+            <span
+              className={cn(
+                'absolute top-[2px] h-[18px] w-[18px] rounded-full bg-white shadow transition-transform duration-200',
+                previews ? 'translate-x-[18px]' : 'translate-x-[2px]'
+              )}
+            />
+          </span>
+        </button>
+        <a
+          href="https://ko-fi.com/P5P21JZUH"
+          target="_blank"
+          rel="noreferrer"
+          className={rowClassName}
+        >
+          Buy me a coffee
+          <span aria-hidden>☕</span>
+        </a>
+        <Separator />
+        <form action={logout.url} method="post">
+          <button className={rowClassName} type="submit">
+            Log out
+          </button>
+        </form>
+        <MenuDanger
+          onClick={async () => {
+            if (confirm('Delete all data Wrapper has stored for you?')) {
+              await deleteWrapperData();
+              setIsOpen(false);
+            }
+          }}
+        >
+          Delete my Wrapper data
+        </MenuDanger>
+      </PopoverContent>
+    </Popover>
+  );
+}
+
+function MenuDanger({
+  onClick,
+  children,
+}: { onClick: () => void; children: ReactNode }) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className={cn(rowClassName, 'text-system-red')}
+    >
+      {children}
+    </button>
+  );
+}
+
+function Separator() {
+  return <div className="mx-3 my-1 h-px bg-separator" />;
+}
+
+function Avatar({
+  image,
+  name,
+  className,
+}: { image: string | null; name: string; className: string }) {
+  return image ? (
+    <img
+      src={image}
+      alt={name}
+      className={cn(
+        'shrink-0 rounded-full object-cover ring-1 ring-white/10',
+        className
+      )}
+    />
+  ) : (
+    <IoPersonCircle className={cn('shrink-0 text-label-tertiary', className)} />
   );
 }

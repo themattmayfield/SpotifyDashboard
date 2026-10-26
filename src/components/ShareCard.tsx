@@ -10,6 +10,7 @@ import {
 import type { TTimeRange } from '@/types';
 import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import { useEffect, useRef, useState } from 'react';
+import { IoClose, IoShareOutline } from 'react-icons/io5';
 
 const labels = {
   short_term: 'Last 4 Weeks',
@@ -185,33 +186,57 @@ function CardModal({ data }: { data: ModalData }) {
     <>
       <button
         type="button"
-        className="rounded-full border border-white px-4 py-2 text-white"
+        className="btn-secondary h-9 px-4 text-[13px]"
         onClick={() => setOpen(true)}
       >
+        <IoShareOutline className="h-4 w-4" />
         Share
       </button>
       {open && (
         <dialog
           open
-          className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 p-4"
+          className="fixed inset-0 z-[100] m-0 flex h-full max-h-none w-full max-w-none items-center justify-center bg-black/60 p-4 text-label backdrop-blur-md animate-in fade-in-0"
         >
-          <div className="max-h-full max-w-md overflow-auto rounded-xl bg-custom-darkgray p-4">
-            <canvas
-              ref={canvas}
-              width={1080}
-              height={1920}
-              className="w-full"
-            />
-            <div className="mt-3 flex flex-wrap gap-3">
-              <button type="button" onClick={share}>
+          <div className="relative flex max-h-full w-full max-w-sm flex-col overflow-hidden rounded-[28px] bg-elevated p-4 shadow-[0_30px_80px_rgba(0,0,0,0.7)] ring-1 ring-inset ring-white/10 animate-in zoom-in-95">
+            <div className="mb-3 flex items-center justify-between pl-1">
+              <h2 className="text-[17px] font-semibold">Share</h2>
+              <button
+                type="button"
+                aria-label="Close"
+                className="btn-icon h-8 w-8 bg-fill-strong"
+                onClick={() => setOpen(false)}
+              >
+                <IoClose className="h-4 w-4" />
+              </button>
+            </div>
+            <div className="min-h-0 overflow-auto rounded-2xl">
+              <canvas
+                ref={canvas}
+                width={1080}
+                height={1920}
+                className="w-full rounded-2xl"
+              />
+            </div>
+            <div className="mt-4 grid grid-cols-2 gap-2">
+              <button
+                type="button"
+                className="btn-primary col-span-2"
+                onClick={share}
+              >
+                <IoShareOutline className="h-4 w-4" />
                 Share
               </button>
-              <button type="button" onClick={download}>
+              <button
+                type="button"
+                className={`btn-secondary ${typeof ClipboardItem === 'undefined' ? 'col-span-2' : ''}`}
+                onClick={download}
+              >
                 Download PNG
               </button>
               {typeof ClipboardItem !== 'undefined' && (
                 <button
                   type="button"
+                  className="btn-secondary"
                   onClick={async () => {
                     const value = await blob();
                     if (value)
@@ -223,9 +248,6 @@ function CardModal({ data }: { data: ModalData }) {
                   Copy image
                 </button>
               )}
-              <button type="button" onClick={() => setOpen(false)}>
-                Close
-              </button>
             </div>
           </div>
         </dialog>

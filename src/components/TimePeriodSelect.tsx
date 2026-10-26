@@ -1,67 +1,60 @@
 import { useNavigate, useRouter } from '@tanstack/react-router';
-import { IoIosInfinite } from 'react-icons/io';
-import { IoTimeOutline } from 'react-icons/io5';
-import { MdOutlineBolt } from 'react-icons/md';
 
-import { type TTimeRange, timeRanges } from '@/types';
-import { Select, SelectContent, SelectItem, SelectTrigger } from './ui/select';
+import { cn } from '@/lib/cn';
+import type { TTimeRange } from '@/types';
 
-const options = {
-  long_term: { label: 'All Time', Icon: IoIosInfinite },
-  medium_term: { label: 'Last 6 Months', Icon: IoTimeOutline },
-  short_term: { label: 'Last 4 Weeks', Icon: MdOutlineBolt },
-} satisfies Record<TTimeRange, { label: string; Icon: unknown }>;
+const options: { range: TTimeRange; label: string }[] = [
+  { range: 'short_term', label: '4 Weeks' },
+  { range: 'medium_term', label: '6 Months' },
+  { range: 'long_term', label: 'All Time' },
+];
 
 export default function TimePeriodSelect({
   activeRange,
 }: { activeRange: TTimeRange }) {
   const navigate = useNavigate();
   const router = useRouter();
-  const { label, Icon } = options[activeRange];
 
-  // Warm the other ranges as soon as the menu opens so switching is instant.
-  const preloadRanges = (open: boolean) => {
-    if (!open) return;
-    for (const range of timeRanges) {
-      if (range !== activeRange)
-        router
-          .preloadRoute({
-            to: '.',
-            search: (previous: object) => ({ ...previous, range }),
-          })
-          .catch(() => undefined);
-    }
+  // Warm a range on hover/focus so switching is instant.
+  const preload = (range: TTimeRange) => {
+    if (range === activeRange) return;
+    router
+      .preloadRoute({
+        to: '.',
+        search: (previous: object) => ({ ...previous, range }),
+      })
+      .catch(() => undefined);
   };
 
   return (
-    <Select
-      value={activeRange}
-      onOpenChange={preloadRanges}
-      onValueChange={(range: TTimeRange) =>
-        navigate({ to: '.', search: (previous) => ({ ...previous, range }) })
-      }
-    >
-      <SelectTrigger
-        aria-label="Time period"
-        className="max-w-min gap-2 border-none pr-1 outline-none ring-0 focus:ring-0"
-      >
-        <Icon className="h-6 w-6" />
-        <span className="hidden whitespace-nowrap sm:inline">{label}</span>
-      </SelectTrigger>
-      <SelectContent
-        className="border-none bg-custom-darkgray"
-        onClick={(e) => e.stopPropagation()}
-      >
-        {timeRanges.map((range) => (
-          <SelectItem
+    <fieldset className="m-0 inline-flex min-w-0 rounded-full border-0 bg-fill-strong p-[3px] ring-1 ring-inset ring-separator">
+      <legend className="sr-only">Time period</legend>
+      {options.map(({ range, label }) => {
+        const active = range === activeRange;
+        return (
+          <button
             key={range}
-            className="cursor-pointer text-white focus:bg-custom-lightgray"
-            value={range}
+            type="button"
+            aria-pressed={active}
+            onMouseEnter={() => preload(range)}
+            onFocus={() => preload(range)}
+            onClick={() =>
+              navigate({
+                to: '.',
+                search: (previous) => ({ ...previous, range }),
+              })
+            }
+            className={cn(
+              'h-8 whitespace-nowrap rounded-full px-4 text-[13px] font-medium transition duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60',
+              active
+                ? 'bg-[#636366] text-white shadow-[0_1px_4px_rgba(0,0,0,0.4)]'
+                : 'text-label-secondary hover:text-label'
+            )}
           >
-            {options[range].label}
-          </SelectItem>
-        ))}
-      </SelectContent>
-    </Select>
+            {label}
+          </button>
+        );
+      })}
+    </fieldset>
   );
 }

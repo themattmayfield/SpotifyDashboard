@@ -11,15 +11,36 @@ module.exports = {
       },
     },
     extend: {
+      fontFamily: {
+        sans: [
+          '-apple-system',
+          'BlinkMacSystemFont',
+          '"SF Pro Text"',
+          '"SF Pro Display"',
+          '"Helvetica Neue"',
+          'Inter',
+          '"Segoe UI"',
+          'Roboto',
+          'sans-serif',
+        ],
+      },
       colors: {
-        'spotify-dark': 'rgb(24, 24, 24)',
-        'spotify-green': 'rgb(29, 185, 84)',
-        'custom-darkgray': '#1B1B1B',
-        'custom-darkgray2': '#0E0E0E',
-        'spotify-black': '#121212',
-        'custom-gray': '#383838',
-        'custom-lightgray': '#686868',
-        'custom-muted': '#565656',
+        canvas: '#000000',
+        sidebar: '#0b0b0c',
+        elevated: '#1c1c1e',
+        label: {
+          DEFAULT: '#f5f5f7',
+          secondary: 'rgba(235, 235, 245, 0.6)',
+          tertiary: 'rgba(235, 235, 245, 0.32)',
+        },
+        fill: {
+          DEFAULT: 'rgba(255, 255, 255, 0.05)',
+          strong: 'rgba(255, 255, 255, 0.1)',
+          hover: 'rgba(255, 255, 255, 0.15)',
+        },
+        separator: 'rgba(255, 255, 255, 0.08)',
+        'system-green': '#30d158',
+        'system-red': '#ff453a',
       },
       keyframes: {
         'accordion-down': {

@@ -16,9 +16,6 @@ import {
 import type { ReactNode } from 'react';
 import '@/styles/globals.css';
 
-const buttonClassName =
-  'tracking-widest focus:outline-none no-underline transition duration-300 ease-in-out hover:bg-[#1ed760] bg-spotify-green text-white py-3.5 px-8 uppercase rounded-full';
-
 function ErrorPage({ error, reset }: Partial<ErrorComponentProps>) {
   const router = useRouter();
   const queryErrorBoundary = useQueryErrorResetBoundary();
@@ -31,24 +28,28 @@ function ErrorPage({ error, reset }: Partial<ErrorComponentProps>) {
   };
 
   return (
-    <div className="flex h-screen flex-col items-center justify-center bg-spotify-dark px-4 text-center text-white">
-      <h1 className="mb-4 text-4xl font-bold">
+    <div className="flex h-[100dvh] flex-col items-center justify-center bg-canvas px-6 text-center text-label">
+      <h1 className="large-title max-w-2xl">
         Oops! Looks like Matt's been coding again...
       </h1>
-      <p className="mb-8 text-lg">
+      <p className="mt-3 max-w-xl text-[17px] text-label-secondary">
         Don't worry, he's been notified and sent back to debugging school.
       </p>
-      <div className="mb-8 text-sm text-gray-400">
+      <div className="card mt-8 max-w-xl px-4 py-3 font-mono text-[12px] text-label-tertiary">
         Error details (for the nerds):{' '}
         {error instanceof Error ? error.message : 'Page not found'}
       </div>
-      <div className="flex gap-4">
+      <div className="mt-8 flex gap-3">
         {error !== undefined && (
-          <button type="button" onClick={retry} className={buttonClassName}>
+          <button
+            type="button"
+            onClick={retry}
+            className="btn-secondary h-11 px-6"
+          >
             Try Again
           </button>
         )}
-        <Link to="/" className={buttonClassName}>
+        <Link to="/" className="btn-primary h-11 px-6">
           Take Me Home
         </Link>
       </div>
@@ -76,8 +77,16 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       meta: [
         { title: 'Spotify Wrapper' },
         { name: 'description', content: 'Spotify Wrapper' },
-        { name: 'viewport', content: 'width=device-width, initial-scale=1.0' },
-        { name: 'theme-color', content: '#121212' },
+        {
+          name: 'viewport',
+          content: 'width=device-width, initial-scale=1.0, viewport-fit=cover',
+        },
+        { name: 'theme-color', content: '#000000' },
+        { name: 'color-scheme', content: 'dark' },
+        {
+          name: 'apple-mobile-web-app-status-bar-style',
+          content: 'black-translucent',
+        },
         { name: 'apple-mobile-web-app-capable', content: 'yes' },
       ],
       links: [

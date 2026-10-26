@@ -1,53 +1,131 @@
-import { AiFillHome } from 'react-icons/ai';
-import { BsMusicNoteBeamed, BsPieChartFill } from 'react-icons/bs';
-import { GiMicrophone } from 'react-icons/gi';
+import { useQuery } from '@tanstack/react-query';
+import { Link } from '@tanstack/react-router';
 import {
-  RiCalendarEventFill,
-  RiHistoryLine,
-  RiPlayListFill,
-} from 'react-icons/ri';
-import { RiTeamFill } from 'react-icons/ri';
+  IoCalendarClearOutline,
+  IoHomeOutline,
+  IoListOutline,
+  IoMicOutline,
+  IoMusicalNotes,
+  IoMusicalNotesOutline,
+  IoPeopleOutline,
+  IoPieChartOutline,
+  IoTimeOutline,
+} from 'react-icons/io5';
 import { SiSpotify } from 'react-icons/si';
 
 import SideNavLink from '@/components/SideNavLink';
+import { formatCount } from '@/lib/format';
+import { spotifyQueries } from '@/lib/queries';
+import UserMenu from './Nav/UserMenu';
 
-const navItems = [
-  { path: '/', label: 'Home', Icon: AiFillHome },
-  { path: '/artists', label: 'Artists', Icon: GiMicrophone },
-  { path: '/tracks', label: 'Tracks', Icon: BsMusicNoteBeamed },
-  { path: '/recentTracks', label: 'Recent', Icon: RiHistoryLine },
-  { path: '/recap', label: 'Recap', Icon: RiCalendarEventFill },
-  { path: '/playlists', label: 'Playlists', Icon: RiPlayListFill },
-  { path: '/compare', label: 'Compare', Icon: RiTeamFill },
-  { path: '/taste', label: 'Taste', Icon: BsPieChartFill },
+const libraryItems = [
+  { path: '/', label: 'Home', Icon: IoHomeOutline },
+  { path: '/artists', label: 'Artists', Icon: IoMicOutline },
+  { path: '/tracks', label: 'Tracks', Icon: IoMusicalNotesOutline },
+  { path: '/recentTracks', label: 'Recent', Icon: IoTimeOutline },
+  { path: '/playlists', label: 'Playlists', Icon: IoListOutline },
 ] as const;
+
+const insightItems = [
+  { path: '/recap', label: 'Recap', Icon: IoCalendarClearOutline },
+  { path: '/taste', label: 'Taste', Icon: IoPieChartOutline },
+  { path: '/compare', label: 'Compare', Icon: IoPeopleOutline },
+] as const;
+
+const allItems = [...libraryItems, ...insightItems];
 
 export default function SideNav() {
   return (
     <>
-      <nav className="sticky top-0 hidden h-screen w-32 shrink-0 flex-col items-center space-y-6 rounded-xl py-4 pt-12 lg:flex">
-        <div className="mb-12">
-          <SiSpotify className="h-14 w-14 text-spotify-green" />
-        </div>
-        <NavLinks className="flex w-full flex-col items-center" />
-      </nav>
       <nav
-        className="fixed bottom-0 right-0 z-50 h-[70px] w-full overflow-x-auto border-x-8 border-spotify-black bg-spotify-black text-white shadow-[inset_18px_0_18px_-18px_#fff,inset_-18px_0_18px_-18px_#fff] lg:hidden"
+        className="hidden w-[248px] shrink-0 flex-col border-r border-separator bg-sidebar px-3 pb-3 pt-6 lg:flex"
         aria-label="Main navigation"
       >
-        <NavLinks className="flex h-full min-w-[560px]" />
+        <Link
+          to="/"
+          className="mb-7 flex items-center gap-2.5 px-3 text-[21px] font-semibold tracking-[-0.02em]"
+        >
+          <SiSpotify className="h-6 w-6" />
+          Wrapper
+        </Link>
+        <div className="flex flex-col gap-0.5">
+          {libraryItems.map((item) => (
+            <SideNavLink key={item.path} variant="sidebar" {...item} />
+          ))}
+        </div>
+        <GroupLabel>Insights</GroupLabel>
+        <div className="flex flex-col gap-0.5">
+          {insightItems.map((item) => (
+            <SideNavLink key={item.path} variant="sidebar" {...item} />
+          ))}
+        </div>
+        <SidebarPlaylists />
+        <div className="mt-auto border-t border-separator pt-3">
+          <UserMenu variant="row" />
+        </div>
+      </nav>
+      <nav
+        className="glass fixed inset-x-0 bottom-0 z-50 border-t border-separator pb-[env(safe-area-inset-bottom)] lg:hidden"
+        aria-label="Main navigation"
+      >
+        <div className="no-scrollbar grid h-[60px] auto-cols-[minmax(64px,1fr)] grid-flow-col overflow-x-auto">
+          {allItems.map((item) => (
+            <SideNavLink key={item.path} variant="tabbar" {...item} />
+          ))}
+        </div>
       </nav>
     </>
   );
 }
 
-const NavLinks = ({ className }: { className: string }) => (
-  <div className={className}>
-    {navItems.map(({ path, label, Icon }) => (
-      <SideNavLink key={path} path={path} label={label}>
-        <Icon className="pointer-events-none z-0 h-6 w-6 text-white transition duration-150 ease-in-out group-hover:text-custom-lightgray" />
-        <span className="mt-1 text-[9px] lg:text-xs">{label}</span>
-      </SideNavLink>
-    ))}
-  </div>
-);
+function GroupLabel({ children }: { children: string }) {
+  return (
+    <h2 className="mb-1.5 mt-6 px-3 text-[12px] font-medium text-label-tertiary">
+      {children}
+    </h2>
+  );
+}
+
+function SidebarPlaylists() {
+  const { data } = useQuery(spotifyQueries.playlists());
+  if (!data?.length) return null;
+  return (
+    <>
+      <GroupLabel>Your playlists</GroupLabel>
+      <div className="no-scrollbar -mx-1 flex min-h-0 flex-1 flex-col gap-0.5 overflow-y-auto px-1 pb-3">
+        {data.map((playlist) => (
+          <Link
+            key={playlist.id}
+            to="/playlists/$id"
+            params={{ id: playlist.id }}
+            className="flex items-center gap-3 rounded-xl px-2 py-1.5 transition hover:bg-fill"
+            activeProps={{ className: 'bg-fill-strong' }}
+          >
+            {playlist.image ? (
+              <img
+                src={playlist.image}
+                alt=""
+                loading="lazy"
+                className="h-9 w-9 shrink-0 rounded-md bg-fill object-cover"
+              />
+            ) : (
+              <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md bg-fill-strong">
+                <IoMusicalNotes className="h-4 w-4 text-label-tertiary" />
+              </span>
+            )}
+            <span className="min-w-0">
+              <span className="block truncate text-[13px] font-medium">
+                {playlist.name}
+              </span>
+              {playlist.trackCount !== null && (
+                <span className="block truncate text-[11px] text-label-tertiary">
+                  {formatCount(playlist.trackCount, 'song')}
+                </span>
+              )}
+            </span>
+          </Link>
+        ))}
+      </div>
+    </>
+  );
+}

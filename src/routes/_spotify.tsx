@@ -4,6 +4,7 @@ import { createIsomorphicFn } from '@tanstack/react-start';
 import { useEffect } from 'react';
 
 import Nav from '@/components/Nav';
+import { NowPlaying } from '@/components/NowPlaying';
 import SideNav from '@/components/SideNav';
 import { ensureAuthenticated } from '@/lib/auth';
 import { syncListening } from '@/lib/persistence';
@@ -28,15 +29,18 @@ function SpotifyLayout() {
     );
   }, [queryClient]);
   return (
-    <div className="no-scrollbar flex h-screen overflow-hidden bg-transparent lg:pl-2 lg:pr-6">
-      <SideNav />
-      <main
-        id="main"
-        className="no-scrollbar flex min-h-screen min-w-0 flex-grow flex-col overflow-y-auto overflow-x-hidden pb-[120px] lg:pb-16"
-      >
-        <Nav />
-        <Outlet />
-      </main>
+    <div className="flex h-[100dvh] flex-col overflow-hidden bg-canvas text-label">
+      <div className="flex min-h-0 flex-1">
+        <SideNav />
+        <main
+          id="main"
+          className="no-scrollbar relative flex min-w-0 flex-1 flex-col overflow-y-auto overflow-x-hidden pb-[170px] lg:pb-12"
+        >
+          <Nav />
+          <Outlet />
+        </main>
+      </div>
+      <NowPlaying />
     </div>
   );
 }

@@ -2,26 +2,67 @@
 @tailwind components;
 @tailwind utilities;
 
-body {
-  background-color: #121212;
+@layer base {
+  html,
+  body {
+    @apply bg-canvas font-sans text-label antialiased;
+    padding: 0;
+    margin: 0;
+    color-scheme: dark;
+    text-rendering: optimizeLegibility;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+
+  ::selection {
+    background: rgba(255, 255, 255, 0.25);
+  }
 }
 
-html,
-body {
-  padding: 0;
-  margin: 0;
-  font-family:
-    -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
-    Ubuntu, Cantarell, Fira Sans, Helvetica Neue, sans-serif;
-}
+@layer components {
+  .glass {
+    @apply bg-black/60 backdrop-blur-2xl backdrop-saturate-150;
+  }
 
-a {
-  color: inherit;
-  text-decoration: none;
-}
+  .card {
+    @apply rounded-2xl bg-fill ring-1 ring-inset ring-separator;
+  }
 
-* {
-  box-sizing: border-box;
+  .large-title {
+    @apply text-[32px] font-semibold leading-tight tracking-[-0.025em] md:text-[40px];
+  }
+
+  .section-title {
+    @apply text-[20px] font-semibold tracking-[-0.015em];
+  }
+
+  .btn {
+    @apply inline-flex h-10 select-none items-center justify-center gap-2 whitespace-nowrap rounded-full px-5 text-[14px] font-medium transition duration-200 ease-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60 active:scale-[0.97] disabled:pointer-events-none disabled:opacity-40;
+  }
+
+  .btn-primary {
+    @apply btn bg-white text-black hover:bg-white/[0.85];
+  }
+
+  .btn-secondary {
+    @apply btn bg-fill-strong text-label hover:bg-fill-hover;
+  }
+
+  .btn-icon {
+    @apply inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-label-secondary transition duration-200 hover:bg-fill-strong hover:text-label focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60 active:scale-95 disabled:pointer-events-none disabled:opacity-30;
+  }
+
+  .link-subtle {
+    @apply text-[13px] text-label-secondary transition hover:text-label;
+  }
 }
 
 .no-scrollbar::-webkit-scrollbar {

@@ -7,9 +7,9 @@ export function OpenInSpotify({ url }: { url: string | null }) {
       href={url}
       target="_blank"
       rel="noopener noreferrer"
-      className="flex h-[34px] items-center gap-2 rounded border border-custom-gray px-3 text-sm text-white transition duration-300 ease-in-out hover:bg-custom-darkgray"
+      className="btn-secondary"
     >
-      <SiSpotify className="h-4 w-4 text-spotify-green" />
+      <SiSpotify className="h-4 w-4" />
       Open in Spotify
     </a>
   );

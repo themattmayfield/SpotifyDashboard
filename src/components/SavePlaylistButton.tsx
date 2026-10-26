@@ -1,5 +1,6 @@
 import { createPlaylistFromTracks } from '@/lib/spotify';
 import { useState } from 'react';
+import { IoAdd } from 'react-icons/io5';
 
 export function SavePlaylistButton({
   name,
@@ -20,18 +21,19 @@ export function SavePlaylistButton({
     }
   };
   return (
-    <div className="flex items-center gap-3 text-sm">
+    <div className="flex flex-wrap items-center gap-3 text-[13px]">
       <button
         type="button"
         disabled={pending || !trackIds.length}
         onClick={save}
-        className="rounded-full bg-spotify-green px-5 py-2 font-semibold text-white disabled:opacity-50"
+        className="btn-primary"
       >
+        <IoAdd className="h-4 w-4" />
         {pending ? 'Saving…' : 'Save as playlist'}
       </button>
       {result?.url && (
         <a
-          className="text-spotify-green hover:underline"
+          className="font-medium text-label hover:underline"
           href={result.url}
           target="_blank"
           rel="noreferrer"
@@ -40,9 +42,9 @@ export function SavePlaylistButton({
         </a>
       )}
       {result?.reauth && (
-        <span>
+        <span className="text-label-secondary">
           Log in again to allow playlist creation.{' '}
-          <a className="underline" href="/api/login">
+          <a className="text-label underline" href="/api/login">
             Log in
           </a>
         </span>

@@ -1,10 +1,14 @@
 import { Link, useRouterState } from '@tanstack/react-router';
-import { type ReactNode, useEffect, useRef } from 'react';
+import { useEffect, useRef } from 'react';
+import type { IconType } from 'react-icons';
+
+import { cn } from '@/lib/cn';
 
 export default function SideNavLink({
   path,
   label,
-  children,
+  Icon,
+  variant,
 }: {
   path:
     | '/'
@@ -16,7 +20,8 @@ export default function SideNavLink({
     | '/taste'
     | '/recap';
   label: string;
-  children: ReactNode;
+  Icon: IconType;
+  variant: 'sidebar' | 'tabbar';
 }) {
   const ref = useRef<HTMLAnchorElement>(null);
   const pathname = useRouterState({
@@ -24,27 +29,38 @@ export default function SideNavLink({
   });
   const active = path === '/' ? pathname === '/' : pathname.startsWith(path);
   useEffect(() => {
-    if (active && window.innerWidth < 1024)
+    if (active && variant === 'tabbar' && window.innerWidth < 1024)
       ref.current?.scrollIntoView({
         behavior: 'smooth',
         inline: 'center',
         block: 'nearest',
       });
-  }, [active]);
+  }, [active, variant]);
   return (
     <Link
       ref={ref}
       to={path}
       aria-label={label}
-      title={label}
-      activeOptions={{ exact: path === '/' }}
-      activeProps={{ className: 'border-spotify-green bg-custom-darkgray' }}
-      inactiveProps={{
-        className: 'border-transparent hover:bg-custom-darkgray',
-      }}
-      className="group z-10 flex w-full cursor-pointer flex-col items-center justify-center border-t-4 lg:h-24 lg:border-l-4 lg:border-t-0"
+      aria-current={active ? 'page' : undefined}
+      className={cn(
+        'transition duration-200 ease-out',
+        variant === 'sidebar'
+          ? 'flex h-10 items-center gap-3 rounded-xl px-3 text-[14px]'
+          : 'flex flex-col items-center justify-center gap-1 text-[10px] font-medium',
+        variant === 'sidebar' &&
+          (active
+            ? 'bg-fill-strong font-medium text-label'
+            : 'text-label-secondary hover:bg-fill hover:text-label'),
+        variant === 'tabbar' && (active ? 'text-label' : 'text-white/40')
+      )}
     >
-      {children}
+      <Icon
+        className={cn(
+          'pointer-events-none shrink-0',
+          variant === 'sidebar' ? 'h-[19px] w-[19px]' : 'h-6 w-6'
+        )}
+      />
+      <span>{label}</span>
     </Link>
   );
 }

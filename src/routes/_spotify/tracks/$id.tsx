@@ -1,6 +1,7 @@
 import { useQueryClient, useSuspenseQuery } from '@tanstack/react-query';
 import { Link, createFileRoute } from '@tanstack/react-router';
 import { Fragment, useState } from 'react';
+import { IoPlay } from 'react-icons/io5';
 
 import { OpenInSpotify } from '@/components/OpenInSpotify';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -22,9 +23,10 @@ export const Route = createFileRoute('/_spotify/tracks/$id')({
 });
 
 const containerClassName =
-  'mx-auto flex w-full max-w-7xl flex-col items-center gap-10 px-2 pt-10 md:px-4 md:pt-12';
-const headerClassName = 'flex flex-col items-center gap-3 md:flex-row md:gap-8';
-const imageClassName = 'h-48 w-48 md:h-72 md:w-72';
+  'mx-auto flex w-full max-w-5xl flex-col gap-12 px-4 pt-6 md:px-8 md:pt-10';
+const headerClassName =
+  'flex flex-col items-center gap-6 text-center md:flex-row md:items-end md:gap-10 md:text-left';
+const imageClassName = 'h-56 w-56 shrink-0 rounded-2xl md:h-72 md:w-72';
 
 function Page() {
   const queryClient = useQueryClient();
@@ -49,33 +51,36 @@ function Page() {
     <div className={containerClassName}>
       <div className={headerClassName}>
         <img
-          className={`${imageClassName} bg-custom-darkgray`}
+          className={`${imageClassName} bg-fill-strong object-cover shadow-[0_24px_60px_rgba(0,0,0,0.6)] ring-1 ring-white/[0.08]`}
           src={track.image ?? undefined}
           alt={`${track.album.name} artwork`}
         />
-        <div className="flex flex-col items-center gap-1 text-center text-custom-muted md:items-start md:gap-3 md:text-left">
-          <h1 className="text-3xl text-white md:text-5xl">{track.name}</h1>
-          <p className="md:text-2xl">
+        <div className="flex min-w-0 flex-col items-center gap-2 md:items-start">
+          <p className="text-[13px] font-medium text-label-secondary">Song</p>
+          <h1 className="text-[34px] font-semibold leading-[1.05] tracking-[-0.03em] md:text-[52px]">
+            {track.name}
+          </h1>
+          <p className="text-[17px] font-medium md:text-[20px]">
             {track.artists.map((artist, index) => (
               <Fragment key={artist.id}>
                 {index > 0 && ', '}
                 <Link
                   to="/artists/$id"
                   params={{ id: artist.id }}
-                  className="hover:text-white hover:underline"
+                  className="hover:underline"
                 >
                   {artist.name}
                 </Link>
               </Fragment>
             ))}
           </p>
-          <p className="md:text-lg">
+          <p className="text-[14px] text-label-secondary">
             {track.album.url ? (
               <a
                 href={track.album.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="hover:text-white hover:underline"
+                className="hover:text-label hover:underline"
               >
                 {track.album.name}
               </a>
@@ -87,50 +92,55 @@ function Page() {
             )}{' '}
             &middot; {formatDuration(track.durationMs)}
           </p>
-          <OpenInSpotify url={track.url} />
-          <button
-            type="button"
-            onClick={play}
-            className="rounded-full bg-spotify-green px-6 py-2 text-white"
-          >
-            Play
-          </button>
-          {message && <p className="text-sm">{message}</p>}
+          <div className="mt-4 flex flex-wrap justify-center gap-3">
+            <button type="button" onClick={play} className="btn-primary px-6">
+              <IoPlay className="h-4 w-4" />
+              Play
+            </button>
+            <OpenInSpotify url={track.url} />
+          </div>
+          {message && (
+            <p className="text-[13px] text-label-secondary">{message}</p>
+          )}
         </div>
       </div>
-      <section className="w-full max-w-2xl rounded-2xl bg-custom-darkgray p-6 text-white">
-        <h2 className="mb-4 text-xl">Track details</h2>
-        {track.popularity !== null && (
-          <div>
-            <div className="flex justify-between">
-              <span>Popularity</span>
-              <span>{track.popularity}/100</span>
+      <section>
+        <h2 className="section-title mb-3">Details</h2>
+        <div className="card overflow-hidden">
+          {track.popularity !== null && (
+            <div className="px-5 py-4">
+              <div className="flex justify-between text-[15px]">
+                <span>Popularity</span>
+                <span className="tabular-nums text-label-secondary">
+                  {track.popularity}/100
+                </span>
+              </div>
+              <div className="mt-3 h-1.5 overflow-hidden rounded-full bg-white/10">
+                <div
+                  className="h-full rounded-full bg-white"
+                  style={{ width: `${track.popularity}%` }}
+                />
+              </div>
             </div>
-            <div className="mt-2 h-2 rounded bg-custom-gray">
-              <div
-                className="h-full rounded bg-spotify-green"
-                style={{ width: `${track.popularity}%` }}
-              />
-            </div>
-          </div>
-        )}
-        <dl className="mt-5 grid grid-cols-2 gap-4 text-sm">
-          <Detail label="Duration" value={formatDuration(track.durationMs)} />
-          <Detail
-            label="Release date"
-            value={track.album.releaseDate ?? 'Unknown'}
-          />
-          <Detail label="Explicit" value={track.explicit ? 'Yes' : 'No'} />
-          <Detail label="Album type" value={track.album.type ?? 'Unknown'} />
-          <Detail
-            label="Track"
-            value={
-              track.trackNumber
-                ? `${track.trackNumber}${track.album.totalTracks ? ` of ${track.album.totalTracks}` : ''}`
-                : 'Unknown'
-            }
-          />
-        </dl>
+          )}
+          <dl className="divide-y divide-separator border-t border-separator [&:first-child]:border-t-0">
+            <Detail label="Duration" value={formatDuration(track.durationMs)} />
+            <Detail
+              label="Release date"
+              value={track.album.releaseDate ?? 'Unknown'}
+            />
+            <Detail label="Explicit" value={track.explicit ? 'Yes' : 'No'} />
+            <Detail label="Album type" value={track.album.type ?? 'Unknown'} />
+            <Detail
+              label="Track"
+              value={
+                track.trackNumber
+                  ? `${track.trackNumber}${track.album.totalTracks ? ` of ${track.album.totalTracks}` : ''}`
+                  : 'Unknown'
+              }
+            />
+          </dl>
+        </div>
       </section>
     </div>
   );
@@ -138,9 +148,9 @@ function Page() {
 
 function Detail({ label, value }: { label: string; value: string }) {
   return (
-    <div>
-      <dt className="text-custom-muted">{label}</dt>
-      <dd className="mt-1 capitalize">{value}</dd>
+    <div className="flex items-center justify-between gap-4 px-5 py-3.5 text-[15px]">
+      <dt>{label}</dt>
+      <dd className="capitalize text-label-secondary">{value}</dd>
     </div>
   );
 }
@@ -149,11 +159,11 @@ function TrackSkeleton() {
   return (
     <div className={containerClassName}>
       <div className={headerClassName}>
-        <Skeleton className={`${imageClassName} rounded-none`} />
-        <div className="flex flex-col items-center gap-2 md:items-start md:gap-3">
-          <Skeleton className="h-9 w-48 md:h-12 md:w-80" />
-          <Skeleton className="h-6 w-32 md:h-8" />
-          <Skeleton className="h-6 w-40 md:h-7" />
+        <Skeleton className={imageClassName} />
+        <div className="flex flex-col items-center gap-3 md:items-start">
+          <Skeleton className="h-10 w-48 md:h-14 md:w-80" />
+          <Skeleton className="h-6 w-32" />
+          <Skeleton className="h-5 w-40" />
         </div>
       </div>
     </div>

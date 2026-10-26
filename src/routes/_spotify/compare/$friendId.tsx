@@ -1,6 +1,11 @@
 import { getComparison } from '@/lib/compare';
 import { createFileRoute, notFound } from '@tanstack/react-router';
 
+import { PageWrapper } from '@/components/PageWrapper';
+
+const subheadClassName =
+  'text-[12px] font-semibold uppercase tracking-[0.06em] text-label-tertiary';
+
 export const Route = createFileRoute('/_spotify/compare/$friendId')({
   loader: async ({ params }) => {
     const result = await getComparison({ data: params.friendId });
@@ -21,20 +26,28 @@ function Comparison() {
           : 'Taste explorers';
   const ranges = Object.keys(data.mine);
   return (
-    <main className="p-6 text-white md:p-10">
-      <div className="text-center">
-        <div className="mb-6 flex items-center justify-center gap-8">
+    <PageWrapper className="max-w-5xl">
+      <div className="card relative overflow-hidden px-6 py-12 text-center">
+        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(255,255,255,0.1),transparent_65%)]" />
+        <div className="relative mb-8 flex items-center justify-center">
           <Person image={data.me.image} name={data.me.name} />
-          <span className="text-2xl text-custom-muted">&amp;</span>
           <Person
             image={data.friend?.image}
             name={data.friend?.displayName ?? 'Friend'}
+            overlap
           />
         </div>
-        <h1 className="text-5xl font-bold text-spotify-green">{data.score}%</h1>
-        <p className="text-xl">{label}</p>
+        <h1 className="relative text-[64px] font-light leading-none tracking-[-0.04em] tabular-nums md:text-[88px]">
+          {data.score}%
+        </h1>
+        <p className="relative mt-3 text-[17px] font-medium text-label-secondary">
+          {label}
+        </p>
+        <p className="relative mt-1 text-[13px] text-label-tertiary">
+          {data.me.name} &amp; {data.friend?.displayName ?? 'Friend'}
+        </p>
       </div>
-      <div className="mt-10 grid gap-8">
+      <div className="mt-10 grid gap-10">
         {ranges.map((range) => (
           <Range
             key={range}
@@ -44,19 +57,21 @@ function Comparison() {
           />
         ))}
       </div>
-    </main>
+    </PageWrapper>
   );
 }
-function Person({ image, name }: { image?: string | null; name: string }) {
+function Person({
+  image,
+  name,
+  overlap,
+}: { image?: string | null; name: string; overlap?: boolean }) {
   return (
-    <div className="flex min-w-0 flex-col items-center gap-2">
-      <img
-        src={image ?? undefined}
-        alt=""
-        className="h-24 w-24 rounded-full bg-custom-gray object-cover"
-      />
-      <strong className="max-w-32 truncate">{name}</strong>
-    </div>
+    <img
+      src={image ?? undefined}
+      alt={name}
+      title={name}
+      className={`h-20 w-20 rounded-full bg-elevated object-cover ring-4 ring-[#111] md:h-24 md:w-24 ${overlap ? '-ml-4' : ''}`}
+    />
   );
 }
 function Range({
@@ -87,35 +102,37 @@ function Range({
     .filter((x) => !mine.artists.some((y) => y.id === x.id))
     .slice(0, 5);
   return (
-    <section className="rounded-xl bg-custom-darkgray p-5">
-      <h2 className="mb-4 text-xl capitalize">{title}</h2>
-      <h3 className="text-spotify-green">Shared top artists</h3>
-      <ol className="mt-2 grid gap-2 md:grid-cols-2">
-        {sharedArtists.map((x) => (
-          <li key={x.id}>
-            {x.name}{' '}
-            <span className="text-custom-muted">
-              #{mine.artists.findIndex((y) => y.id === x.id) + 1} / #
-              {(theirs?.artists.findIndex((y) => y.id === x.id) ?? -1) + 1}
-            </span>
-          </li>
-        ))}
-      </ol>
-      <h3 className="mt-6 text-spotify-green">Shared top tracks</h3>
-      <ol className="mt-2 grid gap-2 md:grid-cols-2">
-        {sharedTracks.map((x) => (
-          <li key={x.id}>
-            {x.name}{' '}
-            <span className="text-custom-muted">
-              #{mine.tracks.findIndex((y) => y.id === x.id) + 1} / #
-              {(theirs?.tracks.findIndex((y) => y.id === x.id) ?? -1) + 1}
-            </span>
-          </li>
-        ))}
-      </ol>
-      <div className="mt-6 grid gap-6 md:grid-cols-2">
-        <ArtistList title="Only you" items={onlyMine} />
-        <ArtistList title="Only them" items={onlyTheirs} />
+    <section>
+      <h2 className="section-title mb-3 capitalize">{title}</h2>
+      <div className="card space-y-6 p-5">
+        <h3 className={subheadClassName}>Shared top artists</h3>
+        <ol className="-mt-4 grid gap-x-6 gap-y-2 text-[15px] md:grid-cols-2">
+          {sharedArtists.map((x) => (
+            <li key={x.id}>
+              {x.name}{' '}
+              <span className="text-[13px] tabular-nums text-label-tertiary">
+                #{mine.artists.findIndex((y) => y.id === x.id) + 1} / #
+                {(theirs?.artists.findIndex((y) => y.id === x.id) ?? -1) + 1}
+              </span>
+            </li>
+          ))}
+        </ol>
+        <h3 className={subheadClassName}>Shared top tracks</h3>
+        <ol className="-mt-4 grid gap-x-6 gap-y-2 text-[15px] md:grid-cols-2">
+          {sharedTracks.map((x) => (
+            <li key={x.id}>
+              {x.name}{' '}
+              <span className="text-[13px] tabular-nums text-label-tertiary">
+                #{mine.tracks.findIndex((y) => y.id === x.id) + 1} / #
+                {(theirs?.tracks.findIndex((y) => y.id === x.id) ?? -1) + 1}
+              </span>
+            </li>
+          ))}
+        </ol>
+        <div className="grid gap-6 border-t border-separator pt-6 md:grid-cols-2">
+          <ArtistList title="Only you" items={onlyMine} />
+          <ArtistList title="Only them" items={onlyTheirs} />
+        </div>
       </div>
     </section>
   );
@@ -126,8 +143,8 @@ function ArtistList({
 }: { title: string; items: { id: string; name: string }[] }) {
   return (
     <div>
-      <h3 className="text-spotify-green">{title}</h3>
-      <ol className="mt-2 space-y-1">
+      <h3 className={subheadClassName}>{title}</h3>
+      <ol className="mt-2 space-y-1.5 text-[15px]">
         {items.map((item) => (
           <li key={item.id}>{item.name}</li>
         ))}

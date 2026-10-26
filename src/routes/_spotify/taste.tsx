@@ -26,13 +26,15 @@ function Taste() {
   const { range } = Route.useSearch();
   return (
     <PageWrapper>
-      <PageHeader title="Your taste" activeRange={range} />
-      <div className="mb-4 px-2">
+      <PageHeader title="Your Taste" activeRange={range}>
         <Suspense>
           <ShareCard card={{ variant: 'taste', range }} />
         </Suspense>
-      </div>
-      <Suspense key={range} fallback={<Skeleton className="h-96 w-full" />}>
+      </PageHeader>
+      <Suspense
+        key={range}
+        fallback={<Skeleton className="h-96 w-full rounded-2xl" />}
+      >
         <Breakdown range={range} />
       </Suspense>
     </PageWrapper>
@@ -47,14 +49,14 @@ function Breakdown({
   const taste = tasteBreakdown(artists, tracks);
   const maxDecade = Math.max(...taste.decades.map((item) => item.count), 1);
   return (
-    <div className="grid gap-6 px-2 text-white md:grid-cols-2">
+    <div className="grid gap-4 md:grid-cols-2">
       {taste.genres.length > 0 && (
-        <section className="rounded-2xl bg-custom-darkgray p-6">
-          <h2 className="mb-4 text-xl">Genre mix</h2>
+        <section className="card p-6">
+          <h2 className="section-title mb-4">Genre mix</h2>
           <ol className="flex flex-wrap gap-2">
             {taste.genres.map((genre) => (
               <li
-                className="rounded-full bg-custom-gray px-3 py-1 capitalize"
+                className="rounded-full bg-fill-strong px-3.5 py-1.5 text-[13px] font-medium capitalize"
                 key={genre.name}
               >
                 {genre.name}
@@ -63,18 +65,20 @@ function Breakdown({
           </ol>
         </section>
       )}
-      <section className="rounded-2xl bg-custom-darkgray p-6">
-        <h2 className="mb-4 text-xl">Decades</h2>
-        <div className="space-y-3">
+      <section className="card p-6">
+        <h2 className="section-title mb-4">Decades</h2>
+        <div className="space-y-4">
           {taste.decades.map(({ decade, count }) => (
             <div key={decade}>
-              <div className="flex justify-between text-sm">
-                <span>{decade}s</span>
-                <span>{count}</span>
+              <div className="mb-1.5 flex justify-between text-[13px]">
+                <span className="font-medium">{decade}s</span>
+                <span className="tabular-nums text-label-secondary">
+                  {count}
+                </span>
               </div>
-              <div className="h-2 bg-custom-gray">
+              <div className="h-1.5 overflow-hidden rounded-full bg-white/10">
                 <div
-                  className="h-full bg-spotify-green"
+                  className="h-full rounded-full bg-white"
                   style={{ width: `${(count / maxDecade) * 100}%` }}
                 />
               </div>
@@ -82,9 +86,9 @@ function Breakdown({
           ))}
         </div>
       </section>
-      <section className="rounded-2xl bg-custom-darkgray p-6 md:col-span-2">
-        <h2 className="mb-4 text-xl">By the numbers</h2>
-        <dl className="grid grid-cols-2 gap-5 md:grid-cols-5">
+      <section className="card p-6 md:col-span-2">
+        <h2 className="section-title mb-5">By the numbers</h2>
+        <dl className="grid grid-cols-2 gap-6 md:grid-cols-5">
           <Stat
             label="Fresh vs. classic"
             value={`${taste.freshPercent}% fresh`}
@@ -110,8 +114,10 @@ function Breakdown({
 function Stat({ label, value }: { label: string; value: string }) {
   return (
     <div>
-      <dt className="text-sm text-custom-muted">{label}</dt>
-      <dd className="mt-1 text-lg">{value}</dd>
+      <dt className="text-[13px] font-medium text-label-secondary">{label}</dt>
+      <dd className="mt-1 text-[20px] font-semibold tracking-[-0.02em]">
+        {value}
+      </dd>
     </div>
   );
 }

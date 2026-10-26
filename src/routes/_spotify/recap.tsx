@@ -8,6 +8,7 @@ import { getRecap } from '@/lib/persistence';
 import { useQuery } from '@tanstack/react-query';
 import { Link, createFileRoute } from '@tanstack/react-router';
 import { Suspense, lazy } from 'react';
+import { IoChevronBack, IoChevronForward } from 'react-icons/io5';
 const ShareCard = lazy(() => import('@/components/ShareCard'));
 
 export const Route = createFileRoute('/_spotify/recap')({
@@ -36,37 +37,63 @@ export function Recap({
     monthIndex >= 0 && monthIndex < (data?.months.length ?? 0) - 1
       ? data?.months[monthIndex + 1]
       : undefined;
+  const monthLabel = formatMonth(month);
   return (
     <PageWrapper>
-      <PageHeader title={`Recap — ${month}`} />
-      <div className="space-y-8 px-4 text-white">
+      <PageHeader eyebrow="Monthly recap" title={monthLabel}>
+        {recap && (
+          <Suspense>
+            <ShareCard card={{ variant: 'recap', month, timeZone }} />
+          </Suspense>
+        )}
+        <div className="flex items-center">
+          {previous ? (
+            <Link
+              to="/recap/$month"
+              params={{ month: previous }}
+              aria-label="Previous month"
+              className="btn-icon bg-fill-strong"
+            >
+              <IoChevronBack className="h-4 w-4" />
+            </Link>
+          ) : (
+            <span className="btn-icon pointer-events-none bg-fill opacity-30">
+              <IoChevronBack className="h-4 w-4" />
+            </span>
+          )}
+          <span className="w-2" />
+          {next ? (
+            <Link
+              to="/recap/$month"
+              params={{ month: next }}
+              aria-label="Next month"
+              className="btn-icon bg-fill-strong"
+            >
+              <IoChevronForward className="h-4 w-4" />
+            </Link>
+          ) : (
+            <span className="btn-icon pointer-events-none bg-fill opacity-30">
+              <IoChevronForward className="h-4 w-4" />
+            </span>
+          )}
+        </div>
+      </PageHeader>
+      <div className="space-y-10">
         {isPending ? (
-          <p>Loading recap…</p>
+          <p className="text-[14px] text-label-tertiary">Loading recap…</p>
         ) : !data?.enabled ? (
-          <p>Recaps are unavailable because storage is not configured.</p>
+          <p className="text-[14px] text-label-secondary">
+            Recaps are unavailable because storage is not configured.
+          </p>
         ) : !recap ? (
           <EmptyState />
         ) : (
           <>
-            <Suspense>
-              <ShareCard card={{ variant: 'recap', month, timeZone }} />
-            </Suspense>
-            <SavePlaylistButton
-              name={`Wrapper · ${month} Recap`}
-              trackIds={recap.playlistTrackIds}
-            />
             <div className="grid grid-cols-3 gap-3">
               <Stat label="Plays" value={recap.totalPlays} />
               <Stat label="Minutes" value={recap.minutes} />
               <Stat label="Artists" value={recap.distinctArtists} />
             </div>
-            <List
-              title="Top artists"
-              rows={recap.topArtists.map((x) => ({
-                name: x.name,
-                count: x.count,
-              }))}
-            />
             <div className="grid gap-3 md:grid-cols-2">
               <Highlight
                 label="Top new artist"
@@ -85,38 +112,29 @@ export function Recap({
                 }
               />
             </div>
-            <List
-              title="Top tracks"
-              rows={recap.topTracks.map((x) => ({
-                name: x.item.name,
-                count: x.count,
-              }))}
+            <div className="grid gap-x-6 gap-y-10 lg:grid-cols-2">
+              <List
+                title="Top artists"
+                rows={recap.topArtists.map((x) => ({
+                  name: x.name,
+                  count: x.count,
+                }))}
+              />
+              <List
+                title="Top tracks"
+                rows={recap.topTracks.map((x) => ({
+                  name: x.item.name,
+                  count: x.count,
+                }))}
+              />
+            </div>
+            <SavePlaylistButton
+              name={`Wrapper · ${month} Recap`}
+              trackIds={recap.playlistTrackIds}
             />
           </>
         )}
-        <div className="flex justify-between">
-          {previous ? (
-            <Link
-              to="/recap/$month"
-              params={{ month: previous }}
-              className="underline"
-            >
-              ← Previous
-            </Link>
-          ) : (
-            <span />
-          )}
-          {next && (
-            <Link
-              to="/recap/$month"
-              params={{ month: next }}
-              className="underline"
-            >
-              Next →
-            </Link>
-          )}
-        </div>
-        <p className="text-sm text-custom-muted">
+        <p className="text-[13px] text-label-tertiary">
           Based on plays we've recorded since you started using Wrapper — visit
           regularly so we don't miss any.
         </p>
@@ -124,19 +142,35 @@ export function Recap({
     </PageWrapper>
   );
 }
+
+function formatMonth(month: string) {
+  const date = new Date(`${month}-01T12:00:00Z`);
+  if (Number.isNaN(date.getTime())) return month;
+  return new Intl.DateTimeFormat('en-US', {
+    month: 'long',
+    year: 'numeric',
+    timeZone: 'UTC',
+  }).format(date);
+}
 function Highlight({ label, value }: { label: string; value: string }) {
   return (
-    <div className="rounded-xl bg-custom-darkgray p-4">
-      <span className="block text-sm text-custom-muted">{label}</span>
-      <strong>{value}</strong>
+    <div className="card p-5">
+      <span className="block text-[13px] font-medium text-label-secondary">
+        {label}
+      </span>
+      <strong className="mt-1 block text-[17px] font-semibold">{value}</strong>
     </div>
   );
 }
 function Stat({ label, value }: { label: string; value: number }) {
   return (
-    <div className="rounded-xl bg-custom-darkgray p-4">
-      <strong className="block text-2xl">{value}</strong>
-      {label}
+    <div className="card p-5">
+      <strong className="block text-[28px] font-semibold tabular-nums tracking-[-0.03em] md:text-[40px]">
+        {value.toLocaleString('en-US')}
+      </strong>
+      <span className="text-[13px] font-medium text-label-secondary">
+        {label}
+      </span>
     </div>
   );
 }
@@ -146,11 +180,22 @@ function List({
 }: { title: string; rows: { name: string; count: number }[] }) {
   return (
     <section>
-      <h2 className="mb-3 text-xl">{title}</h2>
-      <ol className="space-y-2">
-        {rows.map((x) => (
-          <li key={x.name}>
-            {x.name} <span className="text-custom-muted">— {x.count}</span>
+      <h2 className="section-title mb-3">{title}</h2>
+      <ol className="card divide-y divide-separator overflow-hidden">
+        {rows.map((x, index) => (
+          <li
+            key={x.name}
+            className="flex items-center gap-4 px-5 py-3.5 text-[15px]"
+          >
+            <span className="w-5 text-right font-medium tabular-nums text-label-tertiary">
+              {index + 1}
+            </span>
+            <span className="min-w-0 flex-1 truncate font-medium">
+              {x.name}
+            </span>
+            <span className="shrink-0 text-[13px] tabular-nums text-label-secondary">
+              {x.count} plays
+            </span>
           </li>
         ))}
       </ol>

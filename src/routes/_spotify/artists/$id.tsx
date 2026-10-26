@@ -1,5 +1,7 @@
 import { FollowButton, FollowButtonSkeleton } from '@/components/FollowButton';
 import { OpenInSpotify } from '@/components/OpenInSpotify';
+import { PageWrapper } from '@/components/PageWrapper';
+import { SectionHeader } from '@/components/SectionHeader';
 import { TrackList, TrackListSkeleton } from '@/components/Tracks';
 import { Skeleton } from '@/components/ui/skeleton';
 import { artistTopTracks } from '@/lib/insights';
@@ -26,6 +28,9 @@ export const Route = createFileRoute('/_spotify/artists/$id')({
   pendingComponent: ArtistSkeleton,
 });
 
+const heroClassName =
+  'relative h-[380px] overflow-hidden rounded-[28px] bg-fill ring-1 ring-inset ring-separator md:h-[480px]';
+
 const ranges: { range: TTimeRange; label: string }[] = [
   { range: 'short_term', label: 'Last 4 weeks' },
   { range: 'medium_term', label: 'Last 6 months' },
@@ -36,32 +41,34 @@ function Page() {
   const { id } = Route.useParams();
   const { data: artist } = useSuspenseQuery(spotifyQueries.artist(id));
   return (
-    <div className="mx-auto w-full max-w-7xl space-y-12 px-4 pb-16 text-white">
-      <header className="flex flex-col items-center gap-4 pt-10 text-center md:pt-20">
-        <img
-          className="h-40 w-40 rounded-full bg-custom-darkgray object-cover md:h-64 md:w-64"
-          src={artist.image ?? undefined}
-          alt={artist.name}
-        />
-        <h1 className="text-4xl md:text-6xl">{artist.name}</h1>
-        <div className="flex gap-3">
-          <Suspense fallback={<FollowButtonSkeleton />}>
-            <FollowButton id={id} />
-          </Suspense>
-          <OpenInSpotify url={artist.url} />
-        </div>
-        {artist.genres.length > 0 && (
-          <ul className="flex flex-wrap justify-center gap-2">
-            {artist.genres.map((genre) => (
-              <li
-                key={genre}
-                className="rounded-full border border-custom-gray px-3 py-1 text-xs capitalize text-custom-muted"
-              >
-                {genre}
-              </li>
-            ))}
-          </ul>
+    <PageWrapper className="space-y-14">
+      <header className={heroClassName}>
+        {artist.image && (
+          <img
+            className="absolute inset-0 h-full w-full object-cover object-[center_25%]"
+            src={artist.image}
+            alt={artist.name}
+          />
         )}
+        <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-black/0" />
+        <div className="relative flex h-full flex-col justify-end gap-5 p-6 md:p-12">
+          <div>
+            {artist.genres.length > 0 && (
+              <p className="mb-2 text-[13px] font-medium capitalize text-white/70">
+                {artist.genres.slice(0, 3).join(' · ')}
+              </p>
+            )}
+            <h1 className="text-[44px] font-semibold leading-[1.02] tracking-[-0.035em] md:text-[80px]">
+              {artist.name}
+            </h1>
+          </div>
+          <div className="flex flex-wrap gap-3">
+            <Suspense fallback={<FollowButtonSkeleton />}>
+              <FollowButton id={id} />
+            </Suspense>
+            <OpenInSpotify url={artist.url} />
+          </div>
+        </div>
       </header>
       <Suspense fallback={<SectionSkeleton />}>
         <Ranks artistId={id} />
@@ -73,7 +80,7 @@ function Page() {
         <Discography artistId={id} />
       </Suspense>
       <History artistId={id} />
-    </div>
+    </PageWrapper>
   );
 }
 
@@ -86,18 +93,26 @@ function Ranks({ artistId }: { artistId: string }) {
   const lists = [short, medium, long];
   return (
     <section>
-      <h2 className="mb-4 text-2xl">Your ranks</h2>
-      <div className="grid gap-3 md:grid-cols-3">
+      <SectionHeader title="Your ranks" />
+      <div className="grid gap-3 sm:grid-cols-3">
         {ranges.map(({ label }, index) => {
           const rank = lists[index].findIndex(
             (artist) => artist.id === artistId
           );
           return (
-            <div key={label} className="rounded-xl bg-custom-darkgray p-4">
-              <strong>
-                {rank >= 0 ? `#${rank + 1}` : 'Not in your top 50'}
+            <div key={label} className="card p-5">
+              <span className="block text-[13px] font-medium text-label-secondary">
+                {label}
+              </span>
+              <strong
+                className={
+                  rank >= 0
+                    ? 'mt-1 block text-[34px] font-semibold tracking-[-0.03em]'
+                    : 'mt-3 block text-[15px] font-medium text-label-tertiary'
+                }
+              >
+                {rank >= 0 ? `No. ${rank + 1}` : 'Not in your top 50'}
               </strong>
-              <span className="block text-sm text-custom-muted">{label}</span>
             </div>
           );
         })}
@@ -122,8 +137,10 @@ function PersonalTracks({
   if (!tracks.length) return null;
   return (
     <section>
-      <h2 className="mb-4 text-2xl">Your top tracks by {name}</h2>
-      <TrackList tracks={tracks} ranked />
+      <SectionHeader title={`Your top tracks by ${name}`} />
+      <div className="card p-2">
+        <TrackList tracks={tracks} ranked />
+      </div>
     </section>
   );
 }
@@ -133,23 +150,26 @@ function Discography({ artistId }: { artistId: string }) {
   if (!data.length) return null;
   return (
     <section>
-      <h2 className="mb-4 text-2xl">Discography</h2>
-      <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-5">
+      <SectionHeader title="Discography" />
+      <div className="grid grid-cols-2 gap-x-4 gap-y-8 sm:grid-cols-3 lg:grid-cols-5 2xl:grid-cols-6">
         {data.map((album) => (
           <a
             key={album.id}
             href={album.url ?? undefined}
             target="_blank"
             rel="noreferrer"
-            className="rounded-xl bg-custom-darkgray p-3 hover:bg-custom-gray"
+            className="group min-w-0"
           >
             <img
               src={album.image ?? undefined}
               alt=""
-              className="aspect-square w-full bg-custom-gray object-cover"
+              loading="lazy"
+              className="aspect-square w-full rounded-xl bg-fill-strong object-cover shadow-[0_8px_30px_rgba(0,0,0,0.35)] ring-1 ring-white/[0.08] transition duration-500 ease-out group-hover:scale-[1.02]"
             />
-            <strong className="mt-2 block truncate">{album.name}</strong>
-            <span className="text-sm capitalize text-custom-muted">
+            <strong className="mt-3 block truncate text-[14px] font-medium">
+              {album.name}
+            </strong>
+            <span className="text-[13px] capitalize text-label-secondary">
               {album.releaseDate?.slice(0, 4) ?? 'Unknown'} ·{' '}
               {album.type ?? 'release'}
             </span>
@@ -175,8 +195,8 @@ function History({ artistId }: { artistId: string }) {
       : 'Unknown';
   return (
     <section>
-      <h2 className="mb-4 text-2xl">Your history</h2>
-      <dl className="grid grid-cols-2 gap-4 md:grid-cols-4">
+      <SectionHeader title="Your history" />
+      <dl className="grid grid-cols-2 gap-3 md:grid-cols-4">
         <HistoryStat label="Stored plays" value={String(data.totalPlays)} />
         <HistoryStat label="First stored play" value={date(data.firstPlayed)} />
         <HistoryStat
@@ -190,20 +210,21 @@ function History({ artistId }: { artistId: string }) {
 }
 function HistoryStat({ label, value }: { label: string; value: string }) {
   return (
-    <div className="rounded-xl bg-custom-darkgray p-4">
-      <dt className="text-sm text-custom-muted">{label}</dt>
-      <dd className="mt-1">{value}</dd>
+    <div className="card p-5">
+      <dt className="text-[13px] font-medium text-label-secondary">{label}</dt>
+      <dd className="mt-1 text-[20px] font-semibold tracking-[-0.02em]">
+        {value}
+      </dd>
     </div>
   );
 }
 function SectionSkeleton() {
-  return <Skeleton className="h-32 w-full" />;
+  return <Skeleton className="h-32 w-full rounded-2xl" />;
 }
 function ArtistSkeleton() {
   return (
-    <div className="flex flex-col items-center gap-4 pt-20">
-      <Skeleton className="h-64 w-64 rounded-full" />
-      <Skeleton className="h-14 w-80" />
-    </div>
+    <PageWrapper>
+      <Skeleton className="h-[380px] w-full rounded-[28px] md:h-[480px]" />
+    </PageWrapper>
   );
 }

@@ -1,3 +1,5 @@
+import type { ReactNode } from 'react';
+
 import type { TTimeRange } from '@/types';
 
 import TimePeriodSelect from './TimePeriodSelect';
@@ -5,14 +7,30 @@ import TimePeriodSelect from './TimePeriodSelect';
 export function PageHeader({
   activeRange,
   title,
+  eyebrow,
+  children,
 }: {
   activeRange?: TTimeRange;
-  title: string;
+  title: ReactNode;
+  eyebrow?: ReactNode;
+  children?: ReactNode;
 }) {
   return (
-    <div className="flex h-[60px] w-full items-center justify-between pb-6 pl-2 text-white">
-      <h1 className="text-xl font-semibold sm:text-2xl">{title}</h1>
-      {activeRange && <TimePeriodSelect activeRange={activeRange} />}
+    <div className="flex w-full flex-col gap-4 pb-8 sm:flex-row sm:items-end sm:justify-between">
+      <div className="min-w-0">
+        {eyebrow && (
+          <p className="mb-1 text-[13px] font-medium text-label-secondary">
+            {eyebrow}
+          </p>
+        )}
+        <h1 className="large-title">{title}</h1>
+      </div>
+      {(activeRange || children) && (
+        <div className="flex flex-wrap items-center gap-2">
+          {children}
+          {activeRange && <TimePeriodSelect activeRange={activeRange} />}
+        </div>
+      )}
     </div>
   );
 }

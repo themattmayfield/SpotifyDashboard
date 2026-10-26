@@ -27,13 +27,12 @@ function Tracks() {
   const { range } = Route.useSearch();
   return (
     <PageWrapper>
-      <PageHeader title="Tracks" activeRange={range} />
-      <div className="mb-4">
+      <PageHeader title="Top Tracks" activeRange={range}>
         <Suspense>
           <ShareCard card={{ variant: 'tracks', range }} />
         </Suspense>
-      </div>
-      <div className="mb-6 px-2">
+      </PageHeader>
+      <div className="mb-6">
         <Suspense>
           <SaveTopTracks
             range={range}
@@ -41,7 +40,7 @@ function Tracks() {
           />
         </Suspense>
       </div>
-      <div className="px-2 text-white">
+      <div className="card p-2">
         <Suspense
           key={range}
           fallback={<TrackListSkeleton count={12} ranked />}

@@ -1,7 +1,17 @@
 import type { ReactNode } from 'react';
 
-export const PageWrapper = ({ children }: { children: ReactNode }) => (
-  <div className="w-full overflow-x-hidden px-2 md:px-4 xl:mx-auto xl:max-w-[2000px]">
+import { cn } from '@/lib/cn';
+
+export const PageWrapper = ({
+  children,
+  className,
+}: { children: ReactNode; className?: string }) => (
+  <div
+    className={cn(
+      'mx-auto w-full max-w-[1600px] px-4 pt-2 md:px-8 md:pt-4',
+      className
+    )}
+  >
     {children}
   </div>
 );

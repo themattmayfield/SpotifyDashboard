@@ -1,14 +1,14 @@
 import { createFileRoute } from '@tanstack/react-router';
-import { Suspense, lazy } from 'react';
+import { Suspense } from 'react';
 
 import { ArtistTiles, ArtistTilesSkeleton } from '@/components/ArtistTiles';
 import { DroppedOff } from '@/components/DroppedOff';
 import { PageHeader } from '@/components/PageHeader';
 import { PageWrapper } from '@/components/PageWrapper';
+import ShareCard from '@/components/ShareCard';
 import { pageTitle } from '@/lib/head';
 import { spotifyQueries } from '@/lib/queries';
 import { rangeSearch } from '@/lib/rangeSearch';
-const ShareCard = lazy(() => import('@/components/ShareCard'));
 
 export const Route = createFileRoute('/_spotify/artists/')({
   ...rangeSearch,
@@ -24,9 +24,7 @@ function Artists() {
   return (
     <PageWrapper>
       <PageHeader title="Top Artists" activeRange={range}>
-        <Suspense>
-          <ShareCard card={{ variant: 'artists', range }} />
-        </Suspense>
+        <ShareCard card={{ variant: 'artists', range }} />
       </PageHeader>
       <div className="grid grid-cols-2 gap-4 md:grid-cols-3 md:gap-5 xl:grid-cols-4 2xl:grid-cols-6">
         <Suspense key={range} fallback={<ArtistTilesSkeleton count={20} />}>

@@ -1,5 +1,6 @@
 import { PageHeader } from '@/components/PageHeader';
 import { PageWrapper } from '@/components/PageWrapper';
+import ShareCard from '@/components/ShareCard';
 import { Skeleton } from '@/components/ui/skeleton';
 import { formatDuration } from '@/lib/format';
 import { pageTitle } from '@/lib/head';
@@ -8,9 +9,7 @@ import { spotifyQueries } from '@/lib/queries';
 import { rangeSearch } from '@/lib/rangeSearch';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { createFileRoute } from '@tanstack/react-router';
-import { Suspense, lazy } from 'react';
-
-const ShareCard = lazy(() => import('@/components/ShareCard'));
+import { Suspense } from 'react';
 
 export const Route = createFileRoute('/_spotify/taste')({
   ...rangeSearch,
@@ -27,9 +26,7 @@ function Taste() {
   return (
     <PageWrapper>
       <PageHeader title="Your Taste" activeRange={range}>
-        <Suspense>
-          <ShareCard card={{ variant: 'taste', range }} />
-        </Suspense>
+        <ShareCard card={{ variant: 'taste', range }} />
       </PageHeader>
       <Suspense
         key={range}

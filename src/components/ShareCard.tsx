@@ -8,8 +8,9 @@ import {
   loadCardImage,
 } from '@/lib/shareCard';
 import type { TTimeRange } from '@/types';
-import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
-import { useEffect, useRef, useState } from 'react';
+import { useSuspenseQuery } from '@tanstack/react-query';
+import { getRouteApi } from '@tanstack/react-router';
+import { Suspense, useEffect, useRef, useState } from 'react';
 import { IoClose, IoShareOutline } from 'react-icons/io5';
 
 const labels = {
@@ -23,20 +24,34 @@ export type Card =
   | { variant: 'taste'; range: TTimeRange }
   | { variant: 'recap'; month: string; timeZone?: string };
 
+const spotifyRoute = getRouteApi('/_spotify');
+
 export default function ShareCard({ card }: { card: Card }) {
-  return card.variant === 'artists' ? (
-    <ArtistCard range={card.range} />
-  ) : card.variant === 'tracks' ? (
-    <TrackCard range={card.range} />
-  ) : card.variant === 'taste' ? (
-    <TasteCard range={card.range} />
-  ) : (
-    <RecapCard month={card.month} requestedTimeZone={card.timeZone} />
+  const user = spotifyRoute.useLoaderData().name;
+  return (
+    <Suspense fallback={<ShareButton disabled />}>
+      <ShareCardContent card={card} user={user} />
+    </Suspense>
   );
 }
 
-function TasteCard({ range }: { range: TTimeRange }) {
-  const { data: me } = useSuspenseQuery(spotifyQueries.me());
+function ShareCardContent({ card, user }: { card: Card; user: string }) {
+  return card.variant === 'artists' ? (
+    <ArtistCard range={card.range} user={user} />
+  ) : card.variant === 'tracks' ? (
+    <TrackCard range={card.range} user={user} />
+  ) : card.variant === 'taste' ? (
+    <TasteCard range={card.range} user={user} />
+  ) : (
+    <RecapCard
+      month={card.month}
+      requestedTimeZone={card.timeZone}
+      user={user}
+    />
+  );
+}
+
+function TasteCard({ range, user }: { range: TTimeRange; user: string }) {
   const { data: artists } = useSuspenseQuery(spotifyQueries.topArtists(range));
   const { data: tracks } = useSuspenseQuery(spotifyQueries.topTracks(range));
   const taste = tasteBreakdown(artists, tracks);
@@ -45,7 +60,7 @@ function TasteCard({ range }: { range: TTimeRange }) {
     <CardModal
       data={{
         title: `My Taste — ${labels[range]}`,
-        user: me.name,
+        user,
         items: [
           ...taste.genres.slice(0, 3).map((genre) => ({
             name: genre.name,
@@ -61,14 +76,13 @@ function TasteCard({ range }: { range: TTimeRange }) {
   );
 }
 
-function ArtistCard({ range }: { range: TTimeRange }) {
-  const { data: me } = useSuspenseQuery(spotifyQueries.me());
+function ArtistCard({ range, user }: { range: TTimeRange; user: string }) {
   const { data } = useSuspenseQuery(spotifyQueries.topArtists(range));
   return (
     <CardModal
       data={{
         title: `My Top Artists — ${labels[range]}`,
-        user: me.name,
+        user,
         items: data
           .slice(0, 5)
           .map((x) => ({ name: x.name, imageUrl: x.thumb })),
@@ -77,14 +91,13 @@ function ArtistCard({ range }: { range: TTimeRange }) {
   );
 }
 
-function TrackCard({ range }: { range: TTimeRange }) {
-  const { data: me } = useSuspenseQuery(spotifyQueries.me());
+function TrackCard({ range, user }: { range: TTimeRange; user: string }) {
   const { data } = useSuspenseQuery(spotifyQueries.topTracks(range));
   return (
     <CardModal
       data={{
         title: `My Top Tracks — ${labels[range]}`,
-        user: me.name,
+        user,
         items: data.slice(0, 5).map((x) => ({
           name: x.name,
           subtitle: x.artists.map((a) => a.name).join(', '),
@@ -98,38 +111,44 @@ function TrackCard({ range }: { range: TTimeRange }) {
 function RecapCard({
   month,
   requestedTimeZone,
-}: { month: string; requestedTimeZone?: string }) {
+  user,
+}: { month: string; requestedTimeZone?: string; user: string }) {
   const clientTimeZone = useClientTimeZone();
   const timeZone = requestedTimeZone ?? clientTimeZone;
-  const { data: me } = useSuspenseQuery(spotifyQueries.me());
-  const { data } = useQuery({
+  const { data } = useSuspenseQuery({
     queryKey: ['wrapper', 'recap', month, timeZone],
     queryFn: () => getRecap({ data: { month, timeZone } }),
   });
-  if (!data?.recap) return null;
-  const recap = data.recap;
+  const recap = data?.recap;
   return (
     <CardModal
-      data={{
-        title: `My ${month} Recap`,
-        user: me.name,
-        items: [
-          {
-            name: `${recap.minutes} minutes listened`,
-            subtitle: `${recap.totalPlays} total plays`,
-          },
-          { name: recap.topArtists[0]?.name ?? 'None', subtitle: 'Top artist' },
-          {
-            name: recap.topTracks[0]?.item.name ?? 'None',
-            subtitle: 'Top track',
-            imageUrl: recap.topTracks[0]?.item.image,
-          },
-          {
-            name: recap.topNewArtist?.name ?? 'None',
-            subtitle: 'Top new artist',
-          },
-        ],
-      }}
+      data={
+        recap
+          ? {
+              title: `My ${month} Recap`,
+              user,
+              items: [
+                {
+                  name: `${recap.minutes} minutes listened`,
+                  subtitle: `${recap.totalPlays} total plays`,
+                },
+                {
+                  name: recap.topArtists[0]?.name ?? 'None',
+                  subtitle: 'Top artist',
+                },
+                {
+                  name: recap.topTracks[0]?.item.name ?? 'None',
+                  subtitle: 'Top track',
+                  imageUrl: recap.topTracks[0]?.item.image,
+                },
+                {
+                  name: recap.topNewArtist?.name ?? 'None',
+                  subtitle: 'Top new artist',
+                },
+              ],
+            }
+          : undefined
+      }
     />
   );
 }
@@ -139,11 +158,11 @@ type ModalData = Omit<ShareCardData, 'items'> & {
     imageUrl?: string | null;
   })[];
 };
-function CardModal({ data }: { data: ModalData }) {
+function CardModal({ data }: { data?: ModalData }) {
   const [open, setOpen] = useState(false);
   const canvas = useRef<HTMLCanvasElement>(null);
   useEffect(() => {
-    if (!open || !canvas.current) return;
+    if (!open || !canvas.current || !data) return;
     void Promise.all(data.items.map((x) => loadCardImage(x.imageUrl))).then(
       (images) =>
         drawShareCard(
@@ -184,14 +203,7 @@ function CardModal({ data }: { data: ModalData }) {
   };
   return (
     <>
-      <button
-        type="button"
-        className="btn-secondary h-9 px-4 text-[13px]"
-        onClick={() => setOpen(true)}
-      >
-        <IoShareOutline className="h-4 w-4" />
-        Share
-      </button>
+      <ShareButton disabled={!data} onClick={() => setOpen(true)} />
       {open && (
         <dialog
           open
@@ -253,5 +265,23 @@ function CardModal({ data }: { data: ModalData }) {
         </dialog>
       )}
     </>
+  );
+}
+
+function ShareButton({
+  disabled = false,
+  onClick,
+}: { disabled?: boolean; onClick?: () => void }) {
+  return (
+    <button
+      type="button"
+      className="btn-secondary h-9 px-4 text-[13px]"
+      onClick={onClick}
+      disabled={disabled}
+      aria-busy={disabled}
+    >
+      <IoShareOutline className="h-4 w-4" />
+      Share
+    </button>
   );
 }

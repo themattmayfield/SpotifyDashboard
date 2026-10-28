@@ -2,14 +2,13 @@ import { EmptyState } from '@/components/EmptyState';
 import { PageHeader } from '@/components/PageHeader';
 import { PageWrapper } from '@/components/PageWrapper';
 import { SavePlaylistButton } from '@/components/SavePlaylistButton';
+import ShareCard from '@/components/ShareCard';
 import { useClientTimeZone } from '@/components/StoredHistory';
 import { localMonth } from '@/lib/insights';
 import { getRecap } from '@/lib/persistence';
 import { useQuery } from '@tanstack/react-query';
 import { Link, createFileRoute } from '@tanstack/react-router';
-import { Suspense, lazy } from 'react';
 import { IoChevronBack, IoChevronForward } from 'react-icons/io5';
-const ShareCard = lazy(() => import('@/components/ShareCard'));
 
 export const Route = createFileRoute('/_spotify/recap')({
   component: CurrentRecap,
@@ -41,11 +40,7 @@ export function Recap({
   return (
     <PageWrapper>
       <PageHeader eyebrow="Monthly recap" title={monthLabel}>
-        {recap && (
-          <Suspense>
-            <ShareCard card={{ variant: 'recap', month, timeZone }} />
-          </Suspense>
-        )}
+        <ShareCard card={{ variant: 'recap', month, timeZone }} />
         <div className="flex items-center">
           {previous ? (
             <Link

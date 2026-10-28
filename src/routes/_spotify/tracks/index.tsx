@@ -1,9 +1,10 @@
 import { createFileRoute } from '@tanstack/react-router';
-import { Suspense, lazy } from 'react';
+import { Suspense } from 'react';
 
 import { DroppedOff } from '@/components/DroppedOff';
 import { PageHeader } from '@/components/PageHeader';
 import { PageWrapper } from '@/components/PageWrapper';
+import ShareCard from '@/components/ShareCard';
 import {
   SaveTopTracks,
   TopTracks,
@@ -12,7 +13,6 @@ import {
 import { pageTitle } from '@/lib/head';
 import { spotifyQueries } from '@/lib/queries';
 import { rangeSearch } from '@/lib/rangeSearch';
-const ShareCard = lazy(() => import('@/components/ShareCard'));
 
 export const Route = createFileRoute('/_spotify/tracks/')({
   ...rangeSearch,
@@ -28,9 +28,7 @@ function Tracks() {
   return (
     <PageWrapper>
       <PageHeader title="Top Tracks" activeRange={range}>
-        <Suspense>
-          <ShareCard card={{ variant: 'tracks', range }} />
-        </Suspense>
+        <ShareCard card={{ variant: 'tracks', range }} />
       </PageHeader>
       <div className="mb-6">
         <Suspense>

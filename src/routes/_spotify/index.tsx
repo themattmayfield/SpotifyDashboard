@@ -1,6 +1,6 @@
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { Link, createFileRoute } from '@tanstack/react-router';
-import { Suspense, lazy, useEffect, useState } from 'react';
+import { Suspense, useEffect, useState } from 'react';
 import { IoArrowForward, IoSparkles } from 'react-icons/io5';
 
 import { ArtistTiles, ArtistTilesSkeleton } from '@/components/ArtistTiles';
@@ -10,13 +10,13 @@ import {
   RecentlyPlayedSkeleton,
 } from '@/components/RecentlyPlayed';
 import { SectionHeader } from '@/components/SectionHeader';
+import ShareCard from '@/components/ShareCard';
 import { Shelf } from '@/components/Shelf';
 import { Streaks } from '@/components/Streaks';
 import { TopTracks, TrackListSkeleton } from '@/components/Tracks';
 import { Skeleton } from '@/components/ui/skeleton';
 import { tasteBreakdown } from '@/lib/insights';
 import { spotifyQueries } from '@/lib/queries';
-const ShareCard = lazy(() => import('@/components/ShareCard'));
 
 const shelfTileClassName = 'w-[42vw] shrink-0 sm:w-[200px] xl:w-[220px]';
 const heroClassName =
@@ -43,9 +43,7 @@ function Home() {
         title="Your top artists"
         actions={
           <>
-            <Suspense>
-              <ShareCard card={{ variant: 'artists', range: 'long_term' }} />
-            </Suspense>
+            <ShareCard card={{ variant: 'artists', range: 'long_term' }} />
             <Link
               to="/artists"
               search={{ range: 'long_term' }}

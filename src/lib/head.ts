@@ -1,3 +1,3 @@
 export const pageTitle = (title: string) => ({
-  meta: [{ title: `${title} | Spotify Wrapper` }],
+  meta: [{ title: `${title} | AuxCheck` }],
 });

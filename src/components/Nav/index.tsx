@@ -14,7 +14,7 @@ export default function Nav() {
         className="flex items-center gap-2 text-[19px] font-semibold tracking-[-0.02em] lg:hidden"
       >
         <SiSpotify className="h-6 w-6" />
-        Wrapper
+        AuxCheck
       </Link>
       <div className="hidden items-center gap-1 lg:flex">
         <button

@@ -1,6 +1,6 @@
 {
-  "name": "Spotify | Wrapper",
-  "short_name": "Wrapper",
+  "name": "AuxCheck",
+  "short_name": "AuxCheck",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#000000",

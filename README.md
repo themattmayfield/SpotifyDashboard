@@ -1,6 +1,6 @@
-# Spotify | Wrapper
+# AuxCheck
 
-A Spotify analytics dashboard built with TanStack Start, TanStack Router, TanStack Query, React, Vite, Tailwind CSS, and Nitro.
+AuxCheck is a Spotify analytics dashboard, live at https://auxcheck.com. It is built with TanStack Start, TanStack Router, TanStack Query, React, Vite, Tailwind CSS, and Nitro.
 
 ## Development
 
@@ -22,7 +22,6 @@ Set the same environment variables in Vercel and run `bun run build`. Nitro auto
 `vercel.json` pins the framework preset to TanStack Start, so the project's dashboard preset doesn't matter.
 
 Nitro is pinned to an exact beta version so deploy output does not change unexpectedly between installs.
-# Wrapper
 
 ## Production setup
 

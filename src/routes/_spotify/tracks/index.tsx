@@ -36,7 +36,7 @@ function Tracks() {
         <Suspense>
           <SaveTopTracks
             range={range}
-            name={`Wrapper · Top Tracks · ${range.replace('_', ' ')} · ${new Intl.DateTimeFormat('en-US', { month: 'short', year: 'numeric' }).format(new Date())}`}
+            name={`AuxCheck · Top Tracks · ${range.replace('_', ' ')} · ${new Intl.DateTimeFormat('en-US', { month: 'short', year: 'numeric' }).format(new Date())}`}
           />
         </Suspense>
       </div>

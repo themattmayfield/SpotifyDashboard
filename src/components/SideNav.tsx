@@ -46,7 +46,7 @@ export default function SideNav() {
           className="mb-7 flex items-center gap-2.5 px-3 text-[21px] font-semibold tracking-[-0.02em]"
         >
           <SiSpotify className="h-6 w-6" />
-          Wrapper
+          AuxCheck
         </Link>
         <div className="flex flex-col gap-0.5">
           {libraryItems.map((item) => (

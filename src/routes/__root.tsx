@@ -75,8 +75,12 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
   {
     head: () => ({
       meta: [
-        { title: 'Spotify Wrapper' },
-        { name: 'description', content: 'Spotify Wrapper' },
+        { title: 'AuxCheck' },
+        {
+          name: 'description',
+          content:
+            'Your top artists, tracks, and listening history for Spotify.',
+        },
         {
           name: 'viewport',
           content: 'width=device-width, initial-scale=1.0, viewport-fit=cover',

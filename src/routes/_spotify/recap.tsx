@@ -129,13 +129,13 @@ export function Recap({
               />
             </div>
             <SavePlaylistButton
-              name={`Wrapper · ${month} Recap`}
+              name={`AuxCheck · ${month} Recap`}
               trackIds={recap.playlistTrackIds}
             />
           </>
         )}
         <p className="text-[13px] text-label-tertiary">
-          Based on plays we've recorded since you started using Wrapper — visit
+          Based on plays we've recorded since you started using AuxCheck — visit
           regularly so we don't miss any.
         </p>
       </div>

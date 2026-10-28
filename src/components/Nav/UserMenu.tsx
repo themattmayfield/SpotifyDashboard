@@ -112,13 +112,13 @@ export default function UserMenu({ variant }: { variant: 'avatar' | 'row' }) {
         </form>
         <MenuDanger
           onClick={async () => {
-            if (confirm('Delete all data Wrapper has stored for you?')) {
+            if (confirm('Delete all data AuxCheck has stored for you?')) {
               await deleteWrapperData();
               setIsOpen(false);
             }
           }}
         >
-          Delete my Wrapper data
+          Delete my AuxCheck data
         </MenuDanger>
       </PopoverContent>
     </Popover>

@@ -11,7 +11,7 @@ function Login() {
           <SiSpotify className="h-10 w-10" />
         </span>
         <h1 className="mt-8 text-[48px] font-semibold leading-none tracking-[-0.035em] md:text-[64px]">
-          Wrapper
+          AuxCheck
         </h1>
         <p className="mt-4 max-w-sm text-[17px] text-label-secondary">
           Your top artists, tracks, and listening history.

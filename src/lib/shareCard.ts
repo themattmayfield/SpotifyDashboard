@@ -117,7 +117,7 @@ export function drawShareCard(
 
   ctx.fillStyle = '#f5f5f7';
   ctx.font = font(600, 34);
-  ctx.fillText('Wrapper', 90, 1800);
+  ctx.fillText('AuxCheck', 90, 1800);
   ctx.fillStyle = 'rgba(235, 235, 245, 0.45)';
   ctx.font = font(400, 26);
   ctx.fillText('Data from Spotify', 90, 1845);

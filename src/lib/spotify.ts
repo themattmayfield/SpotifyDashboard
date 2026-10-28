@@ -11,6 +11,11 @@ import {
   toTrack,
 } from './normalize';
 import {
+  type SpotifyDevice,
+  createTrackPlaybackBody,
+  selectPlaybackDeviceId,
+} from './playback';
+import {
   SpotifyApiError,
   spotifyFetch,
   spotifyFetchOrNull,
@@ -211,11 +216,35 @@ export const skipPlayback = createServerFn({ method: 'POST' })
 
 export const playTrack = createServerFn({ method: 'POST' })
   .validator(validateId)
-  .handler(({ data }) =>
-    playbackControl('/v1/me/player/play', 'PUT', {
-      uris: [`spotify:track:${data}`],
-    })
-  );
+  .handler(async ({ data }) => {
+    const [track, deviceId] = await Promise.all([
+      spotifyFetch<{ uri?: string; album?: { uri?: string } }>(
+        `/v1/tracks/${data}`
+      ),
+      (async () => {
+        try {
+          const response = await spotifyFetch<{ devices?: SpotifyDevice[] }>(
+            '/v1/me/player/devices'
+          );
+          return selectPlaybackDeviceId(response.devices ?? []);
+        } catch (error) {
+          if (
+            error instanceof SpotifyApiError &&
+            (error.status === 403 || error.status === 404)
+          )
+            return null;
+          throw error;
+        }
+      })(),
+    ]);
+
+    const body = createTrackPlaybackBody(data, track.album?.uri, track.uri);
+
+    const path = deviceId
+      ? `/v1/me/player/play?${new URLSearchParams({ device_id: deviceId })}`
+      : '/v1/me/player/play';
+    return playbackControl(path, 'PUT', body);
+  });
 
 export const createPlaylistFromTracks = createServerFn({ method: 'POST' })
   .validator(

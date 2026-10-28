@@ -13,7 +13,7 @@ import { cn } from '@/lib/cn';
 import { formatDuration } from '@/lib/format';
 import { spotifyQueries } from '@/lib/queries';
 import { setPlayback, skipPlayback } from '@/lib/spotify';
-import type { PlaybackControlResult } from '@/types';
+import type { Playback, PlaybackControlResult } from '@/types';
 
 const messages = {
   'no-device': 'Open Spotify on a device to control playback.',
@@ -22,8 +22,9 @@ const messages = {
 
 export function NowPlaying() {
   const client = useQueryClient();
+  const playbackQuery = spotifyQueries.playback();
   const { data } = useQuery({
-    ...spotifyQueries.playback(),
+    ...playbackQuery,
     refetchInterval: (query) => (query.state.data?.isPlaying ? 5_000 : 15_000),
     refetchIntervalInBackground: false,
   });
@@ -45,12 +46,30 @@ export function NowPlaying() {
       action === 'play' || action === 'pause'
         ? setPlayback({ data: action === 'play' })
         : skipPlayback({ data: action }),
-    onSuccess: (result: PlaybackControlResult) => {
-      setMessage(result.ok ? undefined : messages[result.reason]);
-      client.invalidateQueries({
-        queryKey: spotifyQueries.playback().queryKey,
-      });
+    onMutate: async (action) => {
+      await client.cancelQueries({ queryKey: playbackQuery.queryKey });
+      const previous = client.getQueryData<Playback | null>(
+        playbackQuery.queryKey
+      );
+      if (previous && (action === 'play' || action === 'pause')) {
+        client.setQueryData<Playback>(playbackQuery.queryKey, {
+          ...previous,
+          isPlaying: action === 'play',
+        });
+      }
+      return { previous };
     },
+    onSuccess: (result: PlaybackControlResult, _action, context) => {
+      setMessage(result.ok ? undefined : messages[result.reason]);
+      if (!result.ok)
+        client.setQueryData(playbackQuery.queryKey, context.previous);
+    },
+    onError: (_error, _action, context) => {
+      client.setQueryData(playbackQuery.queryKey, context?.previous);
+      setMessage('Spotify couldn’t update playback. Try again.');
+    },
+    onSettled: () =>
+      client.invalidateQueries({ queryKey: playbackQuery.queryKey }),
   });
 
   const track = data?.track;
@@ -122,16 +141,20 @@ export function NowPlaying() {
             <button
               type="button"
               aria-label="Previous"
+              aria-busy={control.isPending}
+              disabled={control.isPending}
               onClick={() => control.mutate('previous')}
-              className="btn-icon hidden text-label lg:inline-flex"
+              className="btn-icon hidden text-label disabled:cursor-wait lg:inline-flex"
             >
               <IoPlaySkipBack className="h-[18px] w-[18px]" />
             </button>
             <button
               type="button"
               aria-label={data.isPlaying ? 'Pause' : 'Play'}
+              aria-busy={control.isPending}
+              disabled={control.isPending}
               onClick={() => control.mutate(data.isPlaying ? 'pause' : 'play')}
-              className="flex h-10 w-10 items-center justify-center rounded-full text-label transition active:scale-95 lg:h-9 lg:w-9 lg:bg-white lg:text-black lg:hover:scale-105"
+              className="flex h-10 w-10 items-center justify-center rounded-full text-label transition active:scale-95 disabled:cursor-wait lg:h-9 lg:w-9 lg:bg-white lg:text-black lg:hover:scale-105"
             >
               {data.isPlaying ? (
                 <IoPause className="h-6 w-6 lg:h-[18px] lg:w-[18px]" />
@@ -142,8 +165,10 @@ export function NowPlaying() {
             <button
               type="button"
               aria-label="Next"
+              aria-busy={control.isPending}
+              disabled={control.isPending}
               onClick={() => control.mutate('next')}
-              className="btn-icon text-label"
+              className="btn-icon text-label disabled:cursor-wait"
             >
               <IoPlaySkipForward className="h-5 w-5 lg:h-[18px] lg:w-[18px]" />
             </button>

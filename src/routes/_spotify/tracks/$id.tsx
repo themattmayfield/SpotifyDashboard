@@ -1,4 +1,8 @@
-import { useQueryClient, useSuspenseQuery } from '@tanstack/react-query';
+import {
+  useMutation,
+  useQueryClient,
+  useSuspenseQuery,
+} from '@tanstack/react-query';
 import { Link, createFileRoute } from '@tanstack/react-router';
 import { Fragment, useState } from 'react';
 import { IoPlay } from 'react-icons/io5';
@@ -9,6 +13,7 @@ import { formatDuration } from '@/lib/format';
 import { pageTitle } from '@/lib/head';
 import { cachedTrack, spotifyQueries } from '@/lib/queries';
 import { playTrack } from '@/lib/spotify';
+import type { Playback } from '@/types';
 
 export const Route = createFileRoute('/_spotify/tracks/$id')({
   loader: ({ context: { queryClient }, params }) => {
@@ -33,20 +38,38 @@ function Page() {
   const { id } = Route.useParams();
   const { data: track } = useSuspenseQuery(spotifyQueries.track(id));
   const [message, setMessage] = useState<string>();
-  const play = async () => {
-    const result = await playTrack({ data: id });
-    if (result.ok)
-      await queryClient.invalidateQueries({
-        queryKey: spotifyQueries.playback().queryKey,
+  const playbackQuery = spotifyQueries.playback();
+  const play = useMutation({
+    mutationFn: () => playTrack({ data: id }),
+    onMutate: async () => {
+      await queryClient.cancelQueries({ queryKey: playbackQuery.queryKey });
+      const previous = queryClient.getQueryData<Playback | null>(
+        playbackQuery.queryKey
+      );
+      queryClient.setQueryData<Playback>(playbackQuery.queryKey, {
+        isPlaying: true,
+        progressMs: 0,
+        track,
       });
-    setMessage(
-      result.ok
-        ? undefined
-        : result.reason === 'no-device'
+      setMessage(undefined);
+      return { previous };
+    },
+    onSuccess: (result, _variables, context) => {
+      if (result.ok) return;
+      queryClient.setQueryData(playbackQuery.queryKey, context.previous);
+      setMessage(
+        result.reason === 'no-device'
           ? 'Open Spotify on a device to control playback.'
           : 'Playback control requires Spotify Premium.'
-    );
-  };
+      );
+    },
+    onError: (_error, _variables, context) => {
+      queryClient.setQueryData(playbackQuery.queryKey, context?.previous);
+      setMessage('Spotify couldn’t start this track. Try again.');
+    },
+    onSettled: () =>
+      queryClient.invalidateQueries({ queryKey: playbackQuery.queryKey }),
+  });
   return (
     <div className={containerClassName}>
       <div className={headerClassName}>
@@ -93,9 +116,15 @@ function Page() {
             &middot; {formatDuration(track.durationMs)}
           </p>
           <div className="mt-4 flex flex-wrap justify-center gap-3">
-            <button type="button" onClick={play} className="btn-primary px-6">
+            <button
+              type="button"
+              onClick={() => play.mutate()}
+              disabled={play.isPending}
+              aria-busy={play.isPending}
+              className="btn-primary px-6 disabled:cursor-wait"
+            >
               <IoPlay className="h-4 w-4" />
-              Play
+              {play.isPending ? 'Starting…' : 'Play'}
             </button>
             <OpenInSpotify url={track.url} />
           </div>

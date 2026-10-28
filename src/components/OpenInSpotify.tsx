@@ -1,4 +1,4 @@
-import { SiSpotify } from 'react-icons/si';
+import { IoArrowUpOutline } from 'react-icons/io5';
 
 export function OpenInSpotify({ url }: { url: string | null }) {
   if (!url) return null;
@@ -9,8 +9,8 @@ export function OpenInSpotify({ url }: { url: string | null }) {
       rel="noopener noreferrer"
       className="btn-secondary"
     >
-      <SiSpotify className="h-4 w-4" />
       Open in Spotify
+      <IoArrowUpOutline className="h-4 w-4 rotate-45" />
     </a>
   );
 }

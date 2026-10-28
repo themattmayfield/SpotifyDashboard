@@ -11,8 +11,8 @@ import {
   IoPieChartOutline,
   IoTimeOutline,
 } from 'react-icons/io5';
-import { SiSpotify } from 'react-icons/si';
 
+import { Logo } from '@/components/Logo';
 import SideNavLink from '@/components/SideNavLink';
 import { formatCount } from '@/lib/format';
 import { spotifyQueries } from '@/lib/queries';
@@ -45,7 +45,7 @@ export default function SideNav() {
           to="/"
           className="mb-7 flex items-center gap-2.5 px-3 text-[21px] font-semibold tracking-[-0.02em]"
         >
-          <SiSpotify className="h-6 w-6" />
+          <Logo className="h-6 w-6" />
           AuxCheck
         </Link>
         <div className="flex flex-col gap-0.5">

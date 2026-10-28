@@ -1,7 +1,7 @@
 import { Link, useRouter } from '@tanstack/react-router';
 import { IoChevronBack, IoChevronForward } from 'react-icons/io5';
-import { SiSpotify } from 'react-icons/si';
 
+import { Logo } from '../Logo';
 import UserMenu from './UserMenu';
 
 export default function Nav() {
@@ -13,7 +13,7 @@ export default function Nav() {
         aria-label="Home"
         className="flex items-center gap-2 text-[19px] font-semibold tracking-[-0.02em] lg:hidden"
       >
-        <SiSpotify className="h-6 w-6" />
+        <Logo className="h-6 w-6" />
         AuxCheck
       </Link>
       <div className="hidden items-center gap-1 lg:flex">
